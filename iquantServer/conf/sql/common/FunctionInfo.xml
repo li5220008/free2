@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>functioninfo  sql</comment>
+
+
+    <entry key="findSubFunctionInfoByPid">
+             <![CDATA[
+                    SELECT
+                         name,
+                         id,
+                         action,
+                         code,
+                         pid
+                    FROM
+                         function_info
+                     WHERE
+                         pid=?
+                ]]>
+    </entry>
+    <entry key="findAll">
+        <![CDATA[
+                    SELECT
+                         name,
+                         id,
+                         action,
+                         code,
+                         pid
+                    FROM
+                         function_info
+                    WHERE product_id=1
+                     AND status=0
+                ]]>
+    </entry>
+
+</properties>

@@ -1,0 +1,102 @@
+<script type="text/javascript">
+    var maxDate=${dates[0]};
+    var minDate=${dates[1]};
+    var maxYield=parseFloat(${dates[2]});
+    var  strategys=${dates[3]};
+    var  pre_Yield=parseFloat(${dates[4]});
+</script>
+<script src="@{'/public/javascripts/Strategys/strategyContrast.js'}" type="text/javascript" charset="utf-8"></script>
+<div class="constract_img">
+       *{ <img src="@{'/public/images/constracrt_img.jpg'}" width="745" height="334">}*
+        <div id="container" style="width: 745px;height: 334px"></div>
+    </div>
+    <div class="tbl_constract_wrap">
+        <table width="100%" class="tbl_constract" border="0" cellspacing="0" cellpadding="0" style="line-height: 25px;">
+            <tr>
+                <th>策略名称</th>
+                <th>年化收益率</th>
+                <th>Sharpe</th>
+                <th>胜率</th>
+                <th>评级</th>
+                <th>评价数量</th>
+                <th>收藏人数</th>
+                <th>当前订阅</th>
+                <th>累计订阅</th>
+                <th>上架时间</th>
+            </tr>
+
+
+        #{list items:list, as:'item' }
+            <tr>
+                <td >
+                    <div class="stock_index">
+                        <div class="st_index_bg" style="background-color:#{emVF item.color/};">
+                            &nbsp;
+                        </div>
+                        <div  style="color:#{emVF item.color/};">
+                        #{emVF  item.name/}
+                        </div>
+                    </div>
+                </td>
+                #{if item.yieldOfYear!=null}
+                    <td>#{emVFC  item.yieldOfYear*100, f:'##0.00', u:'%'/}</td>
+                #{/if}
+                #{else }
+                    <td>0.00%</td>
+                #{/else}
+                <td>#{emVFC item.sharpeIndex, f:'##0.0000'/}</td>
+                #{if item.profitRatio!=null}
+                    <td>#{emVFC  item.profitRatio*100, f:'##0.00', u:'%'/}</td>
+                #{/if}
+                #{else }
+                    <td>0.00%</td>
+                #{/else}
+                <td>
+                    #{if item.starLevel>4.7}
+                       <span class="all_star_10"> </span>
+                   #{/if}
+                   #{if item.starLevel<=4.7 &&item.starLevel>4.2}
+                       <span class="all_star_9"> </span>
+                   #{/if}
+                   #{if item.starLevel<=4.2 &&item.starLevel>3.7}
+                       <span class="all_star_8"> </span>
+                   #{/if}
+                   #{if item.starLevel<=3.7 &&item.starLevel>3.2}
+                       <span class="all_star_7" > </span>
+                   #{/if}
+                   #{if item.starLevel<=3.2 &&item.starLevel>2.7}
+                       <span class="all_star_6" > </span>
+                   #{/if}
+                   #{if item.starLevel<=2.7 &&item.starLevel>2.2}
+                       <span class="all_star_5"> </span>
+                   #{/if}
+                   #{if item.starLevel<=2.2 &&item.starLevel>1.7}
+                       <span class="all_star_4" > </span>
+                   #{/if}
+                   #{if item.starLevel<=1.7 &&item.starLevel>1.2}
+                       <span class="all_star_3" > </span>
+                   #{/if}
+                   #{if item.starLevel<=1.2 &&item.starLevel>0.7}
+                       <span class="all_star_2"> </span>
+                   #{/if}
+                   #{if item.starLevel<=0.7 &&item.starLevel>0}
+                       <span class="all_star_1"> </span>
+                   #{/if}
+               </td>
+                <td>#{emVF item.discussCount/}</td>
+                <td>#{emVF item.collectCount/}</td>
+                <td>#{emVF item.currentOrder/}</td>
+                <td>#{emVF item.orderCount/}</td>
+                <td>#{emVF item.upTime,f:"yyyy-MM-dd"/}</td>
+            </tr>
+        #{/list}
+        </table>
+    </div>
+<script>
+//    $(".ui-icon-closethick").click(function(){
+//       var parent = $("#container").parent();
+//        $("#container").remove();
+//       parent.append($("<div />").attr("id", "container"));
+//    })
+
+</script>

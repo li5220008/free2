@@ -1,0 +1,36 @@
+
+<div class="dialog_box">
+    <label class="soldout_way" for="user_belong">
+        下架方式：
+    </label>
+    <input type="hidden" autocomplete="off" id="reportDate_4">
+    <input type="hidden" autocomplete="off" id="reportName_4">
+    <div id="select_info_year1_4" class="sel_84_dialog">请选择下架方式</div>
+    <ul id="options_year1_4" class="sel_91_option" style="display: none;">
+        <li data-value="12">立即下架</li>
+        <li data-value="11">延时下架</li>
+    </ul>
+</div>
+<form  method="post" id="strdownForm">
+<div id="hidDate">
+    <div class="dialog_box data_dialog for_top">
+        <div>
+            下架时间设置：
+            <input type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',readOnly:true})" id="start_applydate" name="setTime" readonly="realonly" value="" realValue="1988-08-29" class="a_datepicker">
+        </div>
+
+    </div>
+</div>
+<div class="dialog_box for_top">
+    <div>
+        下架通知：
+    </div>
+    <div class="soldout_notice">
+        <textarea rows="6px" cols="68px" id="strdownMessage" name="textValue">#{emVF content/}</textarea>
+    </div>
+</div>
+<div class="dialog_box soldout_btn">
+    <input type="button" class="common_blue common_cancle" value="取消" id="concel_stra_down">
+    <input type="button" class="common_blue" value="确定" id="submint_stra_down">
+</div>
+</form>

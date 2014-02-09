@@ -1,0 +1,192 @@
+  <div class="common_user_bar">
+        <form action="@{StrategyInfos.retrieve()}" method="get">
+            <dl>
+
+                <dd>
+                    <div class="dialog_box">
+                        <input type="hidden" autocomplete="off" id="languageValue3" name="sp.strategyLanguage" value="${sp.strategyLanguage}">
+                        <input type="hidden" autocomplete="off" id="languageName3">
+                        <div id="strategyLanguage3" class="sel_84_dialog">
+                        #{if sp.strategyLanguage==1}QICore#{/if}
+                        #{elseif sp.strategyLanguage==2}QIA#{/elseif}
+                        #{else }策略平台#{/else}
+                        </div>
+                        <ul id="options_strategyLanguage3" class="sel_91_option" style="display: none;">
+                            <li data-value="0">全部</li>
+                            <li data-value="1">QICore</li>
+                            <li data-value="2">QIA</li>
+                        </ul>
+                    </div>
+
+                </dd>
+
+                <dd>
+                    <div class="dialog_box">
+                        <input type="hidden" autocomplete="off" id="ttypeValue3" name="sp.tradeType" value="${sp.tradeType}">
+                        <input type="hidden" autocomplete="off" id="ttypeName3">
+                        <div id="ttype3" class="sel_84_dialog">
+                        #{if sp.tradeType==1}选股型#{/if}
+                        #{elseif sp.tradeType==2}择时型#{/elseif}
+                        #{elseif sp.tradeType==3}交易型#{/elseif}
+                        #{elseif sp.tradeType==4}其他#{/elseif}
+                        #{else }策略类型#{/else}
+                        </div>
+                        <ul id="options_ttype3" class="sel_91_option" style="display: none;">
+                            <li  data-value="0">全部</li>
+                            <li  data-value="1">选股型</li>
+                            <li  data-value="2">择时型</li>
+                            <li  data-value="3">交易型</li>
+                            <li  data-value="4">其他</li>
+                        </ul>
+                    </div>
+
+                </dd>
+
+                <dd>
+                    <div class="dialog_box">
+                        <input type="hidden" autocomplete="off" id="tvarietyValue3" name="sp.tradeVariety" value="${sp.tradeVariety}">
+                        <input type="hidden" autocomplete="off" id="tvarietyName3">
+                        <div id="tvariety3" class="sel_84_dialog">
+
+                        #{if sp.tradeVariety==1}股票#{/if}
+                        #{elseif sp.tradeVariety==2}期货#{/elseif}
+                        #{elseif sp.tradeVariety==3}混合#{/elseif}
+                        #{else }交易品种#{/else}
+                        </div>
+                        <ul id="options_tvariety3" class="sel_91_option" style="display: none;">
+                            <li  data-value="0">全部</li>
+                            <li  data-value="1">股票</li>
+                            <li  data-value="2">期货</li>
+                            <li  data-value="3">混合</li>
+                        </ul>
+                    </div>
+                </dd>
+
+            *{<dd>
+                    <div class="dialog_box">
+                        <input type="hidden" autocomplete="off" id="statusValue3" name="sp.status" value="${sp.status}">
+                        <input type="hidden" autocomplete="off" id="statusName3">
+                        <div id="status3" class="sel_84_dialog">
+                        #{if sp.status==1}待审核#{/if}
+                        #{elseif sp.status==2}沙箱测试#{/elseif}
+                        #{elseif sp.status==3}回测中#{/elseif}
+                        #{elseif sp.status==4}上架#{/elseif}
+                        #{elseif sp.status==5}下架#{/elseif}
+                        #{elseif sp.status==6}已回测#{/elseif}
+                        #{elseif sp.status==7}待下架#{/elseif}
+                        #{elseif sp.status==8}回测失败#{/elseif}
+                        #{elseif sp.status==-100}审核未通过#{/elseif}
+                        #{else }状态#{/else}
+                        </div>
+                        <ul id="options_status3" class="sel_91_option" style="display: none;">
+                            <li  data-value="0">全部</li>
+                            <li  data-value="1">待审核</li>
+                            <li  data-value="2">沙箱测试</li>
+                            <li  data-value="3">回测中</li>
+                            <li  data-value="4">上架</li>
+                            <li  data-value="5">下架</li>
+                            <li  data-value="6">已回测</li>
+                            <li  data-value="7">待下架</li>
+                            <li  data-value="8">回测失败</li>
+                            <li  data-value="-100">审核未通过</li>
+                        </ul>
+                    </div>
+
+                </dd>}*
+
+                <dd>
+                    <input  class="s_keyword"  type="text"  name="sp.keyWords" value="${sp.keyWords}" placeholder="策略名称/策略师">
+                </dd>
+
+                <dd>
+                    <input  type="image" class="user_submit" src="@{'/public/images/user_check.png'}" name="" >
+                </dd>
+            </dl>
+        </form>
+    </div>
+    <div class="scroll_str">
+        <form action="@{StrategyInfos.retrieve()}" method="get" id='retrieveOrder'>
+        #{if sp.orderFlag==0}
+            <input type="hidden" name="sp.orderFlag" value="1">
+        #{/if}
+        #{else }
+            <input type="hidden" name="sp.orderFlag" value="0">
+        #{/else}
+            <input type="hidden" name="sp.keyWords" value="${sp.keyWords}">
+            <input type="hidden" name="sp.strategyLanguage" value="${sp.strategyLanguage}">
+            <input type="hidden" name="sp.tradeType" value="${sp.tradeType}">
+            <input type="hidden" name="sp.tradeVariety" value="${sp.tradeVariety}">
+            <input type="hidden" name="sp.status" value="${sp.status}">
+            <input type="hidden" name="sp.orderSort" value="" id="retrieveParam">
+            <table width="100%" cellspacing="0" cellpadding="0" border="0" class="tbl_exec tbl_common">
+                <tr>
+                    <th width="8%"  onclick="retrieveSort('delTime')">回收时间#{sortTagShow sortName:sp.orderSort, fieldName:'delTime', flag:sp.orderFlag /}</th>
+                    <th width="8%" onclick="retrieveSort('sname')">策略名称#{sortTagShow sortName:sp.orderSort, fieldName:'sname', flag:sp.orderFlag /}</th>
+                    <th width="8%" onclick="retrieveSort('provider')">策略师#{sortTagShow sortName:sp.orderSort, fieldName:'provider', flag:sp.orderFlag /}</th>
+                    <th width="8%" onclick="retrieveSort('tradeVariety')">交易品种#{sortTagShow sortName:sp.orderSort, fieldName:'tradeVariety', flag:sp.orderFlag /}</th>
+                    <th width="8%" onclick="retrieveSort('stype')">策略类型#{sortTagShow sortName:sp.orderSort, fieldName:'stype', flag:sp.orderFlag /}</th>
+                    <th width="8%" onclick="retrieveSort('enginetypeId')">策略平台#{sortTagShow sortName:sp.orderSort, fieldName:'enginetypeId', flag:sp.orderFlag /}</th>
+                    <th width="10%" onclick="retrieveSort('yieldOfYear')">年化收益率%#{sortTagShow sortName:sp.orderSort, fieldName:'yieldOfYear', flag:sp.orderFlag /}</th>
+                    <th width="10%" onclick="retrieveSort('sharpeIndex')">Sharpe#{sortTagShow sortName:sp.orderSort, fieldName:'sharpeIndex', flag:sp.orderFlag /}</th>
+                    <th width="10%" onclick="retrieveSort('profitRatio')">胜率#{sortTagShow sortName:sp.orderSort, fieldName:'profitRatio', flag:sp.orderFlag /}</th>
+                    <!--<th width="10%" onclick="retrieveSort('movingCost')">滑价成本#{sortTagShow sortName:sp.orderSort, fieldName:'movingCost', flag:sp.orderFlag /}</th>-->
+                </tr>
+
+            #{list items:retrieveList,as:'item'}
+            <tr>
+                <td width="8%">#{emVF item.delTime,f:'yyyy-MM-dd'  /}</td>
+                <td width="8%"><a href="javascript:void(0);" data-url="@{StrategyInfos.strategyDetail(item.id)}"
+                                  data-title="${item.sname}" class="dialog_td">#{emVF item.sname /}</a></td>
+                <td width="8%">#{emVF item.provider /}</td>
+                <td width="8%">
+                    #{if item.tradeVariety ==1  }
+                        股票
+                    #{/if}
+                    #{elseif item.tradeVariety==2}
+                        期货
+                    #{/elseif}
+                    #{else }
+                        混合
+                    #{/else}
+                </td>
+                <td width="8%">
+                    #{if item.stype==1}
+                        选股型
+                    #{/if}
+                    #{elseif item.stype==2}
+                        择时型
+                    #{/elseif}
+                    #{elseif item.stype==3}
+                        交易型
+                    #{/elseif}
+                    #{else }
+                        其他
+                    #{/else}
+
+                </td>
+                <td width="8%">#{emVF item.languange  /}</td>
+                <td width="10%">#{emVFC v: item==null || item.yieldOfYear==null ?null:item.yieldOfYear * 100, f:'0.00',c:true /}</td>
+                <td width="10%">#{emFM v:item.sharpeIndex , f:'0.00',  /}</td>
+                <td width="10%">#{emFM v:item.profitRatio , f:'0.00',  /}</td>
+                <!--<td width="10%">#{emFM v:item.movingCost , f:'0.00',  /}</td>-->
+            #{/list}
+
+            </table>
+        </form>
+    </div>
+    <!--分页 Begin-->
+    <div class="page">
+        <div class="page_center">
+            <form action="@{StrategyInfos.retrieve(sp) }" class="pageFrom" method="get">
+            #{paging page:page /}
+            </form>
+        </div>
+    </div>
+    <!--分页 End-->
+
+    <!--control_active Begin-->
+    <div class="control_active">
+        <div class="control_active_wrap">
+            #{hasAuth '23'}<span class="strategy_remove_btn">策略清空</span>#{/hasAuth}
+        </div>
+    </div>

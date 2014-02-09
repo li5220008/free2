@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>stockpool_ext  sql</comment>
+
+
+    <entry key="stockpooldeleteSql">
+        <![CDATA[
+               DELETE FROM  qic_db.stockpool_ext;
+
+                ]]>
+    </entry>
+
+    <entry key="stockpoolExtSql">
+        <![CDATA[
+               INSERT INTO stockpool_ext(stockPoolCode,source,annualizedYield,yearJensenRatio,updateDate,orgId) values(?,?,?,?,?,?)
+                ]]>
+    </entry>
+
+
+    <entry key="selectStockpoolSql">
+        <![CDATA[
+   SELECT
+    d.stpc AS stockPoolCode,
+    ri.`INSTITUTIONNAME` AS source,
+    mm.`AnnualizedYield` AS annualizedYield,
+    mm.`YearJensenRatio` AS yearJensenRatio,
+    d.udate AS updateDate,
+    ri.`INSTITUTIONID` AS orgId
+    FROM
+    (SELECT
+    a.`StockPoolCode` AS stpc,
+    a.`ReportID` AS reportId,
+    MAX(a.`AdjustDate`) AS udate,
+    a.`SecurityID` AS sec
+    FROM
+    stp_sample a
+    WHERE 1 = 1
+    GROUP BY a.`StockPoolCode`) d
+    LEFT JOIN
+    (SELECT
+    b.`StockPoolCode` AS StockPoolCode,
+    b.`AnnualizedYield` AS annualizedYield,
+    b.`YearSharpeRatio` AS yearJensenRatio,
+    b.TradingDate
+    FROM
+    stp_dailyreturn b,
+    (SELECT
+    StockPoolCode,
+    MAX(TradingDate) AS td
+    FROM
+    stp_dailyreturn c
+    GROUP BY StockPoolCode) a
+    WHERE a.StockPoolCode = b.`StockPoolCode`
+    AND b.`TradingDate` = a.td
+    GROUP BY b.`StockPoolCode`) mm
+    ON d.stpc = mm.StockPoolCode
+    LEFT JOIN rep_institution ri
+    ON d.reportId = ri.`REPORTID`
+    ]]>
+    </entry>
+
+</properties>

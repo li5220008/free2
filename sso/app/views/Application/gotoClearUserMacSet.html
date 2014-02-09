@@ -1,0 +1,25 @@
+<!DOCTYPE	html PUBLIC	"-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title></title>
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body>
+<h3>清空macset信息</h3>
+#{form @Application.clearUserMacSet(), target:"_blank"}
+    <div>
+        账号:<input type="text" name="account"> <input type="submit" value="提交">
+    </div>
+#{/form}
+
+<h3>列出用户的macset信息</h3>
+#{form @Application.listUserMacSet(), target:"_blank"}
+    <div>
+        账号:<input type="text" name="account"> <input type="submit" value="提交">
+    </div>
+#{/form}
+</body>
+</html>

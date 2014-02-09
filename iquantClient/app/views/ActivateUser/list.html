@@ -1,0 +1,2022 @@
+#{extends 'manage_main.html' /}
+#{set title:'用户权限管理' /}
+
+#{set 'moreStyles'}
+*{这里是待激活的css}*
+<link rel="stylesheet" type="text/css" href="@{'public/stylesheets/global-admin.css'}">
+<style>
+
+    #editTradeAccountForm input.new_input{ width:150px; margin: 0}
+    #editTradeAccountForm div.select_short_o{margin: 0}
+    #editTradeAccountForm font.new_user_tips{min-width: 200px; max-width:200px; margin-left: 15px;}
+
+    #editTradeAccountForm label { display:block; }
+    #editTradeAccountForm input { display:block; }
+    #editTradeAccountForm input.text { margin-bottom:12px; width:95%; padding: .4em; }
+    #editTradeAccountForm fieldset { padding:0; border:0; margin-top:5px; }
+
+    #editTradeAccountTable input{margin:1px;}
+    #editTradeAccountTable td{text-align: center;}
+    #addSingleTradeAccountBtn {margin-top:10px;}
+    #saveTradeAccountBtn {margin-top: 10px;margin-left: 70px;}
+*{}*
+</style>
+#{/set}
+
+<script src = "@{'/public/javascripts/WdatePicker.js'}"></script>
+<!--ligerUI插件 Begin-->
+<script src="@{'/public/javascripts/ligerUI/base.js'}"></script>
+<script src="@{'/public/javascripts/ligerUI/ligerTree.js'}"></script>
+<script src="@{'/public/javascripts/userauthorization.js'}" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="@{'/public/javascripts/ligerUI/ligerui-tree.css'}">
+<link rel="stylesheet" type="text/css" href="@{'public/stylesheets/qic-dialog.css'}">
+<script src="@{'/public/javascripts/qic-dialog.js'}"></script>
+<script src="@{'/public/javascripts/json2.js'}"></script>
+
+<!--ligerUI插件 End-->
+
+<style>
+    .tbl_scoll{ border-bottom: 0px solid #ccc;border-left: 0px solid #ccc;}
+    .tbl_common{ border-left:0;}
+</style>
+<body>
+
+
+<!--strategy_nav Begin-->
+<div class="strategy_nav">
+	<ul class="manage_top_menu">
+    #{hasAuth '21'}
+        <li class="mt_current"><a href="@{ActivateUser.list()}" >用户权限管理</a></li>
+    #{/hasAuth}
+    #{hasAuth '22'}
+        <li><a href="@{RoleInfos.roleList()}">角色管理</a></li>
+    #{/hasAuth}
+    </ul>
+</div>
+<!--strategy_nav End-->
+
+<!--main_wrap Begin-->
+<div class="main_wrap">
+    <!--sp_right Begin-->
+    <div class="sp_right_wrap">
+        <div class="content_title">
+            <div class="tab_title">
+                <ul class="tab_li" id="menuTab">
+                    <li  #{if ap.flag==1}class="display"#{/if}>待激活用户</li>
+                    <li  #{if ap.flag==2}class="display"#{/if}>用户列表</li>
+                    <li  #{if ap.flag==3}class="display"#{/if}>到期用户</li>
+                </ul>
+            </div>
+        </div>
+
+        <ul class="sub_content stable_content" id="subContImp">
+            <li  #{if ap.flag==1}class="display"#{/if}>
+                <!--control_active Begin-->
+                <div class="control_active">
+                    <div class="control_active_wrap">
+                    #{hasAuth '21'}
+                        <span class="add_user">新建用户</span>
+                        *{<span id="batch_import_user" class="input_user">批量导入用户</span>}*
+                        <span class="active_user">激活</span>
+                        <span class="remove_user">删除</span>
+                    #{/hasAuth}
+                    </div>
+                </div>
+                <!--control_active End-->
+                <!--待激活用户 Begin-->
+                <div class="common_user_bar">
+                    <form action="@{ActivateUser.list() }" method="get" class="selectfun">
+                        <dl>
+                            <dd>
+                                <label>姓名</label>
+                                <input id="name"  type="text" name="ap.name" value="${ap.name}">
+                            </dd>
+                            <dd>
+                                <label for="user_account">帐号</label>
+                                <input id="user_account" type="text" name="ap.account" value="${ap.account}">
+                            </dd>
+                            <dd>
+                                <div class="dialog_box">
+                                    <label>所属营业部</label>
+                                    <input type="hidden" autocomplete="off" id="reportDate" name="ap.saleId" value="${ap.saleId}">
+                                    <input type="hidden" autocomplete="off" id="reportName">
+                                    <div id="activateSale" class="sel_84_dialog">
+                                        #{if ap.saleId==0}全部#{/if}
+                                        #{list items : saleDepartments, as : 'item1' }
+                                            #{if ap.saleId.equals(item1.id)} #{subString v:item1.name,l:7 /}#{/if}
+                                        #{/list}
+                                    </div>
+                                    <ul id="options_activateSale" class="sel_91_option" style="display: none;">
+                                        <li data-value="0">全部</li>
+                                        #{list items : saleDepartments, as : 'item' }
+                                            <li data-value="${item.id}"  title="${item.name}">#{subString v:item.name,l:7 /}</li>
+                                        #{/list}
+                                    </ul>
+                                </div>
+                            </dd>
+                            <dd>
+                                <input  type="image" class="user_submit" src="@{'/public/images/user_check.png'}" >
+                            </dd>
+                        </dl>
+                    </form>
+                </div>
+
+                <form action="@{ActivateUser.list()}" method="get" name="orderSort" id='orderSort'>
+                #{if ap.orderFlag==0}
+                    <input type="hidden" name="ap.orderFlag" value="1">
+                #{/if}
+                #{else}
+                    <input type="hidden" name="ap.orderFlag" value="0">
+                #{/else}
+                    <input type="hidden" name="ap.name" value="${ap.name}">
+                    <input type="hidden" name="ap.orderSort" value="" id="paramSort">
+                    <input type="hidden" name="ap.saleId" value="${ap.saleId}">
+                    <input type="hidden" name="ap.account" value="${ap.account}">
+                    <table width="100%" cellspacing="0" cellpadding="0" border="0" class="tbl_exec">
+                        <tr>
+                            <th width="11%"><img src="@{'/public/images/check_uncheck.png'}" class="check_uncheck"></th>
+                            <th width="11%" onclick="order('account')">帐号#{sortTagShow sortName:ap.orderSort, fieldName:'account', flag:ap.orderFlag /}</th>
+                            <th width="12%" onclick="order('name')">姓名#{sortTagShow sortName:ap.orderSort, fieldName:'name', flag:ap.orderFlag /}</th>
+                            <th width="12%" onclick="order('idCard')">身份证号#{sortTagShow sortName:ap.orderSort, fieldName:'idCard', flag:ap.orderFlag /}</th>
+                            <th width="12%" onclick="order('phone')">联系电话#{sortTagShow sortName:ap.orderSort, fieldName:'phone', flag:ap.orderFlag /}</th>
+                            <th width="15%" onclick="order('saleName')">所属营业部#{sortTagShow sortName:ap.orderSort, fieldName:'saleName', flag:ap.orderFlag /}</th>
+                            *{<th width="13%" onclick="order('capitalAccount')">资金账号#{sortTagShow sortName:ap.orderSort, fieldName:'capitalAccount', flag:ap.orderFlag /}</th>}*
+                            <th width="13%" onclick="order('applyDate')">申请日期#{sortTagShow sortName:ap.orderSort, fieldName:'applyDate', flag:ap.orderFlag /}</th>
+                        </tr>
+                    </table>
+                </form>
+                <div class="tbl_scoll">
+                    <form action="" id="delFormId" method="post">
+                        <table width="100%" cellspacing="0" cellpadding="0" border="0" class="tbl_common tbl_exec tbl_no_scroll">
+                        #{list items:audList, as:'item'}
+                            <tr>
+                                <td width="11%"><input type="checkbox" autocomplete="off" name="chid" id="userid_${item.id}" value="${item.id}" class="ready_active_cb"></td>
+                                <td width="12%"><span onclick="javascript:showUserInfo('${item.id}')" class="username_datum">#{emVF item.account /}</span></td>
+                                <td width="12%">#{emVF item.name /}</td>
+                                <td width="12%">#{emVF item.idCard /}</td>
+                                <td width="12%">#{emVF item.phone /}</td>
+                                <td width="15%">#{emVF item.saleName/}</td>
+                                *{<td width="13%">#{emVF item.capitalAccount/}</td>}*
+                                <td width="13%">#{emVF item.applyDate, f:'yyyy-MM-dd' /} </td>
+                            </tr>
+                        #{/list}
+                        </table>
+                    </form>
+                </div>
+                <!--待激活用户 End-->
+
+                <!--分页 Begin-->
+                <!--list分页 Begin -->
+                <div class="page">
+                    <div class="page_center">
+                        <form action="@{ActivateUser.list(ap) }" class="pageFrom" method="get">
+                            #{paging page:page /}
+                        </form>
+                    </div>
+                </div>
+                <!--list分页 End-->
+                <!--分页 End-->
+            </li>
+
+            <li  #{if ap.flag==2}class="display"#{/if}>
+                <!--用户列表 Begin-->
+                <div class="common_user_bar">
+                    <form action="@{ActivateUser.users() }" method="get" class="usersfun">
+                        <dl>
+                            <dd>
+                                <label>姓名</label>
+                                <input type="text" name="ap.name" value="${ap.name}" >
+                            </dd>
+                            <dd>
+                                <label for="user_account">帐号</label>
+                                <input  type="text" name="ap.account" value="${ap.account}" >
+                            </dd>
+                            <dd>
+                                <div class="dialog_box">
+                                    <label>所属营业部</label>
+                                    <input type="hidden" autocomplete="off" id="usersDate"  name="ap.saleId" value="${ap.saleId}">
+                                    <input type="hidden" autocomplete="off" id="usersName">
+                                    <div id="userslist" class="sel_84_dialog">
+                                        #{if ap.saleId==0}全部#{/if}
+                                        #{list items : saleDepartments, as : 'item1' }
+                                            #{if ap.saleId.equals(item1.id)} #{subString v:item1.name,l:7 /} #{/if}
+                                        #{/list}
+                                    </div>
+                                    <ul id="options_userslist" class="sel_91_option" style="display: none;">
+                                        <li data-value="0">全部</li>
+                                    #{list items : saleDepartments, as : 'item' }
+                                        <li data-value="${item.id}"  title="${item.name}">#{subString v:item.name,l:7 /}</li>
+                                    #{/list}
+                                    </ul>
+                                </div>
+                            </dd>
+                            <dd>
+                                <div class="dialog_box">
+                                    <label>所属角色</label>
+                                    <input type="hidden" autocomplete="off" id="roleDate" name="ap.roleId" value="${ap.roleId}">
+                                    <input type="hidden" autocomplete="off" id="roleName">
+                                    <div id="roleList" class="sel_84_dialog select_short_o">
+                                        #{if ap.roleId==0}全部#{/if}
+                                        #{list items:roleInfoList, as:'item1' }
+                                            #{if ap.roleId.equals(item1.id)} #{subString v:item1.name,l:7 /}#{/if}
+                                        #{/list}
+                                    </div>
+                                    <ul id="options_roleList" class="sel_91_option select_short_o" style="display: none;">
+                                        <li data-value="0">全部</li>
+                                        #{list items:roleInfoList, as:'item' }
+                                            <li data-value="${item.id}"  title="${item.name}">#{subString v:item.name,l:7 /}</li>
+                                        #{/list}
+                                    </ul>
+                                </div>
+                            </dd>
+                            <dd>
+                                <div class="dialog_box">
+                                    <label>状态</label>
+                                    <input type="hidden" autocomplete="off" id="roleStatusDate" name="ap.status" value="${ap.status}">
+                                    <input type="hidden" autocomplete="off" id="roleStatusName" >
+                                    <div id="roleStatus" class="sel_84_dialog select_short_o">
+                                        #{if ap.status==0}全部#{/if}
+                                        #{elseif ap.status==1}禁用#{/elseif}
+                                        #{elseif ap.status==10}正常#{/elseif}
+                                        #{elseif ap.status==70}一周内到期#{/elseif}
+                                    </div>
+                                    <ul id="options_roleStatus" class="sel_91_option select_short_o" style="display: none;">
+                                        <li data-value="0">全部</li>
+                                        <li data-value="1">禁用</li>
+                                        <li data-value="10">正常</li>
+                                        <li data-value="70">一周内到期</li>
+                                    </ul>
+                                </div>
+                            </dd>
+                            <dd>
+                                <input type="image" class="user_submit" src="@{'/public/images/user_check.png'}" name="" >
+                            </dd>
+                        </dl>
+                    </form>
+                </div>
+                <form action="@{ActivateUser.users()}" method="get" name="usersSort" id='usersSort'>
+                    #{if ap.orderFlag==0}
+                        <input type="hidden" name="ap.orderFlag" value="1">
+                    #{/if}
+                    #{else}
+                        <input type="hidden" name="ap.orderFlag" value="0">
+                    #{/else}
+                        <input type="hidden" name="ap.name" value="${ap.name}">
+                        <input type="hidden" name="ap.orderSort" value="" id="usersParam">
+                        <input type="hidden" name="ap.saleId" value="${ap.saleId}">
+                        <input type="hidden" name="ap.account" value="${ap.account}">
+                        <input type="hidden" name="ap.roleId" value="${ap.roleId}">
+                        <input type="hidden" name="ap.status" value="${ap.status}">
+                    <table width="100%" cellspacing="0" cellpadding="0" border="0" class="tbl_exec">
+                        <tr>
+                            <th width="6%"><img src="@{'/public/images/check_uncheck.png'}" class="check_uncheck"></th>
+                            <th width="9%" onclick="orderUsers('account')">帐号#{sortTagShow sortName:ap.orderSort, fieldName:'account', flag:ap.orderFlag /}</th>
+                            <th width="9%" onclick="orderUsers('name')">姓名#{sortTagShow sortName:ap.orderSort, fieldName:'name', flag:ap.orderFlag /}</th>
+                            <th width="9%" onclick="orderUsers('idCard')">身份证号#{sortTagShow sortName:ap.orderSort, fieldName:'idCard', flag:ap.orderFlag /}</th>
+                            <th width="9%" onclick="orderUsers('phone')">联系电话#{sortTagShow sortName:ap.orderSort, fieldName:'phone', flag:ap.orderFlag /}</th>
+                            *{<th width="9%" onclick="orderUsers('saleName')">所属营业部#{sortTagShow sortName:ap.orderSort, fieldName:'saleName', flag:ap.orderFlag /}</th>}*
+                            <th width="9%">交易账号</th>
+                            <th width="10%" onclick="orderUsers('roleName')">所属角色#{sortTagShow sortName:ap.orderSort, fieldName:'roleName', flag:ap.orderFlag /}</th>
+                            <th width="10%" onclick="orderUsers('startDate')">授权日期#{sortTagShow sortName:ap.orderSort, fieldName:'startDate', flag:ap.orderFlag /}</th>
+                            <th width="10%" onclick="orderUsers('endDate')">权限到期日#{sortTagShow sortName:ap.orderSort, fieldName:'endDate', flag:ap.orderFlag /}</th>
+                            <th width="10%" onclick="orderUsers('status')">用户状态#{sortTagShow sortName:ap.orderSort, fieldName:'status', flag:ap.orderFlag /}</th>
+                        </tr>
+                    </table>
+                </form>
+                <div class="tbl_scoll">
+                    <div id="beforeLoadingDiv" class="tbl_scoll tbl_strupload" style="display:block;">loading...............................................................</div>
+                    <div id="afterLoadingDiv"  style="display:none">
+                        <form action="" id="delFormId2">
+                            <table width="100%" cellspacing="0" cellpadding="0" border="0" class="tbl_common tbl_exec tbl_no_scroll">
+                            #{list items:usersList, as:'item'}
+                                <tr>
+                                    <td width="6%"><input autocomplete="off" type="checkbox" name="" id="userid_${item.id}" value="${item.id}"></td>
+                                    <td width="9%"><span onclick="javascript:showUserInfo('${item.id}')" class="username_datum">#{emVF item.account /}</span></td>
+                                    <td width="9%">#{emVF item.name /}</td>
+                                    <td width="9%">#{emVF item.idCard /}</td>
+                                    <td width="9%">#{emVF item.phone /}</td>
+                                    *{<td width="9%">#{emVF item.saleName /}</td>}*
+                                    <td width="9%"><input opUid="${item.id}" class="tradeAccountViewBtn common_blue" type="button" value="查看"></td>
+                                    <td width="10%">#{emVF item.roleName /} </td>
+                                    <td width="10%">#{emVF item.startDate , f:'yyyy-MM-dd' /}</td>
+                                    <td width="10%">#{emVF item.endDate , f:'yyyy-MM-dd' /}</td>
+                                    <td width="10%">
+                                        #{if item.status==1}禁用#{/if}
+                                        #{elseif item.status==2}未激活#{/elseif}
+                                        #{elseif item.status==10 && item.endDate-new java.util.Date() > 7}正常#{/elseif}
+                                        #{elseif item.status==10 && item.endDate-new java.util.Date() <= 7 && item.endDate>new java.util.Date()}一周内到期#{/elseif}
+                                        #{elseif item.status==10 && item.endDate<new java.util.Date()}已到期#{/elseif}
+                                    </td>
+                                </tr>
+                            #{/list}
+                            </table>
+                        </form>
+                    </div>
+                </div>
+                <!--用户列表 End-->
+                <!--分页 Begin-->
+                <div class="page">
+                    <div class="page_center">
+                        <form action="@{ActivateUser.users(ap) }" class="pageFrom" method="get">
+                            #{paging page:page /}
+                        </form>
+                    </div>
+                </div>
+                <!--分页 End-->
+
+                <!--control_active Begin-->
+                <div class="control_active">
+                    <div class="control_active_wrap">
+                        #{hasAuth '21'}<span id="modify_privilege" class="modify_privilege">更改权限</span>#{/hasAuth}
+                        #{hasAuth '21'}<span class="modify_privilege_date">更改权限期限</span>#{/hasAuth}
+                        #{hasAuth '21'}<span class="disabled_open">禁用/开启</span>#{/hasAuth}
+                        #{hasAuth '21'}<span class="remove_user">删除</span>#{/hasAuth}
+                    </div>
+                </div>
+                <!--control_active End-->
+            </li>
+
+            <li #{if ap.flag==3}class="display"#{/if}>
+                <!--用户列表 Begin-->
+                <div class="common_user_bar">
+                    <form action="@{ActivateUser.dueUsers() }" method="get" class="duefun">
+                        <dl>
+                            <dd>
+                                <label>姓名</label>
+                                <input type="text" name="ap.name" value="${ap.name}" >
+                            </dd>
+                            <dd>
+                                <label for="user_account">帐号</label>
+                                <input  type="text" name="ap.account" value="${ap.account}" >
+                            </dd>
+                            <dd>
+                                <div class="dialog_box">
+                                    <label>所属营业部</label>
+                                    <input type="hidden" autocomplete="off" id="dueStatusDate" value="${ap.saleId}" name="ap.saleId">
+                                    <input type="hidden" autocomplete="off" id="dueStatusName">
+                                    <div id="dueUsers" class="sel_84_dialog select_short_o" >
+                                        #{if ap.saleId==0}全部#{/if}
+                                        #{list items : saleDepartments, as : 'item1' }
+                                            #{if ap.saleId.equals(item1.id)} #{subString v:item1.name,l:7 /}#{/if}
+                                         #{/list}
+                                    </div>
+                                    <ul id="options_dueUsers" class="sel_91_option select_short_o" style="display: none;">
+                                        <li data-value="0">全部</li>
+                                    #{list items : saleDepartments, as : 'item' }
+                                        <li data-value="${item.id}" title="${item.name}">#{subString v:item.name,l:7 /}</li>
+                                    #{/list}
+                                    </ul>
+                                </div>
+                            </dd>
+                            <dd>
+                                <div class="dialog_box">
+                                    <label>所属角色</label>
+                                    <input type="hidden" autocomplete="off" id="dueRoleDate" value="${ap.roleId}" name="ap.roleId">
+                                    <input type="hidden" autocomplete="off" id="dueRoleName">
+                                    <div id="dueRole" class="sel_84_dialog select_short_o" >
+                                        #{if ap.roleId==0}全部#{/if}
+                                        #{list items : roleInfoList, as : 'item1' }
+                                            #{if ap.roleId==item1.id} #{subString v:item1.name,l:7 /}#{/if}
+                                        #{/list}
+                                    </div>
+                                    <ul id="options_dueRole" class="sel_91_option select_short_o" style="display: none;">
+                                        <li data-value="0">全部</li>
+                                    #{list items:roleInfoList, as:'item' }
+                                        <li data-value="${item.id}"  title="${item.name}" >#{subString v:item.name,l:7 /}</li>
+                                    #{/list}
+                                    </ul>
+                                </div>
+                            </dd>
+                            <dd>
+                                <input type="image" class="user_submit" src="@{'/public/images/user_check.png'}" name="" >
+                            </dd>
+                        </dl>
+                    </form>
+                </div>
+
+                <form action="@{ActivateUser.dueUsers()}" method="get"  id='dueSort'>
+                    #{if ap.orderFlag==0}
+                    <input type="hidden" name="ap.orderFlag" value="1">
+                    #{/if}
+                    #{else}
+                    <input type="hidden" name="ap.orderFlag" value="0">
+                    #{/else}
+                    <input type="hidden" name="ap.name" value="${ap.name}">
+                    <input type="hidden" name="ap.orderSort" value="" id="dueParam">
+                    <input type="hidden" name="ap.saleId" value="${ap.saleId}">
+                    <input type="hidden" name="ap.roleId" value="${ap.roleId}">
+                    <input type="hidden" name="ap.account" value="${ap.account}">
+                    <table width="100%" cellspacing="0" cellpadding="0" border="0" class="tbl_exec">
+                        <tr>
+                            <th width="6%"><img src="@{'/public/images/check_uncheck.png'}" class="check_uncheck"></th>
+                            <th width="11%" onclick="orderdus('account')">帐号#{sortTagShow sortName:ap.orderSort, fieldName:'account', flag:ap.orderFlag /}</th>
+                            <th width="11%" onclick="orderdus('name')">姓名#{sortTagShow sortName:ap.orderSort, fieldName:'name', flag:ap.orderFlag /}</th>
+                            <th width="11%" onclick="orderdus('idCard')">身份证号#{sortTagShow sortName:ap.orderSort, fieldName:'idCard', flag:ap.orderFlag /}</th>
+                            <th width="11%" onclick="orderdus('phone')">联系电话#{sortTagShow sortName:ap.orderSort, fieldName:'phone', flag:ap.orderFlag /}</th>
+                            <th width="12%" onclick="orderdus('saleName')">所属营业部#{sortTagShow sortName:ap.orderSort, fieldName:'saleName', flag:ap.orderFlag /}</th>
+                            *{<th width="12%" onclick="orderdus('capitalAccount')">资金账号#{sortTagShow sortName:ap.orderSort, fieldName:'capitalAccount', flag:ap.orderFlag /}</th>}*
+                            <th width="13%" onclick="orderdus('roleName')">所属角色#{sortTagShow sortName:ap.orderSort, fieldName:'roleName', flag:ap.orderFlag /}</th>
+                            <th width="13%" onclick="orderdus('endDate')">权限到期日#{sortTagShow sortName:ap.orderSort, fieldName:'endDate', flag:ap.orderFlag /}</th>
+                        </tr>
+                    </table>
+                </form>
+
+                <div class="tbl_scoll">
+                    <table width="100%" cellspacing="0" cellpadding="0" border="0" class="tbl_common tbl_exec tbl_no_scroll">
+                    #{list items:dueUsersList, as:'item'}
+                        <tr>
+                            <td width="6%"><input type="checkbox" autocomplete="off" name="" id="userid_${item.id}" value="${item.id}"></td>
+                            <td width="11%"><span onclick="javascript:showUserInfo('${item.id}')" class="username_datum">#{emVF item.account /}</span></td>
+                            <td width="11%">#{emVF item.name /}</td>
+                            <td width="11%">#{emVF item.idCard /}</td>
+                            <td width="11%">#{emVF item.phone /}</td>
+                            <td width="12%">#{emVF item.saleName /}</td>
+                            *{<td width="12%">#{emVF item.capitalAccount /}</td>}*
+                            <td width="13%">#{emVF item.roleName /} </td>
+                            <td width="13%">#{emVF item.endDate , f:'yyyy-MM-dd' /}</td>
+                        </tr>
+                    #{/list}
+                    </table>
+                </div>
+                <!--用户列表 End-->
+
+                <!--分页 Begin-->
+                <div class="page">
+                    <div class="page_center">
+                        <form action="@{ActivateUser.dueUsers(ap) }" class="pageFrom" method="get">
+                        #{paging page:page /}
+                        </form>
+                    </div>
+                </div>
+                <!--分页 End-->
+
+                <!--control_active Begin-->
+                <div class="control_active">
+                    <div class="control_active_wrap">
+                        #{hasAuth '21'}<span class="deferred_user">延期</span>#{/hasAuth}
+                        #{hasAuth '21'}<span class="remove_user">删除</span>#{/hasAuth}
+                    </div>
+                </div>
+                <!--control_active End-->
+            </li>
+        </ul>
+    </div><!--sp_right End-->
+</div><!--main_wrap End-->
+
+<script>
+    window.resizeHeight('.tbl_scoll', 220)
+
+    $(".tab_li li").live("click", function(){
+        var index = $(this).index();
+        if(index==0){
+            window.location.href="/activateuser/list?ap.flag=1";
+        }else if(index==1){
+            window.location.href="/activateuser/users?ap.flag=2";
+        }else {
+            window.location.href="/activateuser/dueUsers?ap.flag=3";
+        }
+    });
+
+    //jQ tab切换
+    $(".tab_li li").click(function(){
+        var index = $(this).index();
+        $(".tab_li").children("li").removeClass().eq(index).addClass('display');
+        $(".sub_content").children("li").removeClass().eq(index).addClass('display')
+    });
+
+    //全选/反选
+    $(".check_uncheck").toggle(function(){
+        //check() uncheck()方法 是自定义jQ对象方法
+        //选中项
+        var checked = $(this).closest("li").find('.tbl_common input[type="checkbox"]').check();
+        //console.log(checked);
+    }, function(){
+        $(this).closest("li").find('.tbl_common input[type="checkbox"]').uncheck();
+        //console.log(undchecked);
+    });
+    downBox('activateSale', '#options_activateSale', 'reportDate', 'reportName');
+    downBox('userslist', '#options_userslist', 'usersDate', 'usersName');
+    downBox('roleList', '#options_roleList', 'roleDate', 'roleName');
+    downBox('roleStatus', '#options_roleStatus', 'roleStatusDate', 'roleStatusName');
+    downBox('dueUsers', '#options_dueUsers', 'dueStatusDate', 'dueStatusName');
+    downBox('dueRole', '#options_dueRole', 'dueRoleDate', 'dueRoleName');
+</script>
+
+<!--用户状态修改begin -->
+<div class="tab_user_state" style="display:none" title="禁用/开启">
+    <form action="">
+        <input type="hidden" autocomplete="off" value="0" id="reportDate_20" name="depId">
+        <input type="hidden" autocomplete="off" id="reportName_20">
+        <div id="select_info_year1_20" class="sel_84_dialog new_sel_d">--请选择状态--</div>
+        <ul id="options_year1_20" class="sel_91_option new_sel_option" style="display: none;margin-left: 12px;">
+            <li data-value="1">禁用</li>
+            <li data-value="10">开启</li>
+        </ul>
+        <div class="common_btn">
+            <input type="button" class="common_blue" value="更改"  id="user_state_submit">
+        </div>
+    </form>
+</div>
+
+<script>
+    downBox('select_info_year1_20', '#options_year1_20', 'reportDate_20', 'reportName_20');
+    function getcheckboxvalue(){
+        var myArray = [];
+        $("input[type=checkbox]").each(function(){
+
+            if(this.checked) {
+                myArray.push($(this).val());
+            }
+        })
+        return myArray;
+    }
+    $(".disabled_open").click(function(){
+        if(getcheckboxvalue().length == 0){
+            $.qicTips({
+                target:'.disabled_open',
+                level:2,
+                message:"没有选择用户"
+            });
+            return;
+        }
+
+        $(".tab_user_state").dialog({
+            autoOpen: true,
+            modal: true,
+            position: {
+                at: "center"
+            },
+            height: 'auto',
+            resizable: false,
+            width: 400,
+            zIndex: 1000
+        });
+    });
+
+    $("#user_state_submit").click(function () {
+        var status_val = $("#reportDate_20").val();
+        if(status_val == 0){
+            $.qicTips({
+                target:'#user_state_submit',
+                level:2,
+                message:"请选择状态"
+            });
+            return;
+        }
+        $.ajax({
+            url:"/userinfos/userStateModify",
+            data:{"ids":getcheckboxvalue(), "status":status_val},
+            dataType:"json",
+            type:"post",
+            success:function (data) {
+                if (data.success) {
+                    $.qicTips({
+                        target:"#user_state_submit",
+                        level:1,
+                        message:data.message
+                    });
+                    setTimeout(function() {
+                        window.location.reload();
+                    },400)
+                }
+
+            },
+            error:function (data) {
+                if(!data.success){
+                    $.qicTips({
+                        target:'body',
+                        level:2,
+                        message:"出错了....."
+                    });
+                }
+            }
+        })
+
+    })
+</script>
+<!--用户状态修改end -->
+
+<!--新建用户 Begin-->
+<div class="new_user" title="新建用户"></div>
+
+<link href="/public/stylesheets/ui-lightness/jquery-ui-1.9.1.custom.css" rel="stylesheet">
+<script src="/public/javascripts/jquery-ui-1.9.1.custom.js"></script>
+
+<script src="/public/javascripts/jquery.validate.js"></script>
+<!--<script src="../js/jquery.metadata.js"></script>-->
+<script>
+    //validate 插件
+    var update_form_validator ;
+    <!-- 新建用户js begin-->
+    $(document).ready(function(){
+        $("#afterLoadingDiv").css("display","");
+        $("#beforeLoadingDiv").css("display","none");
+        $(window).keyup(function(event) {
+            if (event.keyCode == "13") {//keyCode=13是回车键
+                $('.new_user_register').click();
+            }
+        });
+
+        $(".new_user_cancle").live('click', function(){
+            //$(":input").val("");
+            //$("#newuserform").get(0).reset();
+            $(".ui-dialog-titlebar-close").click();
+
+        });
+
+        jQuery.validator.addMethod("fullName", function(value, name){
+            return  /^[\u4E00-\u9FA5\uF900-\uFA2D\w]+$/.test(value);
+        }, "只能包括中文、英文、数字和下划线");
+
+        jQuery.validator.addMethod("byteRangeLength", function(value, element, param) {
+            var length = value.length;
+            for(var i = 0; i < value.length; i++){
+                if(value.charCodeAt(i) > 127){
+                    length++;
+                }
+            }
+            return  ( length >= param[0] && length <= param[1] );
+        }, "中文两个字节");
+
+        jQuery.validator.addMethod("isChinese",function(value,element){
+            return /^[\u2E80-\uFE4F]+$/.test(value);
+        },"请输入中文");
+
+        jQuery.validator.addMethod("isPwd",function(value,element){
+            if(value == "") {
+               return true;
+            }
+            return /^[a-z0-9A-Z_]{6,15}$/.test(value);
+        },"密码只能是6-15位的数组和字母的组合");
+
+        jQuery.validator.addMethod("isEmail",function(value,element){
+            return /^[a-z\d]+([a-z\d]+)*@([\da-z]([\da-z])?)+(\.[a-z]+)+$/.test(value);
+        },"请输入一个有效的Email地址");
+
+        <!--修改用户修表单检验start-->
+       update_form_validator =  $("#updateUserInfoForm").validate({
+            submitHandler:function(form){
+                //1. get form data
+               updateUserInfo();
+            },
+            rules: {
+                "userInfoDto.name": {
+                    required:true
+                },
+                "userInfoDto.account":{
+                    required:true,
+                    remote:{
+                        url:'/userinfos/findUserByAccountExcludeSelf',
+                        type:"post",
+                        datatype:"json",
+                        data:{
+                            account:function(){ return $("#myAccount").val()+","+$("#oriAccount").val()}
+                        }
+                    }
+                },
+                "userInfoDto.email": {
+                    required: true,
+                    email: true,
+                    maxlength: 100,
+                    remote: {
+                        url: '/userinfos/findUserByEmailExcludeSelf',//检测EMAIL
+                        type:"post",
+                        dataType: "json",
+                        data:{
+                            email:function() { return $("#myEmail").val()+"," +$("#oriEmail").val()}
+                        }
+                    }
+                },
+                "userInfoDto.password":{
+                    isPwd:true
+                },
+                "userInfoDto.rePassword":{
+                    isPwd:true,
+                    equalTo: "#myPassword"
+                }
+
+
+            },
+            messages:{
+                "userInfoDto.name":{
+                    required: "请输入姓名"
+                },
+                "userInfoDto.account":{
+                    required:"请输入账号",
+                    remote:"账号已被其他用户注册激活"
+                },
+                "userInfoDto.email": {
+                    required: "请输入一个Email地址",
+                    remote:"邮箱格式不正确或已被其他用户注册激活",
+                    maxlength:"邮箱最长100个字符",
+                    email:"请输入一个有效的Email地址"
+                },
+                "userInfoDto.password":{
+                    required:"请输入密码"
+                },
+                "userInfoDto.rePassword":{
+                    required:"请输入重复密码",
+                    equalTo:"两次输入密码不一致"
+                }
+            },
+
+            success: function(label) {
+                label.parent().parent().hide();
+                label.parent().html("OK").removeClass("tips_error").addClass("tips_ok");
+            },
+            errorPlacement: function(error, element) {
+                element.parent().parent().find(".new_user_tips").show();
+                var targetElement = element.parent().parent().find(".tips_text");
+                error.appendTo(targetElement.removeClass("tips_ok").addClass('tips_error').empty());
+            }
+
+        });
+        <!--修改用户信息表单检验end-->
+
+    });
+
+    function removeVlidTip(){
+        $(".new_user_tips").css("display","none");
+        $(".error").removeClass("error").addClass("valid");
+        $(".tips_error").removeClass("tips_error").addClass("tips_ok");
+        $("label").each(function(){
+            if($(this).attr("generated")) {
+                $(this).remove();
+
+            }
+        });
+    }
+    <!-- 新建用户js end-->
+
+
+    $(".mine").live("click", function(){
+        $(".form_new_user").find(":input").val('');   //clear input
+    });
+
+    downBox('select_info_year1_2', '#options_year1_2', 'reportDate_2', 'reportName_2');
+
+    $(".add_user").click(function(){
+        $.ajax({
+            url: "/userinfos/newuser",
+            type: "post",
+            dataType: "html",
+            success: function(data){
+                $(".new_user").html('');
+                $(".new_user").html(data);
+
+                jQuery.validator.addMethod("fullName", function(value, name){
+                    return  /^[\u4E00-\u9FA5\uF900-\uFA2D\w]+$/.test(value);
+                }, "只能包括中文、英文、数字和下划线");
+
+                jQuery.validator.addMethod("byteRangeLength", function(value, element, param) {
+                    var length = value.length;
+                    for(var i = 0; i < value.length; i++){
+                        if(value.charCodeAt(i) > 127){
+                            length++;
+                        }
+                    }
+                    return  ( length >= param[0] && length <= param[1] );
+                }, "中文两个字节");
+
+                jQuery.validator.addMethod("isChinese",function(value,element){
+                    return /^[a-zA-Z\u2E80-\uFE4F]+$/.test(value);
+                },"请输入中英文");
+
+                jQuery.validator.addMethod("isPwd",function(value,element){
+                    return /^[a-z0-9A-Z_]{6,15}$/.test(value);
+                },"密码只能是6-15位的数字和字母的组合");
+
+                jQuery.validator.addMethod("isPost",function(value,element){
+                    return /^[1-9][0-9]{5}$/.test(value)
+                },"请输入正确的邮政编码");
+
+                jQuery.validator.addMethod("isEmail",function(value,element){
+                    return /^[a-z\d]+([a-z\d]+)*@([\da-z]([\da-z])?)+(\.[a-z]+)+$/.test(value);
+                },"请输入一个有效的Email地址");
+
+
+                $("#newuserform").validate({
+                    submitHandler:function(form){
+
+                        //1. get form data
+                        //var newUserData = $("#newuserform").serializeArray();
+                        var newUserData = $("#newuserform").serialize();
+                        $.ajax({
+                            url:"/userinfos/adduser",
+                            data:newUserData,
+                            dataType:"json",
+                            type:"post",
+                            success:function(data){
+                                if(data.success == true){
+                                    $(".new_user").dialog("close");
+                                    if (data.uids.length > 0) {
+                                        new QicDialog({
+                                            message:data.message,
+                                            title:"提示",
+                                            onClose :function(){
+                                                window.location.reload();
+                                            },
+                                            confirm:function(){
+
+                                                showUserAuthorizationDialog(authorizationRoute.url(), {idArray:data.uids}, "用户权限管理", ".privilege_manage",true,false,true);
+                                                $("#newuserform").get(0).reset();
+                                            }
+                                        }).alert();
+                                        //window.location.reload();
+                                    }
+                                }
+                                if(userTradeAccout){ //清空掉
+                                    userTradeAccout.length = 0;
+                                }
+                            } ,
+                            error:function(data){
+                                $.qicTips({
+                                    target:'body',
+                                    level:2,
+                                    message:'新建用户失败'
+                                });
+                            }
+                        });
+                        return false;
+
+                    },
+                    rules: {
+                        "userInfo.name": {
+                            required:true,
+                            isChinese:true,
+                            rangelength:[2,10]
+                        },
+                        "userInfo.account":{
+                            required:true,
+                            fullName:true,
+                            rangelength:[4,16],
+                            remote:{
+                                url:'/userinfos/findUserByAccount',
+                                type:"post",
+                                datatype:"json",
+                                data:{
+                                    account:function(){ return $("#new_user_account").val()}
+                                }
+                            }
+                        },
+                        "userInfo.email": {
+                            required: true,
+                            maxlength: 100,
+                            email:true,
+                            remote: {
+                                url: '/userinfos/findUserByEmail',//检测EMAIL
+                                type:"post",
+                                dataType: "json",
+                                data:{
+                                    email:function() { return $("#new_user_email").val();}
+                                }
+                            }
+                        },
+                        "userInfo.password":{
+                            required:true,
+                            isPwd:true
+                        },
+                        "userInfo.rePassword":{
+                            required: true,
+                            isPwd:true,
+                            equalTo: "#newuser_pwd"
+                        }
+//                        "userInfo.postCode":{
+//                            isPost:true
+//                        }
+
+
+                    },
+                    messages:{
+                        "userInfo.name":{
+                            required: "请输入姓名",
+                            rangelength:"请输入长度为2-10个字符"
+                        },
+                        "userInfo.account":{
+                            required:"请输入账号",
+                            remote:"账号已被其他用户注册激活",
+                            rangelength:"请输入长度为4-16个字符"
+                        },
+                        "userInfo.email": {
+                            required: "请输入一个Email地址",
+                            remote:"邮箱格式不正确或已被其他用户注册激活",
+                            maxlength:"邮箱最长100个字符",
+                            email:"请输入一个有效的Email地址"
+                        },
+                        "userInfo.password":{
+                            required:"请输入密码"
+                        },
+                        "userInfo.rePassword":{
+                            required:"请输入确认密码",
+                            equalTo:"两次输入密码不一致"
+                        }
+                    },
+
+                    success: function(label) {
+                        // $(".new_user_tips").show();
+                        //label.parent().parent().hide();
+                        label.parent().html("OK").removeClass("tips_error").addClass("tips_ok");
+
+
+
+                    },
+                    errorPlacement: function(error, element) {
+                        //$(".new_user_tips").show();
+                        element.parent().parent().find(".new_user_tips").show();
+                        var targetElement = element.parent().parent().find(".tips_text");
+                        error.appendTo(targetElement.removeClass("tips_ok").addClass('tips_error').empty());
+                    }
+
+                });
+
+                $(".new_user").dialog({
+                    autoOpen: true,
+                    modal: true,
+                    position: {
+                        at: "center"
+                    },
+                    //height: 'auto',
+                    height: 400,
+                    resizable: false,
+                    width: 600,
+                    zIndex: 1000
+                });
+
+            }});
+    });
+    //$(".add_user").click();
+    <!-- 新建用户js end-->
+
+    <!-- 待激活用户删除begin-->
+    $(".remove_user").click(function (event) {
+        var arr_value = [];
+
+        $("input[type=checkbox]").each(function(){
+
+            if(this.checked) {
+                arr_value.push($(this).val());
+            }
+        })
+
+        //$(".operate_tips").remove();
+
+        if(arr_value.length == 0){
+            $.qicTips({
+                target: event.target,
+                level:2,
+                message:"没有选择用户"
+            });
+            return;
+        }
+
+
+        new QicDialog({
+            message:"确认删除？",
+            title:"",
+            confirmName:"",
+            cancelName:"",
+            confirm:function(){
+                $.ajax({
+                    url:"/userinfos/deluser",
+                    data:{"ids":arr_value},
+                    dataType:"json",
+                    type:"post",
+                    success:function (data) {
+                        if (data.success) {
+                            $.qicTips({
+                                target:event.target,
+                                level:1,
+                                message:data.message
+                            });
+                            setTimeout(function(){
+                                window.location.reload();
+                            },400)
+
+                        }
+                    },
+                    error:function (data) {
+                        $.qicTips({
+                            target:'body',
+                            level:2,
+                            message:'出错了'
+                        });
+                    }
+                });
+            },
+            cancel:function(){
+
+            }
+        }).confirm();
+    });
+    <!-- 待激活用户删除end-->
+
+</script>
+
+<!--新建用户 End-->
+
+<!--排序 start-->
+<script>
+    function order(con) {
+        var form = $('#orderSort')[0];
+        $("#paramSort").val(con);
+        form.submit();
+    }
+    function orderUsers(con){
+        var form =$('#usersSort')[0];
+        $("#usersParam").val(con);
+        form.submit();
+    }
+    function orderdus(con){
+        var form =$('#dueSort')[0];
+        $("#dueParam").val(con);
+        form.submit();
+    }
+
+</script>
+<!-- 排序 end-->
+
+
+<!--用户资料 Begin-->
+<div id="user_datum" class="user_datum" title="用户资料">
+    <div class="user_datum_left">
+        <form id="updateUserInfoForm"  action="" method="post" class="form_datum_modify">
+
+            <table width="100%" class="tbl_new_user tbl_datum" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td align="right">  <span class="red">*</span>姓名：</td>
+                    <td>
+                        <p class="p_valid">
+                            <input type="text" id="myName" readonly  name="userInfoDto.name" class="new_input">
+                            <input type="hidden" id="myId"  name="userInfoDto.id" class="new_input">
+                        </p>
+                        <font   class="new_user_tips p_l_10 nu_two">
+                            <span class="tips_ico">&nbsp;</span>
+                            <span class="tips_text">2～12位中文、字母、数字、下划线</span>
+                        </font>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right"><span class="red">*</span>帐号：</td>
+                    <td>
+                        <p class="p_valid">
+                            <input type="text" id="myAccount" readonly name="userInfoDto.account" class="new_input">
+                            <input type="hidden" id="oriAccount"  name="oriAccount" >
+                        </p>
+                        <font   class="new_user_tips p_l_10 nu_two">
+                            <span class="tips_ico">&nbsp;</span>
+                            <span class="tips_text tips_error">账号输入错误</span>
+                        </font>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right"><span class="red">*</span>密码：</td>
+                    <td>
+                        <p class="p_valid">
+                            <input type="password" readonly id="myPassword" name="userInfoDto.password" class="new_input">
+                        </p>
+                        <font   class="new_user_tips p_l_10 nu_two">
+                            <span class="tips_ico">&nbsp;</span>
+                            <span class="tips_text tips_ok">正确</span>
+                        </font>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right"><span class="red">*</span>再次输入密码：</td>
+                    <td>
+                        <p  class="p_valid">
+                        <input type="password" id="myRePassword" readonly name="userInfoDto.rePassword" class="new_input">
+                        </p>
+                        <font class="new_user_tips p_l_10 nu_two">
+                            <span class="tips_ico">&nbsp;</span>
+                            <span class="tips_text">重复密码</span>
+                        </font>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">联系电话：</td>
+                    <td><input type="text" id="myPhone" readonly name="userInfoDto.phone" class="new_input"></td>
+                </tr>
+                <tr>
+                    <td align="right"><span class="red">*</span>E-mail：</td>
+                    <td>
+                        <p  class="p_valid">
+                        <input type="text" id="myEmail" readonly name="userInfoDto.email" class="new_input" >
+                            <input type="hidden" id="oriEmail"  name="oriEmail" >
+                        </p>
+                        <font class="new_user_tips p_l_10 nu_two">
+                            <span class="tips_ico">&nbsp;</span>
+                            <span class="tips_text">邮箱</span>
+                        </font>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">身份证号：</td>
+                    <td>
+                        <input type="hidden" id="editOpen" value="off" >
+                        <input type="text" id="myIdCard" readonly name="userInfoDto.idCard" class="new_input"></td>
+                </tr>
+                <tr>
+                    <td align="right">所属营业部：</td>
+                    <td>
+                        <div class="dialog_box">
+
+                            <input type="hidden" name="userInfoDto.saleDept" autocomplete="off" id="reportDate_3">
+                            <input type="hidden" autocomplete="off" id="reportName_3">
+                            <div id="select_info_year1_3" class="sel_84_dialog new_sel_d"></div>
+                            <ul id="options_year1_3" class="sel_91_option new_sel_option" style="display: none;"></ul>
+                        </div>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">资金帐号：</td>
+                    <td><input type="text" id="myCapitalAccount" readonly name="userInfoDto.capitalAccount" class="new_input" /></td>
+                </tr>
+                <tr>
+                    <td align="right">联系地址：</td>
+                    <td><input type="text" id="myAddress" readonly name="userInfoDto.address" class="new_input" /></td>
+                </tr>
+                <tr>
+                    <td align="right">邮编：</td>
+                    <td><input id="myPostCode" readonly name="userInfoDto.postCode" type="text" class="new_input" /></td>
+                </tr>
+                <tr>
+                    <td align="right">&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+            </table>
+
+        </form>
+    </div>
+
+    <div class="user_datum_right">
+
+        <div class="belong_role">
+            所属角色：<span style="font-size: 12px" id="myRoleInfo"></span>
+        </div>
+        <div class="datum_privilege">
+            <h3 class="h3_title">用户权限列表</h3>
+            <div class="organization_tree">
+                <!--ligerTree插件html部分 Beigin-->
+                <ul id="tree1"></ul>
+                <!--ligerTree插件html部分 End-->
+            </div>
+        </div>
+
+        <div class="common_btn">
+            <input  type="submit" onclick="javascript:$('#updateUserInfoForm').submit()" id="updateUserInfoBtn" class="common_blue " value="保存" />
+            <input id="changeStatusBtn" onclick="javascript:changeInputStatus(false)" type="button"  class="common_blue" value="修改">
+        </div>
+    </div>
+</div>
+
+<script>
+    //改变输入框状态
+    function changeInputStatus(value){
+        $("#user_datum").find("input").each(function(){
+            $(this).attr("readonly",value);
+        });
+        $("#editOpen").val(!value?"on":"off");
+    }
+    function showUserInfo(uid){
+        changeInputStatus(true)
+        removeVlidTip();
+        //1. ajax请求数据
+        $.ajax({
+            url: "/UserInfos/show?id="+uid,
+            dataType:"json",
+            success: function(data){
+                //2. 填充数据
+                setUserInfo(data)
+                //3. 展示树
+                showTree(data);
+                //4.获取角色信息
+                setRoleInfo(data);
+                //设置部门下拉框值
+                setDeptInfo(data);
+            }
+        });
+
+        $(".user_datum").dialog({
+            autoOpen: true,
+            modal: true,
+            height: 640,
+            resizable: false,
+            width: 630
+        });
+        //downBox('select_info_year1_3', '#options_year1_3', 'reportDate_3', 'reportName_3');
+    }
+    downBox('select_info_year1_3', '#options_year1_3', 'reportDate_3', 'reportName_3');
+    //data 需json数据
+    function setUserInfo(data){
+
+        $("#myName").val(data.userInfo.name);
+        $("#myAddress").val(data.userInfo.address);
+        $("#myAccount").val(data.userInfo.account);
+        $("#oriAccount").val(data.userInfo.account);
+        $("#myPhone").val(data.userInfo.phone);
+        $("#myEmail").val(data.userInfo.email);
+        $("#oriEmail").val(data.userInfo.email);
+        $("#myIdCard").val(data.userInfo.idCard);
+        $("#myCapitalAccount").val(data.userInfo.capitalAccount);
+        $("#myPostCode").val(data.userInfo.postCode);
+        $("#myId").val(data.userInfo.id);
+
+    }
+    function setRoleInfo(data){
+        var obj = $("#myRoleInfo");
+        obj.html("");//清空
+        for(var i=0;i<data.roleInfo.length;i++){
+            if(i==data.roleInfo.length-1){
+                obj.append(data.roleInfo[i].name + "&nbsp;。");
+            }else{
+                obj.append(data.roleInfo[i].name + "&nbsp;,");
+            }
+        }
+    }
+
+
+
+    function showTree(data){
+        // console.log(eval("[" + data.userInfo.treeData + "]"));
+        $("#tree1").html("");
+        $("#tree1").ligerTree({
+            data:   data.functionInfo,
+            checkbox: false,
+            parentIcon: null,
+            childIcon: null,
+            getChecked:true,
+            nodeWidth: 240,
+            idFieldName :'id',
+            parentIDFieldName :'pid'
+        }).expandAll();
+        //manager = $("#tree1").ligerGetTreeManager();
+        //manager.clear();
+    }
+    //提交修改
+    function updateUserInfo(){
+        if($("#editOpen").val() == "off"){
+            $.qicTips({
+                target:'#updateUserInfoBtn',
+                level:2,
+                message: "请点击修改"
+            });
+            return;
+        }
+        var postData = $("#updateUserInfoForm").serializeArray();
+        var url = #{jsRoute @UserInfos.update()/};
+        $.ajax({
+            url: url.url(),
+            dataType:"json",
+            data : postData,
+            type:"post",
+            success: function(data){
+                if(data.success == true){
+                    //关掉窗口
+                    $(".user_datum").dialog("close");
+                    new QicDialog({
+                        message : data.message,
+                        confirm :function(){
+                            window.location.reload();
+                        }
+                    }).alert();
+
+                }
+            },
+            error:function(){
+                $(".user_datum").dialog("close");
+                new QicDialog({
+                    message : "出错啦!!!",
+                    confirm :function(){
+                        window.location.reload();
+                    }
+                }).error();
+            }
+        });
+
+    }
+    //设置营业部下拉信息
+    function setDeptInfo(data){
+        var obj = data.saleDepartmentsInfo;
+        var selecObj = $("#options_year1_3");
+        selecObj.html("");//初始化
+        var displayDiv = $("#select_info_year1_3");
+        var saleDeptInputText = $("#reportDate_3");
+        saleDeptInputText.val(data.userInfo.saleDept);
+        displayDiv.text("");
+        for(var i=0;i<data.saleDepartmentsInfo.length ;i++){
+
+            selecObj.append("<li data-value='" + data.saleDepartmentsInfo[i].id + "'>"+ data.saleDepartmentsInfo[i].name+"</li>")
+            if(data.saleDepartmentsInfo[i].id == data.userInfo.saleDept){
+                displayDiv.text(data.saleDepartmentsInfo[i].name);
+            }
+
+        }
+    }
+</script>
+
+<!--用户资料 End-->
+
+
+<!--用户权限管理 Begin-->
+<div class="privilege_manage" title="用户权限管理">
+</div>
+<script>
+    var getRidRoute = #{jsRoute @ActivateUser.insertRoleForUser()/};
+    var authorizationRoute = #{jsRoute @ActivateUser.userAuthorization() /};
+    $(".active_user").click(function() {
+        var idArray = [];
+        $(":checkbox[id^='userid']").each(function(){
+            if($(this).attr("checked") == "checked"){
+                idArray.push(parseInt($(this).val()));
+            }
+        });
+        if(idArray.length == 0){
+            $.qicTips({
+                target:'.active_user',
+                level:2,
+                message:"没有选择用户"
+            });
+            return;
+        }
+        showUserAuthorizationDialog(authorizationRoute.url(), {idArray: idArray}, "用户权限管理", ".privilege_manage");
+    });
+    //$(".active_user").click();
+    $("#modify_privilege").click(function() {
+        var idArray = [];
+        $(":checkbox[id^='userid']").each(function(){
+            if($(this).attr("checked") == "checked"){
+                idArray.push(parseInt($(this).val()));
+            }
+        });
+        if(idArray.length == 0){
+            $.qicTips({
+                target:'#modify_privilege',
+                level:2,
+                message:"没有选择用户"
+            });
+            return;
+        }
+        showUserAuthorizationDialog(authorizationRoute.url(), {idArray: idArray}, "更改用户权限", ".privilege_manage");
+    });
+</script>
+<!--用户权限管理 End-->
+
+<!--用户列表 用户权限管理 Begin-->
+<div class="userlist_privilege_manage" title="用户权限管理"></div>
+
+
+<!--用户列表 用户权限管理 End-->
+
+
+<!-- 到期用户延期 begin-->
+<div class="userlist_privilege_date" title="权限期限管理">
+
+    <div class="privilege_date">
+        <div class="privilege_datepicker userlist_detepicker">
+            <strong>权限期限</strong>
+            <input type="text" id="user_edate_delay" realValue="2099-09-09"  onclick="WdatePicker({dateFmt:'yyyy-MM-dd',readOnly:true});" readonly='readonly' value="" class="w_date_userlist a_datepicker">
+        </div>
+        <div class="privilege_radio">
+            <label><a href="#" id="delay_oneweek">一周</a></label>
+            <label><a href="#" id="delay_onemonth">一个月</a></label>
+            <label><a href="#" id="delay_threemonth">三个月</a></label>
+            <label><a href="#" id="delay_halfyear">半年</a></label>
+            <label><a href="#" id="delay_oneyear">一年</a></label>
+            <label><a href="#" id="delay_twoyear">两年</a></label>
+        </div>
+    </div>
+
+    <div class="common_btn pt_date_btn">
+        <input type="button" value="取消" class="common_blue common_cancle" id="user_delay_cancle">
+        <input type="button" value="确定" class="common_blue" id="user_delay_submit">
+    </div>
+</div>
+
+<script>
+    function getCheckBoxValue(){
+        var arr_delay_value = [];
+        $("input[type=checkbox]").each(function(){
+            if(this.checked) {
+                arr_delay_value.push($(this).val());
+            }
+        }) ;
+        return  arr_delay_value;
+    }
+    $(".modify_privilege_date, .deferred_user").live('click', function(event){
+
+        if(getCheckBoxValue().length == 0){
+            $.qicTips({
+                target:event.target,
+                level:2,
+                message:"没有选择用户"
+            });
+            return;
+        }
+
+        $(".userlist_privilege_date").dialog({
+            autoOpen: true,
+            width: 440,
+            height: 190,
+            modal: true,
+            resizable: false,
+            draggable: true
+        });
+
+
+    });
+
+
+
+    (function ($) {
+        var FormatDateTime = function FormatDateTime() { };
+        $.FormatDateTime = function (days) {
+            //var correcttime1 = eval('( new ' + obj.replace(new RegExp("\/", "gm"), "") + ')');
+            var myDate = new Date();
+            myDate.setDate(myDate.getDate()+days);
+            var year = myDate.getFullYear();
+            var month = ("0" + (myDate.getMonth() + 1)).slice(-2);
+            var day = ("0" + myDate.getDate()).slice(-2);
+
+            var s=year+"-"+month+"-"+day;
+            return s ;
+
+        }
+    })(jQuery);
+
+    $(function(){
+        $("#delay_oneweek").live('click',function(){
+            $("#user_edate_delay").val($.FormatDateTime(7));
+            $("#user_edate_delay").attr("realValue",$.FormatDateTime(7));
+        });
+        $("#delay_onemonth").live('click',function(){
+            $("#user_edate_delay").val($.FormatDateTime(30));
+            $("#user_edate_delay").attr("realValue",$.FormatDateTime(30));
+        });
+        $("#delay_threemonth").live('click',function(){
+            $("#user_edate_delay").val($.FormatDateTime(90));
+            $("#user_edate_delay").attr("realValue",$.FormatDateTime(90));
+        });
+        $("#delay_halfyear").live('click',function(){
+            $("#user_edate_delay").val($.FormatDateTime(180));
+            $("#user_edate_delay").attr("realValue",$.FormatDateTime(180));
+        });
+        $("#delay_oneyear").live('click',function(){
+            $("#user_edate_delay").val($.FormatDateTime(365));
+            $("#user_edate_delay").attr("realValue",$.FormatDateTime(365));
+        });
+        $("#delay_twoyear").live('click',function(){
+            $("#user_edate_delay").val($.FormatDateTime(730));
+            $("#user_edate_delay").attr("realValue",$.FormatDateTime(730));
+        });
+
+    });
+
+
+    $("#user_delay_submit").click(function(){
+        var delaydate_value = $("#user_edate_delay").attr("realValue");
+        var compareTime = Date.parse(delaydate_value.replace(/-/g, "/"));
+        var curdate = new Date();
+        if (compareTime < curdate) {
+            $.qicTips({message:'设置日期必须大于当前日期', level:2, target:'#user_delay_submit', mleft:0, mtop:-60});
+            return;
+        }
+
+        $.ajax({
+            url:"/userinfos/userdelay",
+            data:{"ids":getCheckBoxValue(),"delaydate":delaydate_value},
+            dataType:"json",
+            type:"post",
+            success:function (data) {
+
+                if (data.success) {
+                    $.qicTips({
+                        target:'#user_delay_submit',
+                        level:1,
+                        message: data.message
+                    });
+                    setTimeout(function(){
+                        window.location.reload();
+                    },400);
+                }
+                else{
+                    $.qicTips({
+                        target:'#user_delay_submit',
+                        level:2,
+                        message: data.message
+                    });
+                }
+            },
+            error:function (data) {
+                $.qicTips({
+                    target:'body',
+                    level:2,
+                    message: '出错了'
+                });
+            }
+        });
+    })
+
+    $("#user_delay_cancle").click(function(){
+        $(".userlist_privilege_date").dialog("close");
+    })
+
+
+
+    //$(".modify_privilege_date").click();
+</script>
+<!--到期用户延期 End-->
+
+
+
+<!--用户授权 begin-->
+<script type="text/javascript">
+    $(".active_user").click(function(){
+        var table = $(".tbl_checked");
+        table.find("tbody").remove();
+        $(":checkbox").each(function(){
+            if( $(this).attr("checked")=="checked"){
+                $(this).attr("para_name");
+                $(this).attr("para_account");
+                $(this).attr("para_salename");
+                var element = $(this);
+                var tr = $("<tr></tr>")
+                        .append($("<td></td>").html(element.attr("para_name")))
+                        .append($("<td></td>").html(element.attr("para_account")))
+                        .append($("<td></td>").html(element.attr("para_salename")))
+                table.append($("<tbody></tbody>").append(tr));
+
+            }
+        });
+    });
+
+</script>
+<!--用户授权 end-->
+
+<!--上传文件 begin-->
+<script src="@{'/public/javascripts/ajaxfileupload.js'}"></script>
+<link href="@{'/public/stylesheets/ajaxfileupload.css'}" type="text/css" rel="stylesheet">
+<div id="uploadFile" title="批量导入用户" style="display:none" >
+
+    <div class="upload_file">
+        <div class="set_user_i" style="">
+            <span class="qic_file_val" ></span>
+        </div>
+        <div class="btn btn_success fileinput_button">
+            <i class="icon_plus icon_white"></i>
+            <span>导入用户</span>
+            <input  id="excelFile" type="file" name="attachment" class="qic_file" title="仅限(.zip .excel)">
+        </div>
+        <script>
+            bindFileUpload()
+            function bindFileUpload(){
+            $(".qic_file").bind("change", function(){
+                var value = $(this).val();
+                $(".qic_file_val").html(value.substring(12))
+                //alert($(this).val());
+                if(!$("#excelFile").val() || $("#excelFile").val() == '' ){
+                    return;
+                }
+                myAjaxFileUpload()
+            });
+            }
+        </script>
+    </div>
+    <a href="javascript:void(0)" style="position:relative;top:5px;left:10px;" onclick="javscript:qicScriptContext.systemOpenUrl('${hostName}',1)">点击下载模板</a>
+    <div class="common_btn">
+        <img id="loading" src="@{'/public/images/loading.gif'}" style="display:none;">
+    </div>
+</div>
+
+<script>
+    $("#batch_import_user").click(function(){
+        $("#uploadFile").dialog({
+           autoOpen: true,
+           width: 310,
+           height: 180,
+           modal: true,
+           resizable: false,
+           draggable: true
+        });
+    });
+
+    function myAjaxFileUpload(){
+        if($("#excelFile").val()=='' || !$("#excelFile").val()){
+             new QicDialog({
+                 title :"提示",
+                 message : "请选择附件"
+             }).warn();
+            return;
+        }
+        $("#loading")
+            .ajaxStart(function(){
+                $(this).show();
+            })
+            .ajaxComplete(function(){
+               //
+                $("#excelFile").val("");
+                $(".qic_file_val").html("");
+                $(this).hide();
+            }).ajaxError(function(){
+                    $("#excelFile").val("");
+                    $(".qic_file_val").html("");
+                    $(this).hide();
+            });
+
+        var url = #{jsRoute @UploadFiles.uploadUsers()/};
+        $.ajaxFileUpload
+                (
+                        {
+                            url: url.url(),
+                            secureuri:false,
+                            fileElementId:'excelFile',
+                            dataType: 'json',
+                            success: function (data, status)
+                            {
+
+                                if(data.success==false){
+                                    new QicDialog({
+                                        title :"提示",
+                                        message : data.message
+                                    }).warn();
+                                }else{
+
+                                    //调授权接口
+                                  //  alert(data.uids);
+                                    if(data.uids.length>0){
+                                        new QicDialog({
+                                            title :"导入成功",
+                                            message : data.message,
+                                            onClose :function(){
+                                                window.location.reload();
+                                            },
+                                            confirm :function(){
+                                                authorizationRoute = #{jsRoute @ActivateUser.userAuthorization() /};
+                                                showUserAuthorizationDialog(authorizationRoute.url(), {idArray: data.uids}, "用户权限管理", ".privilege_manage",true,false);
+                                            }
+                                        }).alert();
+                                        $("#uploadFile").dialog("close");
+                                       $(".qic_file_val").html("");
+                                    }else{
+                                        new QicDialog({
+                                            title :"提示",
+                                            message : "没有用户被导入，请按用户导入模板要求填写数据再导入"
+                                        }).warn();
+                                    }
+                                }
+                            },
+                            error: function (data, status, e)
+                            {
+                                new QicDialog({
+                                    title :"提示",
+                                    message : "导入出错，请检查网络连接"
+                                }).error();
+                            }
+                        }
+                )
+        bindFileUpload();
+        $(".qic_file_val").html("");
+        return false;
+    }
+</script>
+<!--上传文件 end-->
+
+<!--资金帐号修改 start-->
+
+
+<div id="editTradeAccountDialog" title="修改资金帐号" style="display: none; position:relative; height:450px; width: 100%;  overflow:auto;">
+    <div style="">
+        <table width="100%" id="editTradeAccountTable">
+            <thead>
+            <tr>
+                <th width="25%">帐号名</th>
+                <th width="25%">帐号</th>
+                <th width="20%">类型</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="editTradeAccountTbody"></tbody>
+        </table>
+        <div><input type="button" value="增加帐号" id="addSingleTradeAccountBtn" class="common_blue"></div>
+        <form id="editTradeAccountForm">
+            <fieldset>
+                <table width="100%">
+                    <tr>
+                        <td>
+                            <label for="acedit_name"><span class="red">*</span>帐号名</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                           <input type="text" name="name" id="acedit_name" class="new_input"/>
+                            <font class="new_user_tips p_l_10 nu_two">
+                                <span class="tips_ico">&nbsp;</span>
+                                <span class="tips_text">帐号名</span>
+                            </font>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="acedit_account"><span class="red">*</span>帐号</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" name="account" id="acedit_account" value="" class="new_input"/>
+                            <font class="new_user_tips p_l_10 nu_two">
+                                <span class="tips_ico">&nbsp;</span>
+                                <span class="tips_text">帐号</span>
+                            </font>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="acedit_password"><span class="red">*</span>密码</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" name="password" id="acedit_password" value="" class="new_input"/>
+                            <font class="new_user_tips p_l_10 nu_two">
+                                <span class="tips_ico">&nbsp;</span>
+                                <span class="tips_text">密码</span>
+                            </font>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="acedit_type">类型</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select name="type" id="acedit_type">
+                                <option value="0">期货</option>
+                                <option value="1">股票</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="acedit_clientId">期货公司客户号</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" name="clientId" id="acedit_clientId" value="" class="new_input"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="acedit_targetCompId">订单通道路由标识</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" name="targetCompId" id="acedit_targetCompId" value="" class="new_input"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="acedit_hedgeType">投机\套保标识</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select name="hedgeType" id="acedit_hedgeType">
+                                <option value="0">投机</option>
+                                <option value="1">套保</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="hidden" name="id" id="acedit_id">
+                            <input type="hidden" name="opUid" id="acedit_opUid">
+                            <input type="button" value="保存" id="saveTradeAccountBtn" class="modify_privilege common_blue" >
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function(){
+    var tradeAccountArr = []; //交易帐号
+    var tradeAccountOp = "";
+    var opUid = ""; //要操作的uid
+    $(".tradeAccountViewBtn").click(function(){
+        var $this = $(this);
+        opUid = $this.attr("opUid");
+        $("#acedit_opUid").val(opUid);//把该账号的所属ID存放在这个域里面，ajax远程验证用户名唯一性用到。
+        $("#editTradeAccountDialog").dialog("open");
+        clearTradeAccountForm();
+        loadTradeAccountData();
+    });
+    function loadTradeAccountData(){
+        var fetchTradeAccountRoute = #{jsRoute @UserInfos.fetchTradeAccount()/};
+        $.getJSON(fetchTradeAccountRoute.url(), {"opUid":opUid}, function(data){
+            tradeAccountArr = data;
+            var $tbody = $("#editTradeAccountTbody");
+            $tbody.empty();
+            for(var i=0; i<tradeAccountArr.length; i++){
+                var item = tradeAccountArr[i];
+                var typeStr = "未知";
+                if (item.type == 0) {
+                    typeStr = "期货";
+                }else if(item.type == 1){
+                    typeStr = "股票";
+                }
+
+                var tr = "<tr idval='"+ item.id +"'>"+
+                        "<td>" + item.name +"</td>"+
+                        "<td>" + item.account + "</td>"+
+                        "<td>" + typeStr + "</td>"+
+                        "<td><input class='tradeAccountOpEdit common_blue' type='button' value='修改' /><input class='tradeAccountOpDel common_blue' type='button' value='删除' /></td></tr>";
+                $tbody.append(tr);
+            }
+        });
+    }
+
+    function clearTradeAccountForm(){
+        removeVlidTip();//清空验证提示CSS
+        $("#editTradeAccountForm  input").attr("disabled", "disabled");
+        $("#editTradeAccountForm  select").attr("disabled", "disabled");
+        $("#acedit_id").val(-1);
+        $("#acedit_name").val("");
+        $("#acedit_account").val("");
+        $("#acedit_password").val("");
+        $("#acedit_type").val(0);
+        $("#acedit_clientId").val("");
+        $("#acedit_targetCompId").val("");
+        $("#acedit_hedgeType").val(0);
+    }
+
+    $("#editTradeAccountDialog").dialog({
+        position: {
+            at: "center"
+        },
+        autoOpen: false,
+        height: 500,
+        width: 480,
+        modal: true,
+        close: function() {
+            $(this).dialog( "close" );
+        }
+    });
+
+    $(".tradeAccountOpEdit").live("click", function(){
+        $("#acedit_name").focus();
+        tradeAccountOp = "edit";
+        var $this = $(this);
+        var $tr = $this.closest("tr");
+        var idVal = $tr.attr("idval");
+        var curAccount = null;
+        //筛选出那个
+        $.each(tradeAccountArr, function(i, n){
+            if(n.id == idVal){
+                curAccount = n;
+                return false;
+            }
+        });
+
+        $("#editTradeAccountForm  input").removeAttr("disabled");
+        $("#editTradeAccountForm  select").removeAttr("disabled");
+
+        //设置值
+        $("#acedit_id").val(curAccount.id);
+        $("#acedit_name").val(curAccount.name);
+        $("#acedit_account").val(curAccount.account);
+        $("#acedit_password").val(curAccount.password);
+        $("#acedit_type").val(curAccount.type);
+        $("#acedit_clientId").val(curAccount.clientId);
+        $("#acedit_targetCompId").val(curAccount.targetCompId);
+        $("#acedit_hedgeType").val(curAccount.hedgeType);
+    });
+
+    $("#addSingleTradeAccountBtn").click(function(){
+        tradeAccountOp = "add";
+        clearTradeAccountForm();
+        $("#editTradeAccountForm  input").removeAttr("disabled");
+        $("#editTradeAccountForm  select").removeAttr("disabled", "");
+        $("#acedit_name").focus();
+    });
+
+    $(".tradeAccountOpDel").live("click", function(){
+        var $this = $(this);
+         new QicDialog({
+            title :"提示",
+            message : "确定删除该账号？",
+            confirm:function(){
+                var delTradeAccountRoute = #{jsRoute @UserInfos.delTradeAccount()/};
+                var $tr = $this.closest("tr");
+                var idVal = $tr.attr("idval");
+                var param = {"idVal": idVal, "opUid":opUid};
+                $.post(delTradeAccountRoute.url(), param, function(data){
+                    if(data.success === true){
+                        $tr.remove();
+                    }else{
+                        new QicDialog({
+                            title :"提示",
+                            message : "该账号已被占用不能删除。"
+                        }).warn()
+                    }
+                }, "json")
+            },
+            cancel: function(){ return;}
+        }).confirm();
+    });
+    var verifyAccountUniqueRoute = #{jsRoute @UserInfos.verifyTradeAccountNotExist()/};
+    $("#editTradeAccountForm").validate({
+        rules: {
+            name: {
+                required:true,
+                remote: {
+                    url: verifyAccountUniqueRoute.url(),
+                    type:"post",
+                    dataType: "json",
+                    data:{
+                        accountName:function() { return $("#acedit_name").val();},
+                        opUid:function() { return $("#acedit_opUid").val();}
+                    }
+                }
+            },
+            account: {
+                required:true
+            },
+            password: {
+                required:true
+            }
+        },
+        messages: {
+            name: {
+                required:"用户名不能为空",
+                remote:"账号名已经存在"
+            },
+            account: {
+                required:"账号不能为空"
+            },
+            password: {
+                required:"密码不能为空"
+            }
+        },
+        submitHandler:function(form){
+            removeVlidTip();//清空验证提示CSS
+            var editTradeAccountRoute = #{jsRoute @UserInfos.editTradeAccount()/};
+            var addTradeAccountRoute = #{jsRoute @UserInfos.addSingleTradeAccount()/};
+            var param = $("#editTradeAccountForm").serializeArray();
+            param.push({"name":"opUid", "value":opUid});
+            var premsg = "修改";
+            var url = "";
+            if("edit" == tradeAccountOp){
+                premsg = "修改";
+                url = editTradeAccountRoute.url()
+            }else if("add" == tradeAccountOp){
+                premsg = "增加";
+                url = addTradeAccountRoute.url();
+            }
+            $.post(url, param, function(data){
+                clearTradeAccountForm();
+                if(data.success){
+                    if(data.success === true){
+                        new QicDialog({
+                            title :"提示",
+                            message : premsg + "交易帐号成功",
+                            onClose :function(){
+                                loadTradeAccountData();
+                            }
+                        }).alert();
+                    }else{
+                        new QicDialog({
+                            title :"提示",
+                            message : premsg + "交易帐号失败"
+                        }).warn();
+
+                    }
+                }
+            }, "json");
+        },
+        success: function(label) {
+            // $(".new_user_tips").show();
+            //label.parent().parent().hide();
+            label.parent().html("OK").removeClass("tips_error").addClass("tips_ok");
+        },
+        errorPlacement: function(error, element) {//此属性纯属自定义替换样式用。
+            //$(".new_user_tips").show();
+            element.parent().parent().find(".new_user_tips").show();
+            var targetElement = element.parent().parent().find(".tips_text");
+            error.appendTo(targetElement.removeClass("tips_ok").addClass('tips_error').empty());
+        }
+    });
+
+    $("#saveTradeAccountBtn").live("click",function(){
+        $("#editTradeAccountForm").submit();
+    });
+
+});
+</script>
+<!--资金帐号修改 end-->
+</body>
+

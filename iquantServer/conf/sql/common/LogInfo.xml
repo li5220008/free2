@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<!--写入系统日志-->
+<entry key="writeSystemLog">
+    <![CDATA[
+                    insert into
+                        operation_log_info
+                        (uid,func,content,type,cdate)
+                         values
+                         (?,?,?,?,NOW())
+                ]]>
+</entry>
+
+<entry key="loglistsql">
+<![CDATA[
+        SELECT
+          a.`cdate`,
+          b.`name`,
+          a.`func`,
+          a.`content`,
+          a.`type`
+        FROM
+          qic_db.`operation_log_info` a
+          INNER JOIN qic_db.`user_info` b
+            ON a.`uid` = b.`id`
+
+                ]]>
+</entry>
+<entry key="">
+<![CDATA[
+
+        ]]>
+</entry>
+</properties>

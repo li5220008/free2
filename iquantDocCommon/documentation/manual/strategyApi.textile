@@ -1,0 +1,1428 @@
+h1. 策略类
+
+h3. 策略列表展示
+
+||项||说明||
+| url | /strategyCt/fetchStrategyList |
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|orderType|int|否|0:按收益率 排行排序,1:按收益率 排行排序,2:按人气排行排序,其他值:按最新排序|
+|keyword|String|是|按keyword查询内容|
+|pageNo|int|否|当前页|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+status:0,
+data:[
+     {
+      id:30739,
+      uuid:d261c276f6ad44879a81589413234249,
+      sname:000,
+      provider:sales01,
+      stype:3,
+      tradeVariety:2,
+      collectCount:3,
+      upTime:'2013-04-25 11:08:48',
+      discussCount:5,
+      enginetypeId:2,
+      desp:000,
+      orderCount:2,
+      starLevel:3.4,
+      yield:61.98696,
+      profitRatio:61.1223,
+      sharpe:0.2154
+      }
+    ]
+}
+
+
+h3. 高级搜索列表展示
+
+||项||说明||
+| url | /userTemplateCt/fetchUserTemplate |
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|uid|long |否|用户ID|
+|type|int|否|1:策略类型,2:股票池类型|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc.  {
+status:0,
+data:[
+     {
+      id:1,
+      uid:10,
+      type:1,
+      name:testName,
+      content:{             //需要base64加解码
+                recommendOrgs:[10105079,10884],
+                reportUpdatePeriod:-999,
+                starDown:2,
+                starUp:5
+               }
+      }
+    ]
+}
+
+
+h3. 获取用户已收藏策略ID
+
+||项||说明||
+| url | /userStrategyManageCt/fetchUserCollectById |
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|uid|long |否|用户ID|
+|ids|String|否|当前页的策略id，传入格式为：ids="1,2,3"|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc.  {
+  status:0,
+  data:{1,2,3}
+ }
+
+
+h3. 用户添加策略收藏
+
+||项||说明||
+| url | /userStrategyManageCt/addStrategyCollect |
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|sid|long |否|策略ID|
+|uid|long|否|用户ID|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc.  {
+  status:0,
+  data:success
+}
+
+
+h3. 用户取消策略收藏
+
+||项||说明||
+| url | /userStrategyManageCt/delStrategyCollect |
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|sid|long |否|策略ID|
+|uid|long|否|用户ID|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:success
+}
+
+h3. 修改查询模板
+
+||项||说明||
+| url | /UserTemplateCt/updateTemplate |
+| http Method | post |
+
+*参数说明*
+post提交下面json数据，通过body传递
+
+bc.  {
+    id:1,
+    uid:10,
+    type:1,
+    name:testName,
+    content:{             //需要base64加解码
+            recommendOrgs:[10105079,10884],
+            reportUpdatePeriod:-999,
+            starDown:2,
+            starUp:5
+           }
+}
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:success
+}
+
+h3. 重命名查询模板
+
+||项||说明||
+| url | /UserTemplateCt/renameUserTemplate |
+| http Method | post |
+
+*参数说明*
+post提交下面json数据，通过body传递
+
+bc.  {
+    id:1,
+    uid:10,
+    type:1,
+    name:testName,
+    content:{             //需要base64加解码
+            recommendOrgs:[10105079,10884],
+            reportUpdatePeriod:-999,
+            starDown:2,
+            starUp:5
+           }
+}
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:success
+}
+
+h3. 高级搜索,判断搜索条件是否重名
+
+||项||说明||
+| url | /userTemplateCt/IsTemplateNameExist |
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|uid|long|否|用户ID|
+|type|int|否|1:策略类型，2:股票池类型|
+|name|long|否|搜索名称|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc.  {
+  status:0,
+  data:success
+}
+
+h3. 保存高级搜索条件
+
+||项||说明||
+| url | /userTemplateCt/addTemplate |
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|uid|long|否|用户ID|
+|name|long|否|搜索名称|
+|type|int|否|1:策略类型，2:股票池类型|
+|content|String|否|需要base64编码|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:success
+}
+
+h3. 删除高级搜索条件
+
+||项||说明||
+| url | /userTemplateCt/deleteTemplateById |
+| http Method | get |
+
+*参数说明*
+json格式写进body
+|| 参数名||类型||是否可选||说明||
+|id|long|否|用户ID|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:success
+}
+
+h3. 根据高级搜索条件检索策略
+
+||项||说明||
+| url | /strategyCt/fetchStrategyAdvance |
+| http Method | get |
+
+*参数说明*
+ post提交提交下面json数据,通过body传递
+
+bc. {
+tradeType:1,
+tradeVariety:1,
+yieldDown:1.23,
+yieldUp:5.21,
+profitRatioDown:1.41,
+profitRatioUp:5.31,
+starDown:5.5,
+starUp:7.6,
+}
+
+orderType和pageNo通过get提交
+|| 参数名||类型||是否可选||说明||
+|orderType|int|否|0:按收益率 排行排序,1:按收益率 排行排序,2:按人气排行排序,其他值:按最新排序|
+|pageNo|int|否|当前页|
+
+*返回结果说明*
+操作成功,返回json格式(同“策略列表展示”)
+
+bc. {
+    status:0,
+    data:[
+           {
+              id:30739,
+              uuid:d261c276f6ad44879a81589413234249,
+              sname:000,
+              provider:sales01,
+              stype:3,
+              tradeVariety:2,
+              collectCount:3,
+              upTime:'2013-04-25 11:08:48',
+              discussCount:5,
+              enginetypeId:2,
+              desp:000,
+              orderCount:2,
+              starLevel:3.4,
+              yield:61.98696,
+              profitRatio:61.1223,
+              sharpe:0.2154
+            }
+          ],
+    pageNo:2,
+    pageSize:10,
+    rowTotal:20
+}
+
+h3. 获取高级搜索模板内容
+
+||项||说明||
+| url | /userTemplateCt/fetchUserTemplateInfo|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|id|long |否|搜索条件ID|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:[
+         {
+          id:1,
+          uid:10,
+          type:1,
+          name:testName,
+          content:{             //需要base64加解码
+                    recommendOrgs:[10105079,10884],
+                    reportUpdatePeriod:-999,
+                    starDown:2,
+                    starUp:5
+                   }
+          }
+        ]
+}
+
+
+h3. 获取策略对比策略列表信息
+
+||项||说明||
+| url | /strategyCt/fetchCompareStrategyList|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|stids|long |否|策略ID stids="1,2,3,4"|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:[
+         {
+          name:testName,
+          upTime:'2013-07-04',
+          enginetypeId:10,
+          discussCount:1,
+          collectCount:5,
+          orderCount;:3,
+          starLevel;:5.64,
+          yieldOfYear:0.21,
+          profitRatio:0.58,
+          sharpeIndex:0.41
+          }
+        ]
+}
+
+h3. 获取策略列表对比x轴日期信息
+
+||项||说明||
+| url | /strategyCt/fetchCompareStrategyDates|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|stids|long |否|策略ID stids="1,2,3,4"|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:[
+         {
+          maxDate:'2013-01-04', //最大时间
+          minDate:'2013-07-04',//最小时间
+          str_maxYield:[{name='策略名1' date:[ Date.UTC(2010, 0, 1), 9.05],...},...],//最大收益率
+          strategys:1,//组装的series
+          str_averYield:5//收益率均值
+          }
+        ]
+}
+
+h3. 绩效展示 周线数据
+
+||项||说明||
+| url | /strategyCt/fetchStrategyDetailWeekData|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|stid|long |否|策略ID|
+|isBackTest|boolean |否|是否历史回测数据|
+|upTime|Date |否|上架时间|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:[
+         {
+          maxDate:'2013-01-04', //最大时间
+          minDate:'2013-07-04',//最小时间
+          str_maxYield:[{name='策略名1' date:[ Date.UTC(2010, 0, 1), 9.05],...},...],//最大收益率
+          strategys:1,//组装的series
+          str_averYield:5//收益率均值
+          }
+        ]
+}
+
+h3. 绩效展示 日线数据
+
+||项||说明||
+| url | /strategyCt/fetchStrategyDetailDailyData|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|stid|long |否|策略ID|
+|isBackTest|boolean |否|是否历史回测数据|
+|upTime|Date |否|上架时间|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:[
+         {
+          maxDate:'2013-01-04', //最大时间
+          minDate:'2013-07-04',//最小时间
+          str_maxYield:[{name='策略名1' date:[ Date.UTC(2010, 0, 1), 9.05],...},...],//最大收益率
+          strategys:1,//组装的series
+          str_averYield:5//收益率均值
+          }
+        ]
+}
+
+h3. 获取策略基本信息
+
+||项||说明||
+| url | /strategyCt/fetchStrategyBaseInfo|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|stid|long |否|策略ID|
+
+*返回结果说明*
+操作成功,返回json格式(StrategyBaseDto 实体)
+
+bc. {
+  status:0,
+  data:[
+         {
+          id:1,
+          sname:testName,
+          stype:1,
+          upTime:'2013-07-04',
+          provider:xiaoming,
+          tradeVariety:1,
+          lookbackStime:'2013-07-05',
+          lookbackEtime:'2013-07-05',
+          desp:foo,
+          providerDesp:'xiaoming is a handsome boy',
+          discussTotal:21,
+          discussCount:58,
+          engineTypeId:0.41
+          starLevel:5.41
+          }
+        ]
+}
+
+h3. 判断策略是否被收藏
+
+||项||说明||
+| url | /userStrategyManageCt/hasCollected|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|stid|long |否|策略ID|
+|uid|long |否|用户ID|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:true
+}
+
+h3. 绩效指标
+
+||项||说明||
+| url | /strategyCt/fetchStrategyIndicator|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|stype|int |否|1:历史回测，2:实时模拟|
+|stid|long |否|策略ID|
+|ctype|int |否|1:QIC，2:QIA|
+
+*返回结果说明*
+操作成功,返回json格式(IndicatorDto 实体bean)
+
+bc. {
+      status:0,
+      data:{
+        id:1,
+        uuid:u8978970e,
+        yield:0.23,
+        yieldOfMonth:0.23,
+        yieldOfMonthStandardDeviation:0.23,
+        overallProfitability:0.23,
+        overallDeficit:0.23,
+        tradeDays:2,
+        mAXShortPositionTime:2,
+        tradeCount:5,
+        shortPositionTradeCount:5,
+        profitCount:5,
+        deficitCount:5,
+        positionCloseCount:5,
+        mAXSequentialProfitCount:5,
+        mAXSequentialDeficitCount:5,
+        profitRatio:0.23,
+        canhsiedRatio:0.23,
+        mAXSingleProfitRatio:0.23,
+        mAXSingleDeficitRatio:0.23,
+        sumOfCommission:0.23,
+        grossProfit:0.23,
+        profitLossRatio:0.23,
+        yieldOfYear:0.23,
+        sharpeIndex:0.23,
+        floatingProfitAndLoss:0.23
+      }
+}
+
+h3. 策略委托信号(只有QICore才有委托信号)
+
+||项||说明||
+| url | /strategyCt/fetchAuthorizeRecord|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|stid|long |否|策略ID|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+      status:0,
+      data:{
+             name:testName,
+             trade_variety:1,
+             SecurityID:002001,
+             sendingtime:'2013-07-05',
+             side:1,
+             price:1.25,
+             positionEffect:o
+      }
+}
+
+h3. 是否订阅该策略
+
+||项||说明||
+| url | /userStrategyManageCt/hasOrdered|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|uid|long |否|用户ID|
+|stid|long |否|策略ID|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:true
+}
+
+h3. 获取策略订阅到期时间
+
+||项||说明||
+| url | /userStrategyManageCt/fetchUserOrderEndDate|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|stid|long |否|策略ID|
+|uid|long |否|用户ID|
+
+*返回结果说明*
+操作成功,返回json格式(StrategyBaseDto 实体)
+
+bc. {
+  status:0,
+  data:'2013-07-05'
+}
+
+h3. 判断用户是否评论的该策略
+
+||项||说明||
+| url | /userStrategyManageCt/hasComment|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|stid|long |否|策略ID|
+|uid|long |否|用户ID|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:true
+}
+
+
+h3. 策略持仓
+
+||项||说明||
+| url | /strategyCt/fetchStrategHoldPosition|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|stype|int |否|1:qic,2:qia|
+|stid|long |否|策略ID|
+|pageNo|int |否|当前页|
+
+*返回结果说明*
+操作成功,返回json格式(List<StrategyPositionDto>)
+
+bc. {
+   status:0,
+   data:[
+           {
+               name:moco,
+               trade_variety:2,
+               id:1,//策略id
+               updatetime:'2013-07-10',
+               side:'1',
+               securityid:'2',
+               symbol:'600000'
+           }
+         ],
+   pageNo:2,
+   pageSize:10,
+   rowTotal:20
+}
+
+h3. 委托记录
+
+||项||说明||
+| url | /strategyCt/fetchEntrustRecord|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|stid|long |否|策略ID|
+|pageNo|int |否|当前页|
+
+*返回结果说明*
+操作成功,返回json格式 (List<AuthorizeRecordDto>)
+
+bc. {
+  status:0,
+  data:[
+      {
+        name:moco,
+        trade_variety:1,
+        id:1,//策略id
+        side:'2',
+        securityid:'2',
+        symbol:'600000',
+        account:'myAccount',
+        positionEffect:'c',//持仓影响类型  o:开 c: 平
+      }
+  ],
+  pageNo:2,
+  pageSize:10,
+  rowTotal:20
+}
+
+h3. 成交记录
+
+||项||说明||
+| url | /strategyCt/fetchBargainRecord|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|stid|long |否|策略ID|
+|pageNo|int |否|当前页|
+
+*返回结果说明*
+操作成功,返回json格式 (List<ExecutionRecordDto>)
+
+bc. {
+  status:0,
+  data:[
+      {
+        name:moco,
+        trade_variety:1,
+        id:1,//策略id
+        side:'2',
+        securityid:'2',
+        symbol:'600000',
+        account:'myAccount'
+      }
+  ],
+  pageNo:2,
+  pageSize:10,
+  rowTotal:20
+}
+
+h3. 策略的评论信息列表
+
+||项||说明||
+| url | /strategyCt/fetchUserCommentList|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|stid|long |否|策略ID|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:[
+        {
+            disTime:'2013-07-05'
+            content:'nice strategy!',
+            star:5,
+            userName:'mocoName'
+        }
+      ],
+  pageNo:2,
+  pageSize:10,
+  rowTotal:20
+}
+
+h3. 保存策略评论
+
+||项||说明||
+| url | /userStrategyManageCt/addUserDiscuss|
+| http Method | get |
+
+*参数说明*
+post提交提交下面json数据,通过body传递。
+
+bc. {
+id:10,
+uid:20,
+stid:431,
+disTime:'2013-07-25',
+content:'this strategy is good!',
+star:5,
+userName:'liuhj'
+}
+get提交下列参数
+|| 参数名||类型||是否可选||说明||
+|uid|long |否|用户ID|
+|stid|long |否|策略ID|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:true
+}
+
+h3. 订阅
+
+||项||说明||
+| url | /strategyDetailCt/orderStrategy|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|month|int |否|用户输入的订阅时间，单位为/每月|
+|uid|long |否|用户ID|
+|stid|long |否|策略ID|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:{
+      message:订阅成功,
+      success:true,
+      date:'2033-11-22'
+  }
+}
+
+h3. 获取我的收藏策略信息
+
+||项||说明||
+| url | /userStrategyManageCt/fetchUserCollectList|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|sortType|int |否|1.收益率排行  2.按人气排序 3.按最新上架排序|
+|keyword|String |是|关键字|
+|pageNo|int |否|当前页|
+|uid|long |否|用户ID|
+
+*返回结果说明*
+操作成功,返回json格式(StrategyBaseDto 实体)
+
+bc. {
+  status:0,
+  data:[
+         {
+            id:30739,
+            uuid:d261c276f6ad44879a81589413234249,
+            sname:000,
+            provider:sales01,
+            stype:3,
+            tradeVariety:2,
+            collectCount:3,
+            upTime:'2013-04-25 11:08:48',
+            discussCount:5,
+            enginetypeId:2,
+            desp:000,
+            orderCount:2,
+            starLevel:3.4,
+            yield:61.98696,
+            profitRatio:61.1223,
+            sharpe:0.2154
+          }
+        ],
+  pageNo:2,
+  pageSize:10,
+  rowTotal:20
+}
+
+h3. 高级搜索获取我的收藏策略信息
+
+||项||说明||
+| url | /userStrategyManageCt/fetchUserCollectionListAdvance|
+| http Method | get |
+
+*参数说明*
+post方式提交下面json数据,通过body传递
+
+bc. {
+tradeType:1,
+tradeVariety:1,
+yieldDown:1.23,
+yieldUp:5.21,
+profitRatioDown:1.41,
+profitRatioUp:5.31,
+starDown:5.5,
+starUp:7.6,
+}
+
+get方式提交下面字段
+|| 参数名||类型||是否可选||说明||
+|sortType|int|否|0:按收益率 排行排序,1:按收益率 排行排序,2:按人气排行排序,其他值:按最新排序|
+|pageNo|int |否|当前页|
+|uid|long |否|用户ID|
+
+*返回结果说明*
+操作成功,返回json格式(StrategyBaseDto 实体)
+
+bc. {
+  status:0,
+  data:[
+         {
+            id:30739,
+            uuid:d261c276f6ad44879a81589413234249,
+            sname:000,
+            provider:sales01,
+            stype:3,
+            tradeVariety:2,
+            collectCount:3,
+            upTime:'2013-04-25 11:08:48',
+            discussCount:5,
+            enginetypeId:2,
+            desp:000,
+            orderCount:2,
+            starLevel:3.4,
+            yield:61.98696,
+            profitRatio:61.1223,
+            sharpe:0.2154
+          }
+        ],
+  pageNo:2,
+  pageSize:10,
+  rowTotal:20
+}
+
+h3. 获取我的订阅策略信息
+
+||项||说明||
+| url | /userStrategyManageCt/fetchUserOrderList|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|stid|long |否|策略ID|
+|uid|long |否|用户ID|
+|sortType|int |否|1.收益率排行  2.按人气排序 3.按最新上架排序|
+|keyword|String |是|用户输入的关键字|
+|pageNo|int |否|当前页|
+
+*返回结果说明*
+操作成功,返回json格式(StrategyBaseDto 实体)
+
+bc. {
+  status:0,
+  data:[
+         {
+            id:30739,
+            uuid:d261c276f6ad44879a81589413234249,
+            sname:000,
+            provider:sales01,
+            stype:3,
+            tradeVariety:2,
+            collectCount:3,
+            upTime:'2013-04-25 11:08:48',
+            discussCount:5,
+            enginetypeId:2,
+            desp:000,
+            orderCount:2,
+            starLevel:3.4,
+            yield:61.98696,
+            profitRatio:61.1223,
+            sharpe:0.2154
+          }
+        ],
+  pageNo:2,
+  pageSize:10,
+  rowTotal:20
+}
+
+h3. 高级搜索获取我的订阅策略信息
+
+||项||说明||
+| url | /userStrategyManageCt/fetchUserOrderListAdvance|
+| http Method | get |
+
+*参数说明*
+post方式提交下面json数据,通过body传递
+
+bc. {
+tradeType:1,
+tradeVariety:1,
+yieldDown:1.23,
+yieldUp:5.21,
+profitRatioDown:1.41,
+profitRatioUp:5.31,
+starDown:5.5,
+starUp:7.6,
+}
+get提交下面字段
+|| 参数名||类型||是否可选||说明||
+|sortType|int|否|0:按收益率 排行排序,1:按收益率 排行排序,2:按人气排行排序,其他值:按最新排序|
+|pageNo|int |否|当前页|
+|uid|long |否|用户ID|
+
+*返回结果说明*
+操作成功,返回json格式(List<StrategyBaseDto>)
+
+bc. {
+  status:0,
+  data:[
+         {
+            id:30739,
+            uuid:d261c276f6ad44879a81589413234249,
+            sname:000,
+            provider:sales01,
+            stype:3,
+            tradeVariety:2,
+            collectCount:3,
+            upTime:'2013-04-25 11:08:48',
+            discussCount:5,
+            enginetypeId:2,
+            desp:000,
+            orderCount:2,
+            starLevel:3.4,
+            yield:61.98696,
+            profitRatio:61.1223,
+            sharpe:0.2154
+          }
+        ],
+  pageNo:2,
+  pageSize:10,
+  rowTotal:20
+}
+
+h3. 查找用户上传的策略
+
+||项||说明||
+| url | /userStrategyManageCt/fetchUserStrategyList |
+| http Method | post |
+
+*请求的body示例：*
+
+bc. {
+      "uid": "1",
+      "tradeType": "0",
+      "status": "-1",
+      "orderType": "0",
+      "pageNo": "1",
+      "keyword": "",
+      "orderCol": "1",
+      "tradeVariety": "0",
+      "strategyLanguage": "0"
+}
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+    "data":[
+        {
+            "sname":"***********************************************",
+            "starLevel":0.0,
+            "stype":3,
+            "provider":"管理员",
+            "tradeVariety":2,
+            "collectCount":0,
+            "tradeCount":0,
+            "yield":0.0,
+            "yomsd":0.0,
+            "profitRatio":0.0,
+            "status":-100,
+            "orderCount":0,
+            "uploadTime":"2013-04-23",
+            "validOrderCount":0,
+            "passTime":"2013-04-23",
+            "discussCount":0,
+            "discussTotal":0,
+            "enginetypeId":2,
+            "sharpe":0.0
+        }
+    ],
+    "status":0,
+    "rowTotal":2,
+    "pageSize":20,
+    "pageNo":1
+}
+
+h3. 添加策略
+
+||项||说明||
+| url | /userStrategyManageCt/addStrategy |
+| http Method | post |
+
+*参数说明*
+|| url参数名||类型||是否可选||说明||
+|uid|long |否|用户ID|
+|filePath|String |否|路径|
+
+*请求的body示例：*
+
+bc. {
+     "strategyId": "402bd4136a2c4abea26a91926a782fa5",
+     "status": 0,
+     "sname": "test",
+     "provider": "test",
+     "tradeVariety": 2,
+     "stype": 3,
+     "retainedProfits": 0.0,
+     "yield": 0.0,
+     "yieldOfYear": 0.0,
+     "yomsd": 0.0,
+     "overallProfitability": 0.0,
+     "overallDeficit": 0.0,
+     "yieldOfMonth": 0.0,
+     "sharpeIndex": 0.0,
+     "tradeCount": 0,
+     "collectCount": 0,
+     "subscriber": 0,
+     "allSubscriber": 0,
+     "providerDesp": "li",
+     "desp": "li",
+     "lookbackStime": "",
+     "lookbackEtime": "",
+     "customerLookbackStartTime": "2013-07-01",
+     "customerLookbackEndTime": "2013-07-24",
+     "profitRatio": 0.0,
+     "starLevel": 0.0,
+     "discussCount": 0,
+     "enginetypeId": 2
+}
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+      "data": true,
+      "status": 0
+}
+
+h3. 策略加入回测
+
+||项||说明||
+| url | /userStrategyManageCt/addBackTest |
+| http Method | get |
+
+*参数说明*
+|| 参数名|| 类型 ||是否可选||说明||
+| qicoreServerId| String | 否 | qicore服务器id |
+| qiaServerId | String | 否 | qia服务器id |
+| stids | String[] | 否 | 策略id |
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc.  {
+     status:0,
+     data:[1,2,3]
+ }
+
+h3. 查询回收站的策略列表
+
+||项||说明||
+| url | /strategyCt/fetchRecycleList |
+| http Method | get |
+
+*参数说明*
+|| 参数名|| 类型 ||是否可选||说明||
+| pageNo | int | 否 | 当前页 |
+| uid | long | 否 | 用户ID |
+
+*返回结果说明*
+操作成功,返回json格式(List<StrategyDto>)
+
+bc.  {
+     status: 0,
+     data:[
+            {
+               strategyId:1
+               status:1,
+               sname:mocotest,
+               provider:mocotest,
+               tradeVariety:1,
+               stype:1,
+               collectCount:1.5,
+               enginetypeId:1,
+               upTime:'2013-04-25 11:08:48',
+               uploadTime:'2013-04-25 11:08:48',
+               delTime:'2013-04-25 11:08:48',
+               allSubscriber:1,
+               retainedProfits:1.5,
+               yield: 100.5,
+               yieldOfYear:1.5,
+               profitRatio:0.5,
+               sharpeIndex:1.0,
+            }
+          ],
+     rowTotal:20,
+     pageNo:2,
+     pageSize:10
+}
+
+h3. 查询已上架的策略列表
+
+||项||说明||
+| url | /strategyCt/fetchUpStrategyList |
+| http Method | get |
+
+*参数说明*
+|| 参数名|| 类型 ||是否可选||说明||
+| pageNo | int | 否 | 当前页 |
+| uid | long | 否 | 用户ID |
+
+*返回结果说明*
+操作成功,返回json格式(List<StrategyDto>)
+
+bc.  {
+     status: 0,
+     data:[
+            {
+               strategyId:1
+               status:1,
+               sname:mocotest,
+               provider:mocotest,
+               tradeVariety:1,
+               stype:1,
+               collectCount:1.5,
+               enginetypeId:1,
+               upTime:'2013-04-25 11:08:48',
+               uploadTime:'2013-04-25 11:08:48',
+               delTime:'2013-04-25 11:08:48',
+               allSubscriber:1,
+               retainedProfits:1.5,
+               yield: 100.5,
+               yieldOfYear:1.5,
+               profitRatio:0.5,
+               sharpeIndex:1.0,
+            }
+          ],
+     rowTotal:20,
+     pageNo:2,
+     pageSize:10
+}
+
+h3. 查询待上架策略列表
+
+||项||说明||
+| url | /strategyCt/fetchWaitList |
+| http Method | get |
+
+*参数说明*
+|| 参数名|| 类型 ||是否可选||说明||
+| pageNo | int | 否 | 当前页 |
+| uid | long | 否 | 用户ID |
+
+*返回结果说明*
+操作成功,返回json格式(List<StrategyDto>)
+
+bc.  {
+     status: 0,
+     data:[
+            {
+               strategyId:1
+               status:1,
+               sname:mocotest,
+               provider:mocotest,
+               tradeVariety:1,
+               stype:1,
+               collectCount:1.5,
+               enginetypeId:1,
+               upTime:'2013-04-25 11:08:48',
+               uploadTime:'2013-04-25 11:08:48',
+               delTime:'2013-04-25 11:08:48',
+               allSubscriber:1,
+               retainedProfits:1.5,
+               yield: 100.5,
+               yieldOfYear:1.5,
+               profitRatio:0.5,
+               sharpeIndex:1.0,
+            }
+          ],
+     rowTotal:20,
+     pageNo:2,
+     pageSize:10
+}
+
+h3. 策略删除
+
+||项||说明||
+| url | /userStrategyManageCt/deleteStrategy |
+| http Method | get |
+
+*参数说明*
+|| 参数名 || 类型 ||是否可选||说明||
+|  stids | String[] | 否 | 策略id数组 |
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+   status: 0
+}
+
+h3. 策略清空
+
+||项||说明||
+| url | /userStrategyManageCt/emptyStrategy |
+| http Method | get |
+
+*参数说明*
+|| 参数名 || 类型 ||是否可选||说明||
+|无参数| | | |
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+   status: 0
+}
+
+h3. 策略下架
+
+||项||说明||
+| url | /userStrategyManageCt/downstrategy |
+| http Method | get |
+
+*参数说明*
+|| 参数名 || 类型 ||是否可选||说明||
+| downTime | Date | 否 | 下架时间(yyyy-MM-dd HH:mm:ss) |
+| stids | String[] | 否 | 策略id数组 |
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+     data: 3,
+     status: 0
+}
+
+h3. 策略上架
+
+||项||说明||
+| url | /userStrategyManageCt/upStrategy |
+| http Method | get |
+
+*参数说明*
+|| 参数名 || 类型 ||是否可选||说明||
+| stids | String[] | 否 | 策略id数组 |
+| qiaServerId | String | 否 | qia服务器id |
+| qicoreServerId | String | 否 | qicore服务器id |
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+   status: 0
+}
+
+h3. 查询用户运行中的策略数
+
+||项||说明||
+| url | /userStrategyManageCt/countUserRunntimeStrategy |
+| http Method | get |
+
+*参数说明*
+|| 参数名 || 类型 ||是否可选||说明||
+| uid | long | 否 | 用户id |
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+     data: 0,
+     status: 0
+}
+
+h3. 查询一批策略
+
+||项||说明||
+| url | /strategyCt/fetchStrategyByIds |
+| http Method | get |
+
+*参数说明*
+|| 参数名 || 类型 ||是否可选||说明||
+| ids | Long[] | 否 | 策略id数组 |
+
+*返回结果说明*
+操作成功,返回json格式(List<StrategyBaseinfo>)
+
+bc. [
+      {
+            id:1,
+            stUuid:d261c276f6ad44879a81589413234249,
+            name:mocotest,
+            desp:aaaa,
+            stype:1,
+            tradeVariety:1,
+            upTime:'2013-04-25 11:08:48',
+            downTime:'2013-04-25 11:08:48',
+            provider:aaa,
+            providerDesp:aaa,
+            lookbackStime:'2013-04-25 11:08:48',
+            lookbackEtime:'2013-04-25 11:08:48',
+            status:1,
+            discussTotal:5,
+            discussCount:5,
+            collectCount:5,
+            orderCount:5,
+            enginetypeId:5
+      }
+]
+
+h3. 查询一个策略
+
+||项||说明||
+| url | /strategyCt/fetchStrategyById |
+| http Method | get |
+
+*参数说明*
+|| 参数名 || 类型 ||是否可选||说明||
+| id | long | 否 | 策略id |
+
+*返回结果说明*
+操作成功,返回json格式(StrategyBaseinfo)
+
+bc. {
+        id:1,
+        stUuid:d261c276f6ad44879a81589413234249,
+        name:mocotest,
+        desp:aaaa,
+        stype:1,
+        tradeVariety:1,
+        upTime:'2013-04-25 11:08:48',
+        downTime:'2013-04-25 11:08:48',
+        provider:aaa,
+        providerDesp:aaa,
+        lookbackStime:'2013-04-25 11:08:48',
+        lookbackEtime:'2013-04-25 11:08:48',
+        status:1,
+        discussTotal:5,
+        discussCount:5,
+        collectCount:5,
+        orderCount:5,
+        enginetypeId:5
+}

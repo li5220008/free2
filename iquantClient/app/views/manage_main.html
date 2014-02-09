@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>#{get 'title' /}</title>
+    <meta charset="utf-8">
+#{get 'moreStyles' /}
+    <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.png'}">
+    <link rel="stylesheet" type="text/css" href="@{'public/stylesheets/qic-dialog.css'}">
+*{这里定义全局变量, 用javascript表示. 如上下文路径等}*
+    <script type="text/javascript">
+        var _gQic = {
+            "ctx":"${play.ctxPath}"
+        };
+    </script>
+    <script src="@{'/public/javascripts/jquery-1.8.2.js'}" type="text/javascript" charset="utf-8"></script>
+    <script src="@{'/public/javascripts/manage_global-qic.js'}" type="text/javascript"></script>
+    <script src="/public/javascripts/qic-dialog.js"></script>
+#{get 'moreScripts' /}
+</head>
+#{doLayout /}
+</html>

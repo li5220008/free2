@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment></comment>
+    <!--用户消息-->
+    <!--用户消息 -->
+    <entry key="userMsg">
+        <![CDATA[
+            SELECT
+              a.`id` AS id,
+              a.`message` AS msg,
+              a.`messge_time` AS msgTime,
+              a.`status` AS STATUS,
+              a.`title` AS title
+            FROM
+              qic_db.`user_message` a
+            WHERE a.`uid` = ?
+                ]]>
+    </entry>
+
+    <!--根据消息id得到消息状态 -->
+    <entry key="get_msgStatus_byId">
+        <![CDATA[
+            SELECT
+              *
+            FROM
+              qic_db.`user_message`
+            WHERE id = ?
+                ]]>
+    </entry>
+
+    <!--更新消息状态 -->
+    <entry key="update_msgStatus_byId">
+        <![CDATA[
+            UPDATE
+              qic_db.`user_message`
+            SET
+              STATUS = ?
+            WHERE id = ?
+                ]]>
+    </entry>
+    <!--删除消息 -->
+    <entry key="delMsg">
+        DELETE
+        FROM
+        qic_db.`user_message`
+        WHERE id = ?
+    </entry>
+
+
+</properties>

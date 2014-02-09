@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>activate  sql</comment>
+
+    <!--待激活用户列表-->
+    <entry key="activateSql">
+        <![CDATA[
+        SELECT
+  ui.`id` AS id,
+  ui.`account` AS account,
+  ui.`name` AS NAME,
+  ui.`idcard` AS idCard,
+  ui.`phone` AS phone,
+  sd.`name` AS saleName,
+  ui.`capital_account` AS capitalAccount,
+  ui.`apply_date` AS applyDate,
+  ui.`status` AS STATUS
+FROM
+  user_info ui
+  LEFT JOIN sale_department sd
+    ON ui.`sale_dep` = sd.`id`  WHERE ui.`status`=2
+                ]]>
+    </entry>
+
+    <!--用户列表-->
+    <entry key="users">
+        <![CDATA[
+                 SELECT
+  ui.`id` AS id,
+  ui.`account` AS account,
+  ui.`name` AS NAME,
+  ui.`idcard` AS idCard,
+  ui.`phone` AS phone,
+  sd.`name` AS saleName,
+  ui.`capital_account` AS capitalAccount,
+  ui.`apply_date` AS applyDate,
+  ui.`status` AS STATUS,
+  GROUP_CONCAT(ri.`name`) AS roleName,
+  ui.`sdate` AS startDate,
+  ui.`edate` AS endDate
+FROM
+  user_info ui
+  LEFT JOIN sale_department sd
+    ON ui.`sale_dep` = sd.`id`
+
+    left JOIN user_role ur ON ur.`uid`=ui.`id`
+    left JOIN role_info ri ON ri.`id` = ur.`rid`
+    where ui.`status` NOT IN(-100,2)  AND ui.`edate`>NOW()
+                ]]>
+
+    </entry>
+    <!--到期用户列表-->
+    <entry key="dueUsersSql">
+        <![CDATA[
+                 SELECT
+  ui.`id` AS id,
+  ui.`account` AS account,
+  ui.`name` AS NAME,
+  ui.`idcard` AS idCard,
+  ui.`phone` AS phone,
+  sd.`name` AS saleName,
+  ui.`capital_account` AS capitalAccount,
+  ui.`apply_date` AS applyDate,
+  ui.`status` AS STATUS,
+  GROUP_CONCAT(ri.`name`) AS roleName,
+  ui.`edate` AS endDate
+FROM
+  user_info ui
+  LEFT JOIN sale_department sd
+    ON ui.`sale_dep` = sd.`id`
+
+    left JOIN user_role ur ON ur.`uid`=ui.`id`
+    left JOIN role_info ri ON ri.`id` = ur.`rid`
+    where ui.`status`=10 AND ui.`edate`<NOW()
+                ]]>
+
+    </entry>
+    <!--用户激活  显示用户列表-->
+    <entry key="selectedUserSql">
+        <![CDATA[
+      SELECT
+      a.id AS id,
+      a.name AS NAME,
+      a.account AS account,
+      b.name AS saleName
+    FROM
+      user_info AS a
+      LEFT JOIN sale_department AS b
+        ON b.id = a.sale_dep
+    WHERE
+        ]]>
+    </entry>
+
+
+    <!--用户激活  显示用户列表 用于选择了很多用户的时候-->
+ <entry key="selectedMoreUsersql">
+    <![CDATA[
+        SELECT
+        a.id AS id,
+        a.name AS NAME,
+        a.account AS account,
+        b.name AS saleName
+        FROM
+        user_info AS a
+        LEFT JOIN sale_department AS b
+        ON b.id = a.sale_dep
+        WHERE a.id >= ? & a.id <= ?
+        ]]>
+ </entry>
+
+    <!--插入用户角色-->
+ <entry key="insertUserRole">
+    <![CDATA[
+        insert into
+         user_role(uid,rid)
+         values(?,?)
+        ]]>
+ </entry>
+
+    <!--删除用户角色-->
+ <entry key="deleteUserRole">
+    <![CDATA[
+    delete from
+       user_role
+       where
+            uid=?
+        ]]>
+ </entry>
+
+    <!--更新用户角色-->
+ <entry key="updateUserRole">
+    <![CDATA[
+       update
+         user_info
+         set sdate= now(),
+          edate=? ,
+          status=10
+           where
+            id=?
+        ]]>
+ </entry>
+    <!--新增用户数据权限-->
+ <entry key="insertUserData">
+    <![CDATA[
+       insert into
+            user_qdb_data
+                (uid,did,content)
+        values
+                (?,?,?)
+        ]]>
+ </entry>
+
+    <!--删除用户数据权限-->
+ <entry key="deleteUserData">
+    <![CDATA[
+       delete from
+            user_qdb_data
+       where
+            uid=?
+        ]]>
+ </entry>
+    <!--查询用户数据权限-->
+ <entry key="queryUserDataPermission">
+    <![CDATA[
+       select
+           did,
+           content
+        from
+            user_qdb_data
+       where
+            uid=?
+        ]]>
+ </entry>
+
+    <entry key="findUserById">
+        <![CDATA[
+                       SELECT
+                       name as name,
+                       account,
+                       phone,
+                       email,
+                       idcard,
+                       sale_dep as saleDept,
+                       edate as eDate
+                    FROM
+                       user_info
+                    WHERE
+                       id=?
+                ]]>
+    </entry>
+
+
+</properties>

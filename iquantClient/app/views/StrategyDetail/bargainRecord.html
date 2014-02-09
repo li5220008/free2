@@ -1,0 +1,69 @@
+<table width="100%" border="0" class="tbl_exec" cellspacing="0" cellpadding="0">
+    <tr>
+        <th width="20%">时间</th>
+        <th width="20%">代码</th>
+        *{<th width="12%">名称</th>}*
+        <th width="20%">方向</th>
+        <th width="20%">成交价格</th>
+        <th width="20%">成交量</th>
+        *{<th width="12%">品种</th>
+        <th width="12%">交易所</th>}*
+        <th class="for_til_width"><span class="for_til_width">&nbsp;</span></th>
+    </tr>
+</table>
+
+<div class="tbl_scoll" id="tbl_scoll_bargainRecord">
+    <table width="100%" border="0" class="tbl_common tbl_exec tbl_no_scroll" cellspacing="0"
+           cellpadding="0" id="tbl_common_bargainRecord">
+    #{list items : executionRecordDtoList, as : 'item'}
+        <tr>
+            <td width="20%"><strong>#{emVF v : item.sendingtime, f : 'yyyy-MM-dd HH:mm:ss'/}</strong></td>
+            <td width="20%"><strong>
+                <div >
+                    <a *{href="javascript:jumpToQuote('#{emVF v : item.securityid/}');"}*
+                       style="text-decoration: none">#{emVF v :item.securityid /}</a>
+                </div>
+            </strong></td>
+            *{<td width="12%">
+                <div style="cursor: pointer">
+                    <a href="javascript:jumpToQuote('#{emVF v : item.securityid/}');"
+                       style="text-decoration: none"> #{emVF v : item.name/}</a>
+                </div>
+            </td>}*
+            <td width="20%">
+                #{emVF v : item.getSide()/}
+            </td>
+            <td width="20%"><strong>#{emVF v : item.avgpx, f:'#,##0.00'/}</strong></td>
+            <td width="20%"><strong>#{emVF v : item.lastpx/}</strong></td>
+            *{<td width="12%">
+                #{if item.trade_variety == 1}股票#{/if}
+                #{elseif item.trade_variety == 2}期货#{/elseif}
+                #{else}混合#{/else}
+            </td>
+            <td width="12%">
+                --
+            </td>}*
+        </tr>
+    #{/list}
+    </table>
+    <input type="hidden" id="b_showloading" value="true"/>
+</div>
+
+<script>
+    $(document).ready(function () {
+        scrollObj1 = new ScrollPage({complete:"", getUrl:getLoadUrl, scrollTarget:"#tbl_scoll_bargainRecord", appendTarget:"#tbl_common_bargainRecord", pageNo:2});
+    });
+
+    function getLoadUrl() {
+        var url = "@{StrategyDetail.moreBargainRecord(id)}";
+        return url;
+    }
+
+    function jumpToQuote(code) {
+        if (code.substr(0, 1) == "6") {
+            qicScriptContext.jumpToQuoteChart(1, code);
+        } else {
+            qicScriptContext.jumpToQuoteChart(2, code);
+        }
+    }
+</script>

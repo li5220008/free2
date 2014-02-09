@@ -1,0 +1,124 @@
+body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, dl, dt, dd, ul, ol, li, pre, form, fieldset, legend, button, input, textarea, th, td {
+    margin: 0;
+    padding: 0;
+}
+
+body, button, input, select, textarea {
+    font: 14px/1.5 tahoma, arial, \5b8b\4f53;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-size: 100%;
+}
+
+address, cite, dfn, em, var {
+    font-style: normal;
+}
+
+code, kbd, pre, samp {
+    font-family: courier new, courier, monospace;
+}
+
+ul, ol {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+fieldset, img {
+    border: 0;
+}
+
+button, input, select, textarea {
+    font-size: 100%;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+body, html {
+    background-color: #fff;
+    font-size: 14px;
+    color: #383838;
+    overflow: hidden;
+    font-family: \5b8b\4f53;
+    width: 100%;
+    height: 100%;
+}
+
+select {
+    vertical-align: middle;
+}
+
+.box {
+    width: 850px;
+    margin: 0 auto;
+}
+
+.strategy_nav {
+    height: 41px;
+    border-top: 1px solid #898989;
+    background: -moz-linear-gradient(top, #5e5e5e 0%, #323232 100%);
+    background: -webkit-linear-gradient(top, #5e5e5e 0%, #323232 100%);
+    min-width: 1024px;
+    width: 100%;
+    z-index: 1000;
+}
+
+.info_h2 {
+    font-size: 20px;
+    color: #fff;
+    font-family: Tahoma, Geneva, sans-serif;
+    border-bottom: 4px solid #a20000;
+    padding-bottom: 5px;
+    margin-top: 40px;
+}
+
+.tbl_modify {
+    margin: 20px 0 10px 0;
+}
+
+.tbl_modify td {
+    height: 50px;
+}
+
+.inp_common {
+    border: 1px solid #4b4b4b;
+    height: 25px;
+    line-height: 25px;
+    width: 180px;
+}
+
+.inp_address {
+    width: 320px;
+}
+
+.modify_pwd {
+    color: #4aa3d5;
+    padding-right: 3px;
+}
+
+.m_sc {
+    position: relative;
+    top: 25px;
+    text-align: center;
+    width: 850px;
+    margin: 0 auto;
+}
+
+.m_sc img {
+    cursor: pointer;
+}
+
+.error {
+    color: #ff312c;
+}

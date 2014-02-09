@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>操作日志 sql</comment>
+
+
+    <entry key="findServerIdByAddr">
+        <![CDATA[
+        SELECT
+            bsl.id,
+            bsl.status,
+            enginetype_id enginetypeId
+
+        FROM
+            strategy_server bsl
+        WHERE
+            bsl.ip=? and enginetype_id=? and server_type=?
+
+       ]]>
+    </entry>
+
+
+
+    <entry key="findBackTestStrategyByServerId">
+        <![CDATA[
+        SELECT
+            sb.st_uuid strategyUUid,
+            qs.FilePath filePath,
+            sb.name strategyName,
+            sb.status state,
+            sb.upload_time uploadTime,
+            lookback_stime backTestStartTime,
+            lookback_etime backTestEndTime
+
+        FROM
+            strategy_baseinfo sb
+        LEFT JOIN
+            qstrategy qs
+        ON
+            sb.st_uuid=qs.StrategyID
+        WHERE
+            sb.back_test_sid=? and sb.enginetype_id=? and sb.status BETWEEN ? and ? and filePath<>''
+
+       ]]>
+    </entry>
+
+
+    <entry key="findInRuningStrategy">
+        <![CDATA[
+        SELECT
+            sb.st_uuid strategyUUid,
+            qs.FilePath filePath,
+            sb.name strategyName,
+            sb.status state,
+            sb.upload_time uploadTime,
+            lookback_stime backTestStartTime,
+            lookback_etime backTestEndTime
+
+        FROM
+            strategy_baseinfo sb
+        LEFT JOIN
+            qstrategy qs
+        ON
+            sb.st_uuid=qs.StrategyID
+        WHERE
+            sb.run_server_id=? and sb.enginetype_id=? and sb.status=? and filePath<>''
+
+       ]]>
+    </entry>
+
+
+
+
+    <entry key="checkBackTestStatus">
+        <![CDATA[
+        SELECT
+            sb.st_uuid strategyUUid
+        FROM
+            strategy_baseinfo sb
+
+        WHERE
+            sb.back_test_sid=? and sb.st_uuid=? and sb.status=2
+
+       ]]>
+    </entry>
+
+    <entry key="updateStrategyStatus">
+        <![CDATA[
+        UPDATE
+            strategy_baseinfo
+        SET
+            status=?
+        WHERE
+            st_uuid=?
+
+       ]]>
+    </entry>
+
+
+    <entry key="updateStrategyStatusByServerId">
+        <![CDATA[
+        UPDATE
+            strategy_baseinfo
+        SET
+            status=?
+        WHERE
+            back_test_sid=? AND status=?
+
+       ]]>
+    </entry>
+
+    <entry key="addServer">
+        <![CDATA[
+        INSERT INTO
+            strategy_server(
+              enginetype_id,
+              server_type,
+              name,
+              ip,
+              status
+            )VALUES(
+              ?,?,?,?,?
+            )
+
+       ]]>
+    </entry>
+
+
+    <entry key="updateStratedyServerId">
+        <![CDATA[
+        UPDATE strategy_baseinfo
+             SET
+            back_test_sid=?,
+            status=?
+        WHERE
+            st_uuid=?
+
+       ]]>
+    </entry>
+
+
+    <entry key="updateStratedyPassTime">
+        <![CDATA[
+        UPDATE strategy_baseinfo
+             SET
+            pass_time=NOW()
+        WHERE
+            id=? and pass_time=''
+
+       ]]>
+    </entry>
+
+    <entry key="updateStratedyServerIdByIntId">
+        <![CDATA[
+        UPDATE strategy_baseinfo
+             SET
+            back_test_sid=?,
+            status=?,
+            pass_time=NOW()
+        WHERE
+            id=?
+
+       ]]>
+    </entry>
+
+
+    <entry key="updateBackTestServerStatus">
+        <![CDATA[
+        UPDATE strategy_server
+             SET
+            status=?
+        WHERE
+            id=?
+       ]]>
+    </entry>
+
+
+
+
+    <entry key="findAllServer">
+        <![CDATA[
+        SELECT
+             id,
+             ip,
+             status,
+             server_type type,
+             enginetype_id  enginetypeId,
+             name name
+
+        FROM
+            strategy_server bsl
+       ]]>
+    </entry>
+
+    <entry key="delBackTestServerById">
+        <![CDATA[
+           DELETE FROM strategy_server WHERE id = ?
+        ]]>
+    </entry>
+</properties>

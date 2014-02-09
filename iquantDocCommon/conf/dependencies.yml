@@ -1,0 +1,4 @@
+self: play -> iquantDocCommon 0.1
+
+require:
+    - play

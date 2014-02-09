@@ -1,0 +1,2534 @@
+#{extends 'main.html' /}
+#{set title:'后台管理-策略管理' /}
+
+#{set 'moreStyles'}
+*{这里是策略的css}*
+<link rel="stylesheet" type="text/css" href="@{'public/stylesheets/manage-admin-strategy.css'}">
+<link rel="stylesheet" type="text/css" href="@{'public/stylesheets/qic-dialog.css'}">
+<link rel="stylesheet" type="text/css" href="@{'public/stylesheets/scroll-page.css'}">
+<link href="@{'/public/stylesheets/ui-lightness/jquery-ui-1.9.1.custom.css'}" rel="stylesheet">
+<link href="@{'/public/stylesheets/ajaxfileupload.css'}" type="text/css" rel="stylesheet">
+<style type="text/css">
+.ui-dialog .for_position {
+    left: 28px;
+}
+
+.sel_84_dialog {
+    font-size: 12px;
+    text-indent: 8px;
+}
+
+.change_status .for_alone {
+    top: 89px;
+}
+
+.sel_84_dialog, .sel_91_option {
+    width: 146px;
+}
+
+.common_user_bar dl dd {
+    margin-right: 0px;
+}
+
+.common_user_bar dd input[type='text'] {
+    height: 24px;
+    text-indent: 2px;
+    margin: 1px 3px 0px 8px;
+}
+
+.user_submit {
+    margin-right: 7px;
+}
+
+.user_submit_last {
+    position: relative;
+    top: 10px;
+}
+
+.common_tab_wrap {
+}
+
+.tbl_base_info {
+    margin: 15px 20px 10px 20px;
+}
+
+.base_p1, .base_p2 {
+    line-height: 25px;
+    margin: 6px 0 0 0;
+}
+
+.base_hr {
+    border-bottom: 1px dashed #7a7a7a;
+    margin: -5px 0px 10px 0;
+    width: 101%;
+}
+
+.base_p2 {
+    margin-top: 10px;
+}
+
+.common_base_wrap {
+    overflow: auto;
+    overflow-x: hidden;
+    height: 230px;
+    border: 1px solid #99999a;
+    min-height: 20px;
+}
+
+.common_user_wrap {
+    border: 1px solid #99999a;
+    border-top: 0;
+    background-color: #fff;
+}
+
+.common_til_h3 {
+    height: 30px;
+    background-color: #4792d4;
+    position: relative;
+}
+
+.my_comment {
+    cursor: pointer;
+    position: absolute;
+    right: 15px;
+    top: 2px;
+}
+
+.comment_list {
+    overflow: auto;
+}
+
+.user_comment {
+    background-color: #fff;
+}
+
+.user_comment dd {
+    padding-bottom: 3px;
+    min-height: 53px;
+    border-bottom: 1px dashed #4d4d4d;
+}
+
+.user_comment dd:nth-of-type(odd) {
+    background-color: #f7f7f7;
+}
+
+.dark {
+    color: #4d4d4d;
+    padding-top: 8px;
+}
+
+.user_comment .star_b1 {
+    top: 6px;
+}
+
+.comment_text {
+    margin: 5px 0 0 5px;
+}
+
+.comment_wrap {
+    margin: 13px 0 0 7px;
+}
+
+#comTextarea {
+    width: 490px;
+    height: 80px;
+    margin-top: 6px;
+    border-radius: 1px;
+    border: 1px solid #c9c9c9;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px;
+}
+
+.st_c_til span {
+    display: inline-block;
+    max-width: 200px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    color: #444444;
+    height: 27px;
+    line-height: 27px;
+    display: inline-block;
+}
+
+.st_c_til:hover {
+    text-decoration: none;
+}
+
+.day_week {
+    float: left;
+    position: absolute;
+    z-index: 201;
+    right: 12px;
+    top: 13px;
+}
+
+.dw_pic {
+    margin: 0 40px 0 22px;
+    overflow: auto;
+}
+
+.dw_pic img {
+}
+
+.day_line, .week_line {
+    width: 51px;
+    line-height: 30px;
+    height: 30px;
+    text-align: center;
+    font-size: 14px;
+    color: #fff;
+    text-indent: 7px;
+    cursor: pointer;
+}
+
+.dw_curren {
+    background: url(/public/images/lien_rz.png) no-repeat;
+    color: #fff;
+    cursor: inherit;
+}
+
+.week_line a:link, .week_line a:visited {
+    color: #fff;
+}
+
+.week_line:hover {
+}
+
+.tbl_perfomance {
+    margin: 4px 15px 6px 23px;
+    line-height: 27px;
+}
+
+.tbl_perfomance th {
+    text-align: left;
+}
+
+.tbl_str_sigla {
+    margin: 4px 15px 6px 23px;
+    line-height: 28px;
+    color: red;
+}
+
+.strategy_popup {
+    width: 800px;
+    height: 400px;
+    border: 1px solid #8e8e8e;
+    border-radius: 2px;
+    background-color: #fff;
+    position: absolute;
+    z-index: 10000;
+    color: #353534;
+    display: none;
+}
+
+.popup_title {
+    border-top: 0px solid #d9c99b;
+    height: 36px;
+    line-height: 36px;
+    font-weight: bold;
+    color: #fff;
+    text-indent: .5em; /*background:-webkit-linear-gradient(top, #4295de 0%, #1a71bc 100%);*/
+    position: relative;
+    top: 0px;
+    top: -35px;
+    left: -4px;
+    width: 710px;
+}
+
+.strategy_popup_tab {
+    position: relative;
+}
+
+.popup_close {
+    position: absolute;
+    right: 10px;
+    top: 2px;
+    cursor: pointer;
+}
+
+.strategy_popup_tab li {
+    height: 28px;
+    position: relative;
+    line-height: 28px;
+    float: left;
+    background-color: #555555;
+    border-top: 1px solid #898989;
+    border-bottom: 0;
+    background: #1f1f1f;
+    background: -webkit-linear-gradient(top, #5e5e5e 0%, #323232 100%);
+    margin-right: 7px;
+    padding: 0 20px;
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+    border-top-right-radius: 2px;
+    border-top-left-radius: 2px;
+}
+
+.strategy_popup_tab li.display {
+    font-weight: normal;
+    background: -webkit-linear-gradient(top, #d37200 0%, #ee9200 100%);
+    color: #000;
+    border-top: 1px solid #fbbc6d;
+}
+
+.strategy_content {
+    position: relative;
+    left: -12px;
+    top: -42px;
+}
+
+.strategy_content li {
+    display: none;
+    font-size: 14px;
+    height: 392px;
+    width: 800px;
+}
+
+.strategy_content li.display {
+    display: block;
+}
+
+.strategy_content .common_base_wrap {
+    border: 0;
+    height: 440px;
+    padding-right: 44px;
+}
+
+.strategy_content .dw_pic, .strategy_content .trend_img {
+    margin: 0px;
+    padding: 0;
+    overflow: inherit;
+}
+
+.strategy_content .trend_img {
+    margin-right: 40px;
+}
+
+.strategy_content .day_week {
+    right: -10px;
+}
+
+.strategy_content .right_2_wrap {
+    height: 440px;
+    width: 800px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.strategy_content .tbl_common {
+    border: 0;
+    margin-bottom: 0;
+}
+
+.strategy_content .tbl_common_wrap {
+    border: 0;
+    overflow: auto;
+}
+
+.tbl_scoll {
+    border: 0;
+    height: 400px;
+    overflow: auto;
+}
+
+.popup_close:hover {
+    color: #000;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.strategy_content .tbl_exec th {
+    height: 33px;
+    border: 0;
+    background-color: #d9ecfd;
+    color: #fff;
+}
+
+.tbl_common tr:nth-of-type(even) {
+}
+
+.tbl_common tr:nth-of-type(odd) {
+}
+
+.strategy_content .tbl_exec th {
+    background: #474747;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+    padding: 0.6em 0.1em;
+}
+
+.strategy_content .tbl_exec th, .tbl_exec td {
+    min-width: 50px;
+}
+
+.t_w_img {
+    position: relative;
+    top: 20px;
+    left: 20px;
+}
+
+.ui-dialog .for_position {
+    left: 28px;
+}
+
+.sel_84_dialog {
+    font-size: 12px;
+    text-indent: 8px;
+}
+
+.change_status .for_alone {
+    top: 89px;
+}
+
+.strategy_content .tbl_exec th, .tbl_exec td {
+    min-width: 0;
+}
+
+#back_test_manage td, #back_test_manage th {
+    font-size: 14px;
+    border-bottom: 1px dotted #ccc;
+    height: 30px;
+}
+
+#back_test_manage tr a {
+    font-weight: bold;
+    color: #980a0a;
+}
+
+#back_test_manage tr a:hover {
+    font-weight: bold;
+}
+</style>
+#{/set}
+
+<body>
+
+#{set 'moreScripts'}
+<script src="@{'/public/javascripts/scroll-page.js'}" type="text/javascript" charset="utf-8"></script>
+<script src="@{'/public/javascripts/jquery.validate.js'}"></script>
+<script src="@{'/public/javascripts/qic-dialog.js'}"></script>
+<script src="@{'/public/javascripts/global-qic.js'}"></script>
+<script src="@{'/public/javascripts/highChart/js/highcharts.js'}" type="text/javascript" charset="utf-8"></script>
+<script src="@{'/public/javascripts/highChart/js/highchartstheme.js'}" type="text/javascript" charset="utf-8"></script>
+<script src="@{'/public/javascripts/jquery-ui-1.9.1.custom.js'}"></script>
+<script src="@{'/public/javascripts/strategyinfo.js'}"></script>
+<script src="@{'/public/javascripts/WdatePicker.js'}"></script>
+<script src="@{'/public/javascripts/ajaxfileupload.js'}"></script>
+#{/set}
+
+<!--strategy_nav Begin-->
+<div class="strategy_nav">
+</div>
+<!--strategy_nav End-->
+
+<!--main_wrap Begin-->
+<div class="main_wrap">
+
+
+<!--sp_right Begin-->
+<div class="sp_right_wrap">
+<div class="content_title">
+    <div class="tab_title">
+        <ul class="tab_li" id="menuTab">
+            <li #{if sp.flag==1}class="display"#{/if} >已上架策略</li>
+            <li #{if sp.flag==2}class="display"#{/if} >待上架策略</li>
+            <li #{if sp.flag==3}class="display"#{/if} >策略回收站</li>
+        </ul>
+
+    </div>
+
+</div>
+
+<ul class="sub_content stable_content" id="subContImp">
+
+<li #{if sp.flag==1}class="display"#{/if}>
+
+<div class="common_user_bar">
+    <form action="@{StrategyInfos.list()}" method="get">
+        <dl>
+            <dd>
+                <div class="dialog_box">
+                    <input type="hidden" autocomplete="off" id="languageValue" name="sp.strategyLanguage"
+                           value="${sp.strategyLanguage}">
+                    <input type="hidden" autocomplete="off" id="languageName">
+
+                    <div id="strategyLanguage" class="sel_84_dialog">
+                    #{if sp.strategyLanguage==1}QICore#{/if}
+                    #{elseif sp.strategyLanguage==2}QIA#{/elseif}
+                    #{else }策略平台#{/else}
+                    </div>
+                    <ul id="options_strategyLanguage" class="sel_91_option" style="display: none;">
+                        <li data-value="0">全部</li>
+                        <li data-value="1">QICore</li>
+                        <li data-value="2">QIA</li>
+                    </ul>
+                </div>
+
+            </dd>
+
+            <dd>
+                <div class="dialog_box">
+                    <input type="hidden" autocomplete="off" id="ttypeValue" name="sp.tradeType" value="${sp.tradeType}">
+                    <input type="hidden" autocomplete="off" id="ttypeName">
+
+                    <div id="ttype" class="sel_84_dialog">
+                    #{if sp.tradeType==1}选股型#{/if}
+                    #{elseif sp.tradeType==2}择时型#{/elseif}
+                    #{elseif sp.tradeType==3}交易型#{/elseif}
+                    #{elseif sp.tradeType==4}其他#{/elseif}
+                    #{else }策略类型#{/else}
+                    </div>
+                    <ul id="options_ttype" class="sel_91_option" style="display: none;">
+                        <li data-value="0">全部</li>
+                        <li data-value="1">选股型</li>
+                        <li data-value="2">择时型</li>
+                        <li data-value="3">交易型</li>
+                        <li data-value="4">其他</li>
+                    </ul>
+                </div>
+
+            </dd>
+
+            <dd>
+                <div class="dialog_box">
+                    <input type="hidden" autocomplete="off" id="tvarietyValue" name="sp.tradeVariety"
+                           value="${sp.tradeVariety}">
+                    <input type="hidden" autocomplete="off" id="tvarietyName">
+
+                    <div id="tvariety" class="sel_84_dialog">
+
+                    #{if sp.tradeVariety==1}股票#{/if}
+                    #{elseif sp.tradeVariety==2}期货#{/elseif}
+                    #{elseif sp.tradeVariety==3}混合#{/elseif}
+                    #{else }交易品种#{/else}
+                    </div>
+                    <ul id="options_tvariety" class="sel_91_option" style="display: none;">
+                        <li data-value="0">全部</li>
+                        <li data-value="1">股票</li>
+                        <li data-value="2">期货</li>
+                        <li data-value="3">混合</li>
+                    </ul>
+                </div>
+
+            </dd>
+
+            <dd>
+                <input class="s_keyword" type="text" name="sp.keyWords" value="${sp.keyWords}" placeholder="策略名称/策略师">
+            </dd>
+
+            <dd>
+                <input type="image" class="user_submit" src="@{'/public/images/user_check.png'}" name="">
+            </dd>
+        </dl>
+    </form>
+</div>
+<div class="scroll_str">
+
+    <form action="@{StrategyInfos.list()}" method="get" id='groundingSort'>
+    #{if sp.orderFlag==0}
+        <input type="hidden" name="sp.orderFlag" value="1">
+    #{/if}
+    #{else }
+        <input type="hidden" name="sp.orderFlag" value="0">
+    #{/else}
+        <input type="hidden" name="sp.keyWords" value="${sp.keyWords}">
+        <input type="hidden" name="sp.strategyLanguage" value="${sp.strategyLanguage}">
+        <input type="hidden" name="sp.tradeType" value="${sp.tradeType}">
+        <input type="hidden" name="sp.tradeVariety" value="${sp.tradeVariety}">
+        <input type="hidden" name="sp.orderSort" value="" id="groundingParam">
+        <table width="100%" cellspacing="0" cellpadding="0" border="0" class="tbl_exec tbl_common">
+            <tr>
+                <th width="8%"><img src="@{'/public/images/check_uncheck.png'}" class="check_uncheck"></th>
+                <th width="8%" onclick="groundingSort('upTime')">
+                    上架时间#{sortTagShow sortName:sp.orderSort, fieldName:'upTime', flag:sp.orderFlag /}</th>
+                <th width="8%" onclick="groundingSort('sname')">
+                    策略名称#{sortTagShow sortName:sp.orderSort, fieldName:'sname', flag:sp.orderFlag /}</th>
+                <th width="8%" onclick="groundingSort('provider')">
+                    策略师#{sortTagShow sortName:sp.orderSort, fieldName:'provider', flag:sp.orderFlag /}</th>
+                <th width="8%" onclick="groundingSort('tradeVariety')">
+                    交易品种#{sortTagShow sortName:sp.orderSort, fieldName:'tradeVariety', flag:sp.orderFlag /}</th>
+                <th width="8%" onclick="groundingSort('stype')">
+                    策略类型#{sortTagShow sortName:sp.orderSort, fieldName:'stype', flag:sp.orderFlag /}</th>
+                <th width="8%" onclick="groundingSort('enginetypeId')">
+                    策略平台#{sortTagShow sortName:sp.orderSort, fieldName:'enginetypeId', flag:sp.orderFlag /}</th>
+                <th width="10%" onclick="groundingSort('starLevel')">
+                    评级#{sortTagShow sortName:sp.orderSort, fieldName:'starLevel', flag:sp.orderFlag /}</th>
+                <th width="10%" onclick="groundingSort('discussCount')">
+                    评价数量#{sortTagShow sortName:sp.orderSort, fieldName:'discussCount', flag:sp.orderFlag /}</th>
+                <th width="10%" onclick="groundingSort('collectCount')">
+                    收藏人数#{sortTagShow sortName:sp.orderSort, fieldName:'collectCount', flag:sp.orderFlag /}</th>
+                <th width="10%" onclick="groundingSort('subscriber')">
+                    当前订阅#{sortTagShow sortName:sp.orderSort, fieldName:'subscriber', flag:sp.orderFlag /}</th>
+                <th width="10%" onclick="groundingSort('allSubscriber')">
+                    累计订阅#{sortTagShow sortName:sp.orderSort, fieldName:'allSubscriber', flag:sp.orderFlag /}</th>
+                <th width="10%">
+                    最晚订阅到期日#{sortTagShow sortName:sp.orderSort, fieldName:'endDate', flag:sp.orderFlag /}</th>
+                <!--onclick="groundingSort('endDate')"这个不点击排序-->
+                <th width="10%" onclick="groundingSort('yieldOfYear')">
+                    年化收益率%#{sortTagShow sortName:sp.orderSort, fieldName:'yieldOfYear', flag:sp.orderFlag /}</th>
+                <th width="10%" onclick="groundingSort('sharpeIndex')">
+                    sharpe#{sortTagShow sortName:sp.orderSort, fieldName:'sharpeIndex', flag:sp.orderFlag /}</th>
+                <th width="10%" onclick="groundingSort('profitRatio')">
+                    盈利比率（胜率）#{sortTagShow sortName:sp.orderSort, fieldName:'profitRatio', flag:sp.orderFlag /}</th>
+            </tr>
+        #{list items:gdList,as:'item'}
+            <tr>
+                <td width="8%"><input type="checkbox" autocomplete="off" id="stra_${item.id}" name=""
+                                      value="${item.id}"></td>
+                <td width="8%">#{emVF item.upTime , f:'yyyy-MM-dd'/}</td>
+                <td width="8%"><a href="javascript:void(0);" data-url="@{StrategyInfos.strategyDetail(item.id)}"
+                                  data-title="${item.sname}" class="dialog_td">#{emVF item.sname /}</a></td>
+                <td width="8%">#{emVF item.provider /}</td>
+                <td width="8%">
+                    #{if item.tradeVariety ==1  }
+                        股票
+                    #{/if}
+                    #{elseif item.tradeVariety==2}
+                        期货
+                    #{/elseif}
+                    #{else }
+                        混合
+                    #{/else}
+                </td>
+                <td width="8%">
+                    #{if item.stype==1}
+                        选股型
+                    #{/if}
+                    #{elseif item.stype==2}
+                        择时型
+                    #{/elseif}
+                    #{elseif item.stype==3}
+                        交易型
+                    #{/elseif}
+                    #{else }
+                        其他
+                    #{/else}
+
+                </td>
+                <td width="8%">#{emVF item.languange /}</td>
+                <td width="10%">
+                    #{if item.starLevel>4.7}
+                        <span class="all_star_10"> </span>
+                    #{/if}
+                    #{if item.starLevel<=4.7 &&item.starLevel>4.2}
+                        <span class="all_star_9"> </span>
+                    #{/if}
+                    #{if item.starLevel<=4.2 &&item.starLevel>3.7}
+                        <span class="all_star_8"> </span>
+                    #{/if}
+                    #{if item.starLevel<=3.7 &&item.starLevel>3.2}
+                        <span class="all_star_7"> </span>
+                    #{/if}
+                    #{if item.starLevel<=3.2 &&item.starLevel>2.7}
+                        <span class="all_star_6"> </span>
+                    #{/if}
+                    #{if item.starLevel<=2.7 &&item.starLevel>2.2}
+                        <span class="all_star_5"> </span>
+                    #{/if}
+                    #{if item.starLevel<=2.2 &&item.starLevel>1.7}
+                        <span class="all_star_4"> </span>
+                    #{/if}
+                    #{if item.starLevel<=1.7 &&item.starLevel>1.2}
+                        <span class="all_star_3"> </span>
+                    #{/if}
+                    #{if item.starLevel<=1.2 &&item.starLevel>0.7}
+                        <span class="all_star_2"> </span>
+                    #{/if}
+                    #{if item.starLevel<=0.7 &&item.starLevel>0}
+                        <span class="all_star_1"> </span>
+                    #{/if}
+                </td>
+                <td width="10%">#{emVF item.discussCount  /}</td>
+                <td width="10%"><strong>#{emFM item.collectCount /}</strong></td>
+                <td width="10%"><strong>#{emFM item.subscriber /}</strong></td>
+                <td width="10%"><strong>#{emFM item.allSubscriber /}</strong></td>
+                <td width="10%">#{emVFC item.endDate , f:'yyyy-MM-dd' /}</td>
+                <td width="10%">#{emVFC v: item==null || item.yieldOfYear==null ?null : item.yieldOfYear * 100, f:'0.00',c:true /}</td>
+                <td width="10%">#{emFM v:item.sharpeIndex , f:'0.00',  /}</td>
+                <td width="10%">#{emFM v:item.profitRatio , f:'0.00',  /}</td>
+            </tr>
+        #{/list}
+        </table>
+    </form>
+
+
+</div>
+<!--分页 Begin-->
+<div class="page">
+    <div class="page_center">
+        <form action="@{StrategyInfos.list(sp) }" class="pageFrom" method="get">
+        #{paging page:page /}
+        </form>
+    </div>
+</div>
+<!--分页 End-->
+
+<!--control_active Begin-->
+<div class="control_active">
+    <div class="control_active_wrap">
+    #{hasAuth '23' } <span class="sale_out">策略下架</span> #{/hasAuth}
+    </div>
+</div>
+<!--control_active End-->
+
+
+</li>
+
+<li #{if sp.flag==2}class="display"#{/if}>
+
+<div class="common_user_bar">
+    <dl>
+        <form action="@{StrategyInfos.grounding()}" method="get">
+        *{ <dd>
+                    <div class="dialog_box">
+                        <input type="hidden" autocomplete="off" id="ttypeValue2" name="sp.tradeType" value="${sp.tradeType}">
+                        <input type="hidden" autocomplete="off" id="ttypeName2">
+                        <div id="ttype2" class="sel_84_dialog">
+                        #{if sp.tradeType==1}选股型#{/if}
+                        #{elseif sp.tradeType==2}择时型#{/elseif}
+                        #{elseif sp.tradeType==3}交易型#{/elseif}
+                        #{elseif sp.tradeType==4}其他#{/elseif}
+                        #{else }策略类型#{/else}
+                        </div>
+                        <ul id="options_ttype2" class="sel_91_option" style="display: none;">
+                            <li  data-value="0">全部</li>
+                            <li  data-value="1">选股型</li>
+                            <li  data-value="2">择时型</li>
+                            <li  data-value="3">交易型</li>
+                            <li  data-value="4">其他</li>
+                        </ul>
+                    </div>
+
+                </dd>
+
+                <dd>
+                    <div class="dialog_box">
+                        <input type="hidden" autocomplete="off" id="tvarietyValue2" name="sp.tradeVariety" value="${sp.tradeVariety}">
+                        <input type="hidden" autocomplete="off" id="tvarietyName2">
+                        <div id="tvariety2" class="sel_84_dialog">
+
+                        #{if sp.tradeVariety==1}股票#{/if}
+                        #{elseif sp.tradeVariety==2}期货#{/elseif}
+                        #{elseif sp.tradeVariety==3}混合#{/elseif}
+                        #{else }交易品种#{/else}
+                        </div>
+                        <ul id="options_tvariety2" class="sel_91_option" style="display: none;">
+                            <li  data-value="0">全部</li>
+                            <li  data-value="1">股票</li>
+                            <li  data-value="2">期货</li>
+                            <li  data-value="3">混合</li>
+                        </ul>
+                    </div>
+                </dd>}*
+
+            <dd>
+                <div class="dialog_box">
+                    <input type="hidden" autocomplete="off" id="languageValue2" name="sp.strategyLanguage"
+                           value="${sp.strategyLanguage}">
+                    <input type="hidden" autocomplete="off" id="languageName2">
+
+                    <div id="strategyLanguage2" class="sel_84_dialog">
+                    #{if sp.strategyLanguage==1}QICore#{/if}
+                    #{elseif sp.strategyLanguage==2}QIA#{/elseif}
+                    #{else }策略平台#{/else}
+                    </div>
+                    <ul id="options_strategyLanguage2" class="sel_91_option" style="display: none;">
+                        <li data-value="0">全部</li>
+                        <li data-value="1">QICore</li>
+                        <li data-value="2">QIA</li>
+                    </ul>
+                </div>
+
+            </dd>
+
+            <dd>
+                <div class="dialog_box">
+                    <input type="hidden" autocomplete="off" id="statusValue2" name="sp.status" value="${sp.status}">
+                    <input type="hidden" autocomplete="off" id="statusName2">
+
+                    <div id="status2" class="sel_84_dialog">
+                    #{if sp.status==1}待审核#{/if}
+                    #{elseif sp.status==2}沙箱测试#{/elseif}
+                    #{elseif sp.status==3}回测中#{/elseif}
+                    #{elseif sp.status==6}已回测#{/elseif}
+                    #{elseif sp.status==8}回测失败#{/elseif}
+                    #{else }状态#{/else}
+                    </div>
+                    <ul id="options_status2" class="sel_91_option" style="display: none;">
+                        <li data-value="0">全部</li>
+                        <li data-value="1">待审核</li>
+                        <li data-value="2">沙箱测试</li>
+                        <li data-value="3">回测中</li>
+                        <li data-value="6">已回测</li>
+                        <li data-value="8">回测失败</li>
+                    </ul>
+                </div>
+
+            </dd>
+            <dd>
+                <input class="s_keyword" type="text" name="sp.keyWords" value="${sp.keyWords}" placeholder="策略名称/策略师">
+            </dd>
+
+            <dd>
+                <input type="image" class="user_submit" src="@{'/public/images/user_check.png'}" name="">
+            </dd>
+            <dd>
+                <img src="@{'/public/images/refresh.png'}" class="user_submit user_submit_last" id="refresh" alt=""
+                     style="cursor:pointer">
+            </dd>
+        </form>
+    </dl>
+
+</div>
+<div class="scroll_str">
+    <form action="@{StrategyInfos.grounding()}" method="get" id='waitOrder'>
+    #{if sp.orderFlag==0}
+        <input type="hidden" name="sp.orderFlag" value="1">
+    #{/if}
+    #{else }
+        <input type="hidden" name="sp.orderFlag" value="0">
+    #{/else}
+        <input type="hidden" name="sp.keyWords" value="${sp.keyWords}">
+        <input type="hidden" name="sp.status" value="${sp.status}">
+        <input type="hidden" name="sp.tradeType" value="${sp.tradeType}">
+        <input type="hidden" name="sp.tradeVariety" value="${sp.tradeVariety}">
+        <input type="hidden" name="sp.orderSort" value="" id="paramSort">
+        <table width="100%" cellspacing="0" cellpadding="0" border="0" class="tbl_exec tbl_common">
+            <tr>
+                <th width="8%"><img src="@{'/public/images/check_uncheck.png'}" class="check_uncheck"></th>
+                <th width="8%" onclick="waitSort('uploadTime')">
+                    上传时间#{sortTagShow sortName:sp.orderSort, fieldName:'uploadTime', flag:sp.orderFlag /}</th>
+                <th width="8%" onclick="waitSort('sname')">
+                    策略名称#{sortTagShow sortName:sp.orderSort, fieldName:'sname', flag:sp.orderFlag /}</th>
+                <th width="8%" onclick="waitSort('status')">
+                    状态#{sortTagShow sortName:sp.orderSort, fieldName:'status', flag:sp.orderFlag /}</th>
+                <th width="8%" onclick="waitSort('enginetypeId')">
+                    策略平台#{sortTagShow sortName:sp.orderSort, fieldName:'enginetypeId', flag:sp.orderFlag /}</th>
+                <th width="8%" onclick="waitSort('provider')">
+                    策略师#{sortTagShow sortName:sp.orderSort, fieldName:'provider', flag:sp.orderFlag /}</th>
+                <th width="8%" onclick="waitSort('tradeVariety')">
+                    交易品种#{sortTagShow sortName:sp.orderSort, fieldName:'tradeVariety', flag:sp.orderFlag /}#{sortTagShow sortName:sp.orderSort, fieldName:'movingCost', flag:sp.orderFlag /}</th>
+                <th width="8%" onclick="waitSort('stype')">
+                    策略类型#{sortTagShow sortName:sp.orderSort, fieldName:'stype', flag:sp.orderFlag /}</th>
+                <th width="10%" onclick="waitSort('yieldOfYear')">
+                    年化收益率%#{sortTagShow sortName:sp.orderSort, fieldName:'yieldOfYear', flag:sp.orderFlag /}</th>
+                <th width="10%" onclick="waitSort('sharpeIndex')">
+                    sharpe#{sortTagShow sortName:sp.orderSort, fieldName:'sharpeIndex', flag:sp.orderFlag /}</th>
+                <th width="10%" onclick="waitSort('profitRatio')">
+                    盈利比率（胜率）#{sortTagShow sortName:sp.orderSort, fieldName:'profitRatio', flag:sp.orderFlag /}</th>
+                <!--<th width="10%" onclick="waitSort('movingCost')">滑价成本#{sortTagShow sortName:sp.orderSort, fieldName:'movingCost', flag:sp.orderFlag /}</th>-->
+            </tr>
+        #{list items:waitList ,as:'item'}
+            <tr>
+                <td width="8%"><input type="checkbox" autocomplete="off" eid="${item.enginetypeId}" name=""
+                                      status="${item.status}" value="${item.id}"></td>
+                <td width="8%">#{emVF item.uploadTime , f:'yyyy-MM-dd' /}</td>
+                <td width="8%"><a href="javascript:void(0);" data-url="@{StrategyInfos.strategyDetail(item.id)}"
+                                  data-title="${item.sname}" class="dialog_td">#{emVF item.sname /}</a></td>
+                <td width="8%">#{if item.status==1}待审核#{/if}
+                    #{elseif item.status==2}沙箱测试#{/elseif}
+                    #{elseif item.status==3}回测中#{/elseif}
+                    #{elseif item.status==6}已回测#{/elseif}
+                    #{else }回测失败#{/else}
+                </td>
+
+
+                <td width="8%">#{emVF item.languange /}</td>
+                <td width="8%">#{emVF item.provider /}</td>
+                <td width="8%">
+                    #{if item.tradeVariety ==1  }
+                        股票
+                    #{/if}
+                    #{elseif item.tradeVariety==2}
+                        期货
+                    #{/elseif}
+                    #{else }
+                        混合
+                    #{/else}
+                </td>
+                <td width="8%">
+                    #{if item.stype==1}
+                        选股型
+                    #{/if}
+                    #{elseif item.stype==2}
+                        择时型
+                    #{/elseif}
+                    #{elseif item.stype==3}
+                        交易型
+                    #{/elseif}
+                    #{else }
+                        其他
+                    #{/else}
+
+                </td>
+
+                <td width="10%">#{emVFC v: item==null || item.yieldOfYear==null ?null:item.yieldOfYear * 100, f:'0.00',c:true /}</td>
+                <td width="10%">#{emFM v:item.sharpeIndex , f:'0.00',  /}</td>
+                <td width="10%">#{emFM v:item.profitRatio , f:'0.00',  /}</td>
+                <!--<td width="10%">#{emFM v:item.movingCost , f:'0.00',  /}</td>-->
+
+
+            </tr>
+        #{/list}
+
+
+        </table>
+    </form>
+</div>
+
+
+<!--分页 Begin-->
+<div class="page">
+    <div class="page_center">
+        <form action="@{StrategyInfos.grounding(sp) }" class="pageFrom" method="get">
+        #{paging page:page /}
+        </form>
+    </div>
+</div>
+<!--分页 End-->
+
+<!--control_active Begin-->
+<div class="control_active">
+    <div class="control_active_wrap">
+    #{hasAuth '23' }
+        #{if flag}
+            <span class="strategy_upload_btn">策略上传</span>
+        #{/if}
+        <span class="add_checkstr">加入回测</span>
+        <span class="back_test_manage">回测管理</span>
+        <span class="strategy_sale">策略上架</span>
+        <span class="remove_strategy">删除策略</span>
+    #{/hasAuth}
+    </div>
+</div>
+<!--control_active End-->
+<!--待上架策略 End-->
+
+
+</li>
+
+<li #{if sp.flag==3}class="display"#{/if}>
+#{include '/StrategyInfos/retrieve.html' /}
+</li>
+</ul>
+
+
+</div>
+<!--sp_right End-->
+
+</div>
+<!--main_wrap End-->
+
+<!-- 加入回测 dialog begin-->
+
+<div class="tab_strategy_state change_status" style="display:none" title="加入回测">
+    <form action="">
+        <div id="qicore_backtest_server" class="dialog_box">
+            <input type="hidden" autocomplete="off" value="-1" id="reportDate_20" name="ip">
+            <input type="hidden" autocomplete="off" id="reportName_20">
+
+            <div id="select_info_year1_20" class="sel_84_dialog">
+                --请选择回测服务器--
+            </div>
+            <ul id="options_year1_20" class="sel_91_option for_position" style="display: none;">
+
+                <li data-value="-1">请选择回测服务器</li>
+            </ul>
+        </div>
+        <br/>
+        <br/>
+
+        <div id="qia_backtest_server" class="dialog_box">
+            <input type="hidden" autocomplete="off" value="-1" id="reportDate_20_QIA" name="ip">
+            <input type="hidden" autocomplete="off" id="reportName_20_QIA">
+
+            <div id="select_info_year1_20_QIA" class="sel_84_dialog">
+                --请选择回测服务器--
+            </div>
+            <ul id="options_year1_20_QIA" class="sel_91_option for_position" style="display: none;">
+
+
+            </ul>
+        </div>
+
+        <div class="common_btn">
+            <input style="position: relative;float: right;margin-right: 80px;" type="button"  value="加入回测"
+                   id="strategy_state_submit" param_value="false" disabled="disabled" class="">
+        </div>
+        <div id="qicInfo" style="margin:80px 60px 0 25px"></div>
+    </form>
+</div>
+
+<!-- 策略上架 dialog begin-->
+
+<div class="tab_strategy_up change_status" style="display:none" title="策略上架">
+    <form action="">
+        <div id="qicore_run_server">
+            <input type="hidden" autocomplete="off" value="-1" id="reportDate_21" name="ip">
+            <input type="hidden" autocomplete="off" id="reportName_21">
+
+            <div id="select_info_year1_21" class="sel_84_dialog new_sel_d">
+            </div>
+            <ul id="options_year1_21" class="sel_91_option new_sel_option" style="display: none;">
+
+            </ul>
+        </div>
+        <br/>
+        <br/>
+
+        <div id="qia_agent_server" style="margin-top: 10px">
+            <input type="hidden" autocomplete="off" value="-1" id="reportDate_21_QIA" name="ip">
+            <input type="hidden" autocomplete="off" id="reportName_21_QIA">
+
+            <div id="select_info_year1_21_QIA" class="sel_84_dialog new_sel_d">
+            </div>
+            <ul id="options_year1_21_QIA" class="sel_91_option new_sel_option for_alone" style="display: none;">
+            </ul>
+
+        </div>
+        <br/>
+        <br/>
+
+        <div id="qia_simulate_server" style="margin-top: 10px">
+
+            <input type="hidden" autocomplete="off" value="-1" id="reportDate_22_QIA" name="ip">
+            <input type="hidden" autocomplete="off" id="reportName_22_QIA">
+
+            <div id="select_info_year1_22_QIA" class="sel_84_dialog new_sel_d">
+            </div>
+            <ul id="options_year1_22_QIA" class="sel_91_option new_sel_option for_alone"
+                style="display: none;position: absolute; top: 135px; left: 47px;">
+            </ul>
+
+        </div>
+        <div class="common_btn">
+            <input style="position: relative;float: right;margin-right: 80px" type="button" class="common_blue"
+                   value="确认上架" id="strategy_state_submit_2">
+
+        </div>
+
+        <table style="clear:both; width:100%;">
+            <tbody>
+            <tr height="20px"></tr>
+            <tr>
+                <td align="center"><img style="display:none" id="loading2" src="/public/images/loading.gif"></td>
+            </tr>
+            </tbody>
+        </table>
+
+    </form>
+</div>
+<!--  策略上架 dialog end-->
+<!-- 策略回测管理 dialog begin-->
+
+<div class="stategy_backtest_manage" style="display:none" title="回测管理">
+
+    <div id="back_test_manage">
+        <table width="100%" id="back_test_manage_table">
+            <tr>
+                <th>服务器名称</th>
+                <th>服务器ip</th>
+                <th>状态</th>
+                <th>运行信息<br/>(总数/成功数/失败数)</th>
+                <th>操作</th>
+            </tr>
+        </table>
+    </div>
+
+</div>
+<!--  策略回测管理 dialog end-->
+<script>
+var strategyUpParam = ${sp.serviceParam};
+<!--读取config_manage表的配置信息 -->
+var allowDoSubmit = true;
+function getCheckBoxValue() {
+    var strategyId_arry = [];
+    var eid_array = []
+    $("input[type=checkbox]").each(function () {
+        if (this.checked) {
+            strategyId_arry.push($(this).val());
+            eid_array.push($(this).attr("eid"))
+            if ($(this).attr("status") == 6) {
+                allowDoSubmit = false;
+            }
+        }
+    })
+    return {"strategyIds":strategyId_arry, "eids":eid_array};
+}
+function hasBackTestingStrategy() {
+    var hasBackTestStrategy = false;
+    $("input[type=checkbox]").each(function () {
+        if (this.checked) {
+            if ($(this).attr("status") == 3) {
+                hasBackTestStrategy = true;
+            }
+        }
+    });
+    return hasBackTestStrategy;
+}
+function hasDiffEngineStragety(eid_array) {
+    if (eid_array.length == 0) {
+        return true;
+    }
+    var curEid = eid_array[0];
+    for (var i = 0; i < eid_array.length; i++) {
+        if (eid_array[i] != curEid) {
+            return true;
+        }
+        curEid = eid_array[i];
+    }
+    return false;
+
+}
+function fillServers(type, eId) {
+    var data = getServers(type, eId)
+
+    if (data) {
+        for (var i = 0; i < data.length; i++)
+            if (type == 0) {
+                if (eId == 1) {
+                    $("#options_year1_20").append("<li data-value=" + data[i].id + ">" + data[i].name + "</li>");
+                } else if (eId == 2) {
+                    $("#options_year1_20_QIA").append("<li data-value=" + data[i].id + ">" + data[i].name + "</li>");
+                }
+            } else if (type == 1) {
+                if (eId == 1) {
+                    $("#options_year1_21").append("<li data-value=" + data[i].id + ">" + data[i].name + "</li>");
+                } else if (eId == 2) {
+                    $("#options_year1_21_QIA").append("<li data-value=" + data[i].id + ">" + data[i].name + "</li>");
+                }
+            }
+            else if (type == 2) {
+                if (eId == 2) {
+                    $("#options_year1_22_QIA").append("<li data-value=" + data[i].id + ">" + data[i].name + "</li>");
+                }
+            }
+
+    }
+}
+//注册“加入回测”dialog中点击li事件
+$("#options_year1_20_QIA li").live("click", function (serviceId) {
+    var serviceId = $(this).attr("data-value");
+    if (serviceId == -1) {
+        $this.removeClass("common_blue");
+        $this.attr("disabled",true);
+        return;
+    }
+    var $this = $("#strategy_state_submit");
+    $this.removeClass("common_blue");
+    $this.attr("disabled",true);
+    //$this.attr("param_value","false");
+    $("#qicInfo").html("状态：<span style='color: green'>检查中,请稍后...</span>");
+    var url = #{jsRoute @BackTestServers.getServiceStatus() /}
+    $.ajax({
+        type:"GET",
+        url:url.url() +"?serverId=" + serviceId,
+        dataType:"json",
+        cache:false,
+        success:function (data) {
+            if (data.result == true) {
+                $this.addClass("common_blue");
+                $this.attr("disabled",false);
+              //  $this.attr("param_value","true");
+                $("#qicInfo").html("状态：<span style='color: green'>运行中</span>, "+"已分配策略: "+data.count+"个");
+            } else {
+                $("#qicInfo").html("状态：<span style='color: red'>离线</span>, "+"已分配策略: "+data.count+"个");
+            }
+        },
+        error:function () {
+            $("#qicInfo").html("状态：<span style='color: red'>离线</span>, "+"已分配策略: "+data.count+"个");
+        }
+    });
+
+
+});
+function getServers(type, eId) {
+    var result = undefined;
+    var url = #{jsRoute @BackTestServers.getServers() /}
+            $.ajax({
+                url:url.url() + "?type=" + type + "&eId=" + eId,
+                dataType:'json',
+                type:"post",
+                async:false,
+                success:function (data) {
+                    result = data;
+                },
+                error:function (data) {
+
+
+                }
+
+            });
+    return result;
+}
+function initStrategyServerOptionValue() {
+    $("#options_year1_20").html("<li data-value='-1'>--QICORE回测服务器--</li>");
+    $("#select_info_year1_20").html("--QICORE回测服务器--");
+    $("#options_year1_20_QIA").html("<li data-value='-1'>--QIA回测服务器--</li>");
+    $("#select_info_year1_20_QIA").html("--QIA回测服务器--");
+    $("#options_year1_21").html("<li data-value='-1'>--QICORE运行服务器--</li>");
+    $("#select_info_year1_21").html("--QICORE运行服务器--");
+    $("#options_year1_21_QIA").html("<li data-value='-1'>--QIA Agent 服务器--</li>");
+    $("#select_info_year1_21_QIA").html("--QIA Agent服务器--");
+    $("#options_year1_22_QIA").html("<li data-value='-1'>--QIA实时模拟服务器--</li>");
+    $("#select_info_year1_22_QIA").html("--QIA实时模拟服务器--");
+    $("#reportDate_20").val("-1")
+    $("#reportDate_20_QIA").val("-1")
+    $("#reportDate_21").val("-1")
+    $("#reportDate_21_QIA").val("-1")
+    $("#reportDate_22").val("-1")
+    $("#reportDate_22_QIA").val("-1")
+}
+function changeStrategyServerDivStyle(type, value, param) {
+
+    switch (value) {
+        //仅选择了qicore策略
+        case '1':
+            //隐藏qia的服务器选择框
+            if (type == 1) {
+                $("#qia_agent_server").css("display", "none")
+                $("#qia_simulate_server").css("display", "none")
+                $("#qicore_run_server").css("display", "")
+            } else {
+                $("#qia_backtest_server").css("display", "none")
+                $("#qicore_backtest_server").css("display", "")
+            }
+            fillServers(type, 1);
+            break;
+        //仅选择了qia策略
+        case '2':
+            //隐藏qicore的服务器选择框
+            if (type == 1) {
+                $("#qicore_run_server").css("display", "none")
+                if (param == 1) {  <!--根据config_manage表的配置信息 选择显示内容-->
+                    $("#qia_agent_server").css("display", "")
+                    $("#qia_simulate_server").css("display", "none")
+                } else if (param == 2) {
+                    $("#qia_agent_server").css("display", "none")
+                    $("#qia_simulate_server").css("display", "")
+                } else {
+                    $("#qia_agent_server").css("display", "")
+                    $("#qia_simulate_server").css("display", "")
+                }
+            } else {
+                $("#qicore_backtest_server").css("display", "none")
+                $("#qia_backtest_server").css("display", "")
+                //type=2代表qia实现模拟服务器
+            }
+            fillServers(2, 2);
+            fillServers(type, 2);
+            break;
+        //两种策略混合情况
+        case 3:
+            if (type == 1) {
+                $("#qia_agent_server").css("display", "")
+                $("#qia_simulate_server").css("display", "")
+                $("#qicore_run_server").css("display", "")
+                fillServers(2, 2);
+            } else {
+                $("#qia_backtest_server").css("display", "")
+                $("#qicore_backtest_server").css("display", "")
+            }
+            fillServers(type, 1);
+            fillServers(type, 2);
+            break;
+        default :
+            new QicDialog({"message":"系统出错"}).error();
+    }
+}
+
+//加入回测 begin
+$(".add_checkstr").click(function () {
+    var checkedValue = getCheckBoxValue();
+    if (checkedValue.strategyIds.length == 0) {
+        $.qicTips({
+            target:'.add_checkstr',
+            level:2,
+            message:"请选择回测策略"
+        });
+        return;
+    }
+    initStrategyServerOptionValue();
+    if (hasDiffEngineStragety(checkedValue.eids)) {
+        changeStrategyServerDivStyle(0, 3, strategyUpParam)
+    } else {
+        changeStrategyServerDivStyle(0, checkedValue.eids[0], strategyUpParam);
+    }
+    $(".tab_strategy_state").dialog({
+        autoOpen:true,
+        modal:true,
+        position:{
+            at:"center"
+        },
+        height:290,
+        resizable:false,
+        width:330,
+        zIndex:1000
+    });
+})
+
+$("#strategy_state_submit").click(function () {
+    var qicore_server_id = $("#reportDate_20").val();
+    var qia_server_id = $("#reportDate_20_QIA").val();
+
+
+    if ($("#qicore_backtest_server").css("display") != "none" && qicore_server_id == "-1") {
+        $.qicTips({
+            target:'#strategy_state_submit',
+            level:2,
+            message:"请选择QICore回测服务器"
+        });
+        return;
+    }
+    if ($("#qia_backtest_server").css("display") != "none" && qia_server_id == "-1") {
+        $.qicTips({
+            target:'#strategy_state_submit',
+            level:2,
+            message:"请选择QIA回测服务器"
+        });
+        return;
+    }
+
+    $.ajax({
+        url:"/StrategyInfos/addlookback",
+        dataType:'json',
+        data:{"ids":getCheckBoxValue().strategyIds, "serverId.qicore":qicore_server_id, "serverId.qia":qia_server_id},
+        type:"post",
+        beforeSend:function () {
+            if (!allowDoSubmit) {
+                new QicDialog({
+                    message:"请不要选择已回测策略"
+                }).warn();
+                allowDoSubmit = true;
+                return false;
+            }
+            return true;
+        },
+        success:function (data) {
+            if (data.success == true) {
+                $.qicTips({
+                    target:'#strategy_state_submit',
+                    level:1,
+                    message:data.message
+                });
+                window.location.reload();
+            } else {
+                $.qicTips({
+                    target:'#strategy_state_submit',
+                    level:2,
+                    message:data.message
+                });
+                // alert(data.message);
+            }
+        },
+        error:function (data) {
+            if (!data.success) {
+                $.qicTips({
+                    target:'#strategy_state_submit',
+                    level:2,
+                    message:"出错了....."
+                });
+            }
+
+        }
+
+    })
+
+
+})
+//加入回测 end
+
+//删除策略 begin
+$(".remove_strategy").click(function (event) {
+    if (getCheckBoxValue().strategyIds.length == 0) {
+        //alert("没有选中策略");
+        $.qicTips({
+            target:'.remove_strategy',
+            level:2,
+            message:"请选择删除策略"
+        });
+
+        return;
+    }
+    if (hasBackTestingStrategy()) {
+        $.qicTips({
+            target:'.remove_strategy',
+            level:2,
+            message:"回测中的策略不允许删"
+        });
+
+        return;
+    }
+
+    new QicDialog({
+        message:"确认删除？",
+        title:"",
+        confirmName:"",
+        cancelName:"",
+        confirm:function () {
+            $.ajax({
+                url:"/StrategyInfos/delstrategy",
+                dataType:'json',
+                data:{"ids":getCheckBoxValue().strategyIds},
+                type:"post",
+                success:function (data) {
+                    if (data.success) {
+                        $.qicTips({
+                            target:event.target,
+                            level:1,
+                            message:"删除成功"
+                        });
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 400);
+
+                    } else {
+                        $.qicTips({
+                            target:event.target,
+                            level:2,
+                            message:"回测中的策略不允许删"
+                        });
+                    }
+                },
+                error:function (data) {
+                    if (!data.success) {
+                        $.qicTips({
+                            target:event.target,
+                            level:2,
+                            message:"出错了....."
+                        });
+                    }
+
+                }
+
+            })
+        },
+        cancel:function () {
+
+        }
+    }).confirm();
+
+})
+
+//删除策略 end
+
+//策略清空 begin
+$(".strategy_remove_btn").click(function (event) {
+    new QicDialog({
+        message:"确认清空已删除和下架时间大于三个月的策略?",
+        title:"",
+        confirmName:"",
+        cancelName:"",
+        confirm:function () {
+            $.ajax({
+                url:"/StrategyInfos/emptystrategy",
+                dataType:'json',
+                //data:{"retrieveist":retrieveList},
+                type:"post",
+                success:function (data) {
+                    if (data.success) {
+                        $.qicTips({
+                            target:event.target,
+                            level:1,
+                            message:"成功清空策略"
+                        });
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 400);
+
+                    }
+                },
+                error:function (data) {
+                    if (!data.success) {
+                        $.qicTips({
+                            target:event.target,
+                            level:2,
+                            message:"出错了....."
+                        });
+                    }
+
+                }
+
+            })
+        },
+        cancel:function () {
+
+        }
+    }).confirm();
+})
+
+//策略清空 end
+
+//策略上架begin
+$(".strategy_sale").click(function () {
+    var checkedValue = getCheckBoxValue();
+    if (checkedValue.strategyIds.length == 0) {
+        //alert("没有选中策略");
+        $.qicTips({
+            target:'.strategy_sale',
+            level:2,
+            message:"请选择上架策略"
+        });
+        return;
+    }
+    initStrategyServerOptionValue();
+    if (hasDiffEngineStragety(checkedValue.eids)) {
+        changeStrategyServerDivStyle(1, 3, strategyUpParam);
+    } else {
+        changeStrategyServerDivStyle(1, checkedValue.eids[0], strategyUpParam);
+    }
+
+    $(".tab_strategy_up").dialog({
+        autoOpen:true,
+        modal:true,
+        position:{
+            at:"center"
+        },
+        height:350,
+        resizable:false,
+        width:330,
+        zIndex:1000
+    });
+
+
+});
+$("#strategy_state_submit_2").click(function () {
+
+    var qicore_server_id = $("#reportDate_21").val();
+    var qia_agent_server_id = $("#reportDate_21_QIA").val();
+    var qia_simulate_server_id = $("#reportDate_22_QIA").val();
+    if ($("#qicore_run_server").css("display") != "none" && qicore_server_id == "-1") {
+        $.qicTips({
+            target:'#strategy_state_submit_2',
+            level:2,
+            message:"请选择QICore运行服务器"
+        });
+        return;
+    }
+    switch (strategyUpParam) {
+        case 1 :
+            if ($("#qia_agent_server").css("display") != "none" && qia_agent_server_id == "-1") {
+                $.qicTips({
+                    target:'#strategy_state_submit_2',
+                    level:2,
+                    message:"请选择QIA Agent服务器"
+                });
+                return;
+            }
+            break;
+        case 2 :
+            if ($("#qia_simulate_server").css("display") != "none" && qia_simulate_server_id == "-1") {
+                $.qicTips({
+                    target:'#strategy_state_submit_2',
+                    level:2,
+                    message:"请选择QIA 实时模拟服务器"
+                });
+                return;
+            }
+            break;
+        default :
+            if ($("#qia_agent_server").css("display") != "none" && qia_agent_server_id == "-1") {
+                $.qicTips({
+                    target:'#strategy_state_submit_2',
+                    level:2,
+                    message:"请选择QIA Agent服务器"
+                });
+                return;
+            }
+            if ($("#qia_simulate_server").css("display") != "none" && qia_simulate_server_id == "-1") {
+                $.qicTips({
+                    target:'#strategy_state_submit_2',
+                    level:2,
+                    message:"请选择QIA 实时模拟服务器"
+                });
+                return;
+            }
+            break;
+    }
+
+
+    $.ajax({
+        url:'/strategyinfos/upstrategy',
+        data:{"ids":getCheckBoxValue().strategyIds, "serverId.qicore":qicore_server_id, "serverId.qia":qia_agent_server_id, "serverId.qiaSimulate":qia_simulate_server_id},
+        type:'post',
+        dataType:'json',
+        beforeSend:function () {
+            $("#loading2").show();
+        },
+        complete:function () {
+            $("#loading2").hide();
+        },
+        success:function (data) {
+            if (data.success) {
+                $.qicTips({
+                    target:'#strategy_state_submit_2',
+                    level:1,
+                    message:data.message
+                });
+                setTimeout(function () {
+                    window.location.reload();
+                }, 400);
+            }
+            else {
+                $.qicTips({
+                    target:'#strategy_state_submit_2',
+                    level:2,
+                    message:data.message
+                });
+            }
+        },
+        error:function (data) {
+
+            $.qicTips({
+                target:'#strategy_state_submit_2',
+                level:2,
+                message:"上架失败"
+            });
+
+        }
+    })
+
+
+});
+//策略上架end
+
+</script>
+
+
+<script>
+    (function () {
+        //window.resizeHeight('.tbl_scoll', 320);
+        window.resizeHeight('.scroll_str', 170)
+
+        $(".tab_li li").live("click", function () {
+            var index = $(this).index();
+            if (index == 0) {
+                window.location.href = "/StrategyInfos/list";
+            } else if (index == 1) {
+                window.location.href = "/StrategyInfos/grounding";
+            } else {
+                window.location.href = "/StrategyInfos/retrieve";
+            }
+
+        });
+
+        //jQ tab切换
+        $(".tab_li li").click(function () {
+            var index = $(this).index();
+            $(".tab_li").children("li").removeClass().eq(index).addClass('display');
+            $(".sub_content").children("li").removeClass().eq(index).addClass('display')
+        });
+
+        //全选/反选
+        $(".check_uncheck").toggle(function () {
+            //check() uncheck()方法 是自定义jQ对象方法
+            //选中项
+            var checked = $(this).closest("li").find('.tbl_common input[type="checkbox"]').check();
+            //console.log(checked);
+        }, function () {
+            $(this).closest("li").find('.tbl_common input[type="checkbox"]').uncheck();
+            //console.log(undchecked);
+        });
+
+    })();
+
+
+</script>
+
+<!--下架选项 Begin-->
+<script>
+    var strategyDownRoute = #{jsRoute @StrategyInfos.strategyDownInfo() /};
+    var getStrDownTemplateRoute = #{jsRoute @StrategyInfos.strategyDown() /};
+</script>
+<div class="sold_out_pop pop_blue" title='策略下架'>
+    <!-- strategyDown.html-->
+</div>
+<link href="@{'/public/stylesheets/ui-lightness/jquery-ui-1.9.1.custom.css'}" rel="stylesheet">
+<script src="@{'/public/javascripts/jquery-ui-1.9.1.custom.js'}"></script>
+<script src="@{'/public/javascripts/strategyinfo.js'}"></script>
+<script src="@{'/public/javascripts/WdatePicker.js'}"></script>
+<script>
+
+</script>
+<!--下架选项 End-->
+<!--策略基本信息 Begin-->
+<div class="strategy_popup tab_wrap">
+    <div class="popup_title">
+        <ul class="strategy_popup_tab tab_title" id="tabTitle">
+            <li class="display" data-value='11d日'>基本信息</li>
+            <li class="" data-value='22d日'>收益走势图</li>
+            <li class="" data-value='33d日'>当前持仓</li>
+            <li class="" data-value='44d日'>绩效指标</li>
+            <li class="engine_hiden" data-value='55日'>委托记录</li>
+            <li class="engine_hiden" data-value='66d日'>成交记录</li>
+        </ul>
+    </div>
+    <div class="strategy_content">
+        <ul class="tab_contents">
+            <li class="tab_content display">
+                <!--基本信息 Begin-->
+                <div class="common_tab_wrap common_base_wrap">
+                </div>
+                <!--基本信息 End-->
+            </li>
+            <li class="tab_content ">
+                <div class="trend_img">
+                </div>
+            </li>
+            <li class="tab_content ">
+                <!--当前持仓 Begin-->
+                <div id="chicang">
+                </div>
+                <!--当前持仓 End-->
+            </li>
+            <li class="tab_content" id="indicator_loading">
+                <!--绩效指标 Begin-->
+                <div class="right_2_wrap" id="indicator">
+                </div>
+                <!--绩效指标 End-->
+            </li>
+            <li class="tab_content">
+                <!--委托记录 Begin-->
+                <div class="tbl_common_wrap bargainRecord" id="bargainRecord">
+                </div>
+                <!--委托记录 End-->
+            </li>
+            <li class="tab_content">
+                <!--成交记录 Begin-->
+                <div class="tbl_common_wrap entrustRecord" id="entrustRecord">
+                </div>
+                <!--成交记录 End-->
+            </li>
+        </ul>
+    </div>
+</div>
+<!--策略基本信息 End-->
+<!--策略上传 Begin-->
+<div class="strategy_upload_box" title="上传策略">
+    <form id="uploadStategyForm" method="post" class="form_datum_modify">
+        <div class="upload_box">
+            <input name="hadUploadFile" type="hidden" value="0" id="hadUploadFile">
+            <input name="files" id="files" type="hidden" value="">
+            <input name="strategyDto.enginetypeId" id="enginetypeId" type="hidden" value="-1">
+            <img id="loading" src="@{'/public/images/loading.gif'}" style="display:none;">
+            <!--
+
+            &nbsp;&nbsp;<input type="file" id="strategyFile" class="set_user_i"  name="attachment" ><span  onclick="javscript:uploadStrategy()" id="strategy_upload"  class="strategy_upload">上传策略</span>
+            -->
+            <div class="upload_file">
+                <div class="set_user_i" style="">
+                    <span class="qic_file_val"></span>
+                </div>
+                <div class="btn btn_success fileinput_button">
+
+                    <i class="icon_plus icon_white"></i>
+                    <span>上传策略</span>
+                    <input type="file" id="strategyFile" name="attachment" class="qic_file" title="仅限(.zip .excel)">
+
+                </div>
+                <script>
+                    bindFileUpload();
+                    function bindFileUpload() {
+                        $(".qic_file").bind("change", function () {
+                            var value = $(this).val();
+                            $(".qic_file_val").html(value.substring(12))
+                            //alert($(this).val());
+                            // alert($(".qic_file_val").html());
+                            if (!$("#strategyFile").val() || $("#strategyFile").val() == '') {
+                                return;
+                            }
+                            uploadStrategy();
+                        })
+                    }
+                </script>
+            </div>
+            <h3 class="h3_title">
+                策略信息
+            </h3>
+
+            <div class="strategy_common strategy_name">
+                <label>策略上传状态<span class="red">&nbsp;</span>：</label>
+                <span id="uploadStatus"><font color="red">未上传</font></span>
+                <input name="strategyDto.lookbackStime" type="hidden" value="" autocomplete="off"
+                       id="strategyDto_lookbackStime">
+                <input name="strategyDto.lookbackEtime" type="hidden" value="" autocomplete="off"
+                       id="strategyDto_lookbackEtime">
+            </div>
+
+            <div class="strategy_common strategy_name">
+                <label>策略名称<span class="red">*</span>：</label>
+                <input name="strategyDto.sname" id="strategyDto_sname" type="text" class="strategy_name_inpt">
+            </div>
+
+            <div class="strategy_common strategy_variety">
+
+                <div class="dialog_box infor_dialog">
+                    <div></div>
+                    <label class="for_tn">策略类型<span class="red">*</span></label>
+                    <input name="strategyDto.stype" type="hidden" value="3" autocomplete="off" id="reportDate_8">
+                    <input type="hidden" autocomplete="off" id="reportName_8">
+
+                    <div id="select_info_year1_8" class="sel_84_dialog  for_infor" style="width:145px;">交易型</div>
+                    <ul id="options_year1_8" class="sel_91_option  for_infor" style="display: none;">
+                        <li data-value="1">选股型</li>
+                        <li data-value="3">交易型</li>
+                        <li data-value="2">择时型</li>
+                        <li data-value="4">其它</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="strategy_common strategy_from">
+                <div class="dialog_box infor_dialog">
+                    <div></div>
+                    <label class="for_tn">交易品种<span class="red">*</span></label>
+                    <input name="strategyDto.tradeVariety" type="hidden" value="2" autocomplete="off" id="reportDate_9">
+                    <input type="hidden" autocomplete="off" id="reportName_9">
+
+                    <div id="select_info_year1_9" class="sel_84_dialog  for_infor" style="width:145px;">期货</div>
+                    <ul id="options_year1_9" class="sel_91_option  for_infor" style="display: none;">
+                        <li data-value="1">股票</li>
+                        <li data-value="2">期货</li>
+                        <li data-value="3">混合</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="strategy_common strategy_e">
+                <label>回测开始时间：</label>
+                <input name="strategyDto.customerLookbackStartTime"
+                       onclick="WdatePicker({dateFmt:'yyyy-MM-dd',readOnly:true,maxDate: '#F{$dp.$D(\'strategyDto_backtest_endTime\')||\'%y-%M-%d\'}'  })"
+                       id="strategyDto_backtest_startTime" type="text" class="strategy_name_inpt a_datepicker">
+            </div>
+            <div class="strategy_common strategy_e">
+                <label>回测结束时间：</label>
+                <input name="strategyDto.customerLookbackEndTime"
+                       onclick="WdatePicker({dateFmt:'yyyy-MM-dd',readOnly:true, minDate: '#F{$dp.$D(\'strategyDto_backtest_startTime\')}',maxDate: '%y-%M-%d'  })"
+                       id="strategyDto_backtest_endTime" type="text" class="strategy_name_inpt a_datepicker">
+            </div>
+            <div class="strategy_common strategy_e">
+                <label>策略师姓名<span class="red">*</span>：</label>
+                <input name="strategyDto.provider" id="strategyDto_provider" type="text" class="strategy_name_inpt ">
+            </div>
+            <div class="strategy_common strategy_ec">
+                <label>策略简介（140字）<span class="red">*</span></label>
+
+                <div>
+                    <textarea style="resize:none" name="strategyDto.desp" id="strategyDto_desp" class="txtarea_stra"
+                              cols="" rows=""></textarea>
+                </div>
+            </div>
+            <div class="strategy_common strategy_e">
+                <label>策略师简介（80字）<span class="red">*</span></label>
+
+                <div>
+                    <textarea style="resize:none" name="strategyDto.providerDesp" id="strategyDto_providerDesp"
+                              class="txtarea_stra" cols="" rows=""></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="dialog_box stra_upload_btn">
+            <input type="button" id="cancleUploadBtn" onclick="javascript:cancleUpload()"
+                   class="common_blue common_cancle" value="取消">
+            <input type="submit" class="common_blue" value="确定">
+        </div>
+
+
+</div>
+</form>
+</div>
+<script src="@{'/public/javascripts/ajaxfileupload.js'}"></script>
+<link href="@{'/public/stylesheets/ajaxfileupload.css'}" type="text/css" rel="stylesheet">
+<script src="/public/javascripts/jquery.validate.js"></script>
+<script>
+#{if userInfoDto}
+var curLoginName = '${userInfoDto.name}';
+#{/if}
+function cancleUpload() {
+    $("#uploadStategyForm").get(0).reset();
+    $("#hadUploadFile").val(0);//标识已上传策略文件
+    $("#uploadStatus").html("<font color='red'>未上传</font>");
+    $(".qic_file_val").html("");
+    $(".strategy_upload_box").dialog(
+            "close"
+    );
+    return;
+
+}
+function removeVlidTip() {
+
+    $("label").each(function () {
+        if ($(this).attr("generated")) {
+            $(this).remove();
+
+        }
+    });
+    // $(".new_user_tips").css("display","none");
+}
+$().ready(function () {
+
+    $("#uploadStategyForm").validate({
+        submitHandler:function (form) {
+            if ($("#hadUploadFile").val() == 0) {
+                new QicDialog({
+                    message:"你还没有上传策略包，请上传策略包"
+                }).warn();
+                return;
+            }
+            //1. get form data
+            var url = #{jsRoute @StrategyInfos.addStrategy()/};
+            var newStrategyData = $("#uploadStategyForm").serializeArray();
+            $.ajax({
+                url:url.url(),
+                data:newStrategyData,
+                dataType:"json",
+                type:"post",
+                success:function (data) {
+                    if (data.success) {
+                        new QicDialog({
+                            message:data.message,
+                            confirm:function () {
+                                window.location.reload();
+                            }
+                        }).alert();
+                        //  window.location.reload();
+                    } else {
+                        new QicDialog({
+                            message:data.message
+                        }).error();
+                    }
+                },
+                error:function (data) {
+                    new QicDialog({
+                        message:"添加策略失败!请检查网络是否正常"
+                    }).error();
+                }
+            });
+            return false;
+
+        },
+        rules:{
+            "strategyDto.provider":{
+                required:true,
+                maxlength:10
+            },
+            "strategyDto.sname":{
+                required:true,
+                maxlength:16,
+                remote:{
+                    url:'/StrategyInfos/findStrategyByName',
+                    type:"post",
+                    datatype:"json",
+                    data:{
+                        sname:function () {
+                            return $("#strategyDto_sname").val()
+                        }
+                    }
+                }
+            },
+            "strategyDto.providerDesp":{
+                required:true,
+                maxlength:80
+            },
+            "strategyDto.desp":{
+                required:true,
+                maxlength:140
+            },
+            "strategyDto.customerLookbackStartTime":{
+                required:true
+            },
+            "strategyDto.customerLookbackEndTime":{
+                required:true
+            }
+
+
+        },
+        messages:{
+            "strategyDto.provider":{
+                required:"<font color=red>请输入姓名</font>",
+                maxlength:"<font color=red>策略师名不能超过10个字符</font>"
+            },
+            "strategyDto.sname":{
+                required:"<font color=red>请输入策略名</font>",
+                maxlength:"<font color=red>策略名不能超过16个字符</font>",
+                remote:"<font color=red>策略名已存在</font>"
+            },
+            "strategyDto.providerDesp":{
+                required:"<br><font color=red>请输入策略师简介</font>",
+                maxlength:"<br><font color=red>信息最长80个字符</font>"
+            },
+            "strategyDto.desp":{
+                required:"<br><font color=red>请输入策略简介</font>",
+                maxlength:"<br><font color=red>信息最长140个字符</font>"
+            },
+            "strategyDto.customerLookbackStartTime":{
+                required:"<br><font color=red>请输入回测开始时间</font>",
+                maxlength:"<br><font color=red>信息最长50个字符</font>"
+            },
+            "strategyDto.customerLookbackEndTime":{
+                required:"<br><font color=red>请输入回测结束时间</font>",
+                maxlength:"<br><font color=red>信息最长50个字符</font>"
+            }
+        }
+    });
+
+});
+$(".strategy_upload_btn").click(function () {
+    $("#uploadStategyForm").get(0).reset();
+    $("#hadUploadFile").val(0);//标识已未上传策略文件
+    $("#uploadStatus").html("<font color='red'>未上传</font>");
+    $(".qic_file_val").html("");
+    $(".strategy_upload_box").dialog({
+        autoOpen:true,
+        width:450,
+        modal:true,
+        resizable:false,
+        draggable:true
+    });
+    $("#strategyDto_provider").val(curLoginName);
+    removeVlidTip();
+});
+//$(".strategy_upload_btn").click();
+
+(function () {
+    downBox('select_info_year1_8', '#options_year1_8', 'reportDate_8', 'reportName_8');
+    downBox('select_info_year1_9', '#options_year1_9', 'reportDate_9', 'reportName_9');
+})();
+
+function uploadStrategy() {
+
+    var url = #{jsRoute @UploadFiles.uploadStrage()/};
+    if (!$("#strategyFile").val() || $("#strategyFile").val() == '') {
+        new QicDialog({
+            message:"请选择要上传的策略文件"
+        }).warn();
+        return;
+    }
+    var isFileUpload = true;
+    $("#loading")
+            .ajaxStart(function () {
+                if (isFileUpload) {
+                    $(this).show();
+                    isFileUpload = false;
+
+                }
+
+            })
+            .ajaxComplete(function () {
+                $(this).hide();
+            });
+    $.ajaxFileUpload
+            (
+                    {
+                        url:url.url(),
+                        secureuri:false,
+                        fileElementId:'strategyFile',
+                        dataType:'json',
+                        success:function (data, status) {
+                            if (data.success == true) {//填充表单
+                                if (data.fileNotFound) {
+                                    new QicDialog({
+                                        message:"上传文件有误"
+                                    }).error();
+                                    return;
+                                }
+                                if (data.fileExist) {
+                                    new QicDialog({
+                                        message:"策略已存在，不能重复上传"
+                                    }).error();
+                                    return;
+                                }
+                                if (data.fileErr) {
+                                    new QicDialog({
+                                        message:data.errMessage ? data.errMessage : "策略文件内容有误"
+                                    }).error();
+                                    return;
+                                }
+                                //填充表单
+                                $("#strategyDto_sname").val(data.StrategyName);
+                                if (data.Author && data.Author != '') {
+                                    $("#strategyDto_provider").val(data.Author);
+                                }
+                                //$("#strategyDto_providerDesp").val(data.Instruction);
+                                $("#hadUploadFile").val(1);//标识已上传策略文件
+                                var files = "";
+                                for (var i = 0; i < data.files.length; i++) {
+                                    files += (data.files[i] + ",");
+                                }
+                                $("#files").val(files)
+                                $("#enginetypeId").val(data.enginetypeId);
+                                if (data.enginetypeId == 1) {//qicore策略从配置文件读取回测时间
+                                    $("#strategyDto_lookbackStime").val(data.BackTestStartDate);
+                                    $("#strategyDto_lookbackEtime").val(data.BackTestEndtDate);
+                                    $("#strategyDto_backtest_startTime").val(data.BackTestStartDate);
+                                    $("#strategyDto_backtest_endTime").val(data.BackTestEndtDate);
+                                } else {
+                                    $("#strategyDto_lookbackStime").val("");
+                                    $("#strategyDto_lookbackEtime").val("");
+                                    $("#strategyDto_backtest_startTime").val("");
+                                    $("#strategyDto_backtest_endTime").val("");
+                                    $("#strategyDto_provider").val(curLoginName);
+                                }
+                                $("#uploadStatus").html("<font color='green'>已上传:" + $(".qic_file_val").text() + "</font>");
+
+
+                            } else {
+                                new QicDialog({
+                                    message:"上传出错"
+                                }).error();
+                                return;
+                            }
+                            bindFileUpload();
+                        },
+                        error:function (data, status, e) {
+                            new QicDialog({
+                                message:"上传出错"
+                            }).error();
+                            bindFileUpload();
+                        }
+                    }
+            )
+    bindFileUpload();
+    return false;
+}
+</script>
+<!--策略上传 End-->
+
+<!--排序 start-->
+<script>
+    function waitSort(con) {
+        var form = $('#waitOrder')[0];
+        $("#paramSort").val(con);
+        form.submit();
+    }
+    function retrieveSort(con) {
+        var form = $('#retrieveOrder')[0];
+        $("#retrieveParam").val(con);
+        form.submit();
+    }
+    function groundingSort(con) {
+        var form = $('#groundingSort')[0];
+        $("#groundingParam").val(con);
+        form.submit();
+    }
+
+</script>
+<!-- 排序 end-->
+<script>
+    downBox('strategyLanguage', '#options_strategyLanguage', 'languageValue', 'languageName');
+    downBox('ttype', '#options_ttype', 'ttypeValue', 'ttypeName');
+    downBox('tvariety', '#options_tvariety', 'tvarietyValue', 'tvarietyName');
+
+    downBox('ttype2', '#options_ttype2', 'ttypeValue2', 'ttypeName2');
+    downBox('tvariety2', '#options_tvariety2', 'tvarietyValue2', 'tvarietyName2');
+    downBox('strategyLanguage2', '#options_strategyLanguage2', 'languageValue2', 'languageName2');
+    downBox('status2', '#options_status2', 'statusValue2', 'statusName2');
+
+    downBox('ttype3', '#options_ttype3', 'ttypeValue3', 'ttypeName3');
+    downBox('tvariety3', '#options_tvariety3', 'tvarietyValue3', 'tvarietyName3');
+    downBox('status3', '#options_status3', 'statusValue3', 'statusName3');
+    downBox('strategyLanguage3', '#options_strategyLanguage3', 'languageValue3', 'languageName3');
+
+    downBox('select_info_year1_20', '#options_year1_20', 'reportDate_20', 'reportName_20');
+    downBox('select_info_year1_20_QIA', '#options_year1_20_QIA', 'reportDate_20_QIA', 'reportName_20_QIA');
+    downBox('select_info_year1_21', '#options_year1_21', 'reportDate_21', 'reportName_21');
+    downBox('select_info_year1_21_QIA', '#options_year1_21_QIA', 'reportDate_21_QIA', 'reportName_21_QIA');
+    downBox('select_info_year1_22', '#options_year1_22', 'reportDate_22', 'reportName_22');
+    downBox('select_info_year1_22_QIA', '#options_year1_22_QIA', 'reportDate_22_QIA', 'reportName_22_QIA');
+</script>
+<!--策略详情 Begin-->
+<script>
+
+var qic = {
+
+
+    /*2.0 tab切换
+    *
+      2.1 callbakc: 回调函数
+        function callback(index, value, text){}
+           index:索引值, value: tab上的data-value值, text：显示的值
+
+      2.2 tabEle: 指定回调函数了，这个值就是必填.否则是可选
+      2.3 contEle：可选, 内容项li上的class
+
+        注: 如需要回调函数，则应是第一个参数.
+       例：调用1(默认)->qic.tab()
+          调用2(指定回调函数)->qic.tab(function(index, value, text){}, '#tabTitle');
+    */
+    tab:function (callback, tabEle, contEle) {
+        var tabTil = tabEle || ".tab_title",
+                tabCont = contEle || '.tab_content',
+                index,
+                display = 'display',
+                tabWrap = ".tab_wrap",
+                dataValue,
+                dataText,
+                _this;
+
+        $(tabTil).children("li").click(function () {
+            index = $(this).index();
+            _this = this;
+            if (typeof callback !== 'undefined') {
+                dataValue = $(this).attr("data-value");
+                dataText = $(this).text();
+
+                tabDisplay(_this);//切换
+                //返回回调函数
+                return callback(index, dataValue, dataText);
+            } else {
+                tabDisplay(_this);
+            }
+
+            function tabDisplay(_this) {
+                //切换title
+                $(_this).siblings("li").removeClass(display);
+                $(_this).addClass(display);
+                //切换内容
+                $(_this).closest(tabWrap).find(tabCont).removeClass(display);
+                $(_this).closest(tabWrap).find(tabCont).eq(index).addClass(display);
+
+            }
+        });
+    },
+    /**  初始化该TAB
+     *   $tab_title 对应的Tab标题 (jq表达式) //全部必须
+     *   $tab_content 对应的Tab内容 (jq表达式)
+     *   index 要初始化的下标
+     */
+    initTab:function ($tab_title, $tab_content, index) {
+        var tabTitle = $tab_title,
+                tabContent = $tab_content,
+                display = 'display',
+                index = index,
+                tabTitleLi = $(tabTitle).children("li"),
+                tabContentLi = $(tabContent).children("li");
+
+        tabTitleLi.removeClass(display);
+        tabTitleLi.eq(index).addClass(display);
+        tabContentLi.removeClass(display);
+        tabContentLi.eq(index).addClass(display);
+    }
+};
+
+$(".dialog_td").click(function () {
+    qic.initTab(".tab_title", ".tab_contents", 0);
+    var tabMap = null;
+    var $this = $(this);
+    var url = $this.attr("data-url");
+    var title = $this.attr("data-title");
+    var st_id = 0;
+    var engineId = 0;
+    $.ajax({
+        type:"GET",
+        url:url,
+        data:{},
+        dataType:"html",
+        success:function (data) {
+            $(".common_base_wrap").html(data);
+            tabMap = { //类似Map映射关系
+                "syzst":["收益走势图", #{jsRoute @StrategyInfos.drawChart(":strategyId")/}],
+                "dqcc":["当前持仓", #{jsRoute @StrategyInfos.holdPosition(":stid",":enginetypeId")/}],
+                "jxzb":["绩效指标", #{jsRoute @StrategyInfos.strategyIndicator(":stid",":enginetypeId")/}],
+                "wtjl":["委托记录", #{jsRoute @StrategyInfos.entrustRecord(":id")/}],
+                "cjjl":["成交记录", #{jsRoute @StrategyInfos.bargainRecord(":id")/}]
+            };
+            st_id = $("#strategy_id").attr("st_id");
+            engineId = $("#strategy_id").attr("enginetype_id");
+            if (engineId == 2) {//如果是qia则把成交记录跟委托记录隐藏掉
+                $(".engine_hiden").css("display", "none");
+            } else {
+                $(".engine_hiden").css("display", "block");
+            }
+        }
+    });
+
+    qic.tab(function (index, value, text) {
+        //回调函数
+        //console.log(index, value, text);
+
+        switch (text) {
+            case tabMap.syzst[0] :
+                $.ajax({
+                    type:"GET",
+                    url:tabMap.syzst[1].url({strategyId:st_id}),
+                    dataType:"html",
+                    beforeSend:function () {
+                        //加载数据之前 显示loading。。。效果
+                        $.qicLoading({
+                            target:'.trend_img',
+                            text:"loading...",
+                            modal:false,
+                            width:220,
+                            top:'40%',
+                            left:'40%',
+                            postion:"absolute",
+                            zIndex:2000
+                        });
+                    },
+                    success:function (data) {
+                        $(".trend_img").html(data);
+                        tabMap.syzst[0] = "close";//改变这个值达到只加载一次的目的
+                    }
+                });
+                break;
+            case tabMap.dqcc[0] :
+                $.ajax({
+                    type:"GET",
+                    url:tabMap.dqcc[1].url({stid:st_id, enginetypeId:engineId}),
+                    dataType:"html",
+                    beforeSend:function () {
+                        //加载数据之前 显示loading。。。效果
+                        $.qicLoading({
+                            target:'#chicang',
+                            text:"loading...",
+                            modal:false,
+                            width:220,
+                            top:'40%',
+                            left:'40%',
+                            postion:"absolute",
+                            zIndex:2000
+                        });
+                    },
+                    success:function (data) {
+                        $("#chicang").html(data);
+                        tabMap.dqcc[0] = "close";//改变这个值达到只加载一次的目的
+                    }
+                });
+                break;
+            case tabMap.jxzb[0] :
+                $.ajax({
+                    type:"GET",
+                    url:tabMap.jxzb[1].url({stid:st_id, enginetypeId:engineId}),
+                    dataType:"html",
+                    beforeSend:function () {
+                        //加载数据之前 显示loading。。。效果
+                        $.qicLoading({
+                            target:'#indicator',
+                            text:"loading...",
+                            modal:false,
+                            width:220,
+                            top:'40%',
+                            left:'40%',
+                            postion:"absolute",
+                            zIndex:2000
+                        });
+                        //setTimeout(function(){ window.location.reload()},4000)//为了让提示信息正确显示，延迟刷新页面
+                    },
+                    success:function (data) {
+                        $("#indicator").html(data);
+                        tabMap.jxzb[0] = "close";//改变这个值达到只加载一次的目的
+                    }
+                });
+                break;
+            case tabMap.wtjl[0] :
+                $.ajax({
+                    type:"GET",
+                    url:tabMap.wtjl[1].url({id:st_id}),
+                    dataType:"html",
+                    beforeSend:function () {
+                        //加载数据之前 显示loading。。。效果
+                        $.qicLoading({
+                            target:'#bargainRecord',
+                            text:"loading...",
+                            modal:false,
+                            width:220,
+                            top:'40%',
+                            left:'38%',
+                            postion:"absolute",
+                            zIndex:2000
+                        });
+                    },
+                    success:function (data) {
+                        $("#bargainRecord").html(data);
+                        tabMap.wtjl[0] = "close";//改变这个值达到只加载一次的目的
+                    }
+                });
+                break;
+            case tabMap.cjjl[0] :
+                $.ajax({
+                    type:"GET",
+                    url:tabMap.cjjl[1].url({id:st_id}),
+                    dataType:"html",
+                    beforeSend:function () {
+                        //加载数据之前 显示loading。。。效果
+                        $.qicLoading({
+                            target:'#entrustRecord',
+                            text:"loading...",
+                            modal:false,
+                            width:220,
+                            top:'40%',
+                            left:'38%',
+                            postion:"absolute",
+                            zIndex:2000
+                        });
+                    },
+                    success:function (data) {
+                        $("#entrustRecord").html(data);
+                        tabMap.cjjl[0] = "close";//改变这个值达到只加载一次的目的
+                    }
+                });
+                break;
+        }
+    });
+    $(".strategy_popup").dialog({
+        "width":800,
+        heigth:420,
+        modal:true
+    });
+});
+</script>
+<!--策略详情 End-->
+<!--回策管理 begain-->
+<script>
+    var socket;
+    var backTestServerIds = [];
+    var allServerIds = [];
+    var hasLoading = false;
+    var serverStatusInterval = undefined;
+    $(".back_test_manage").click(function () {
+
+        $(".stategy_backtest_manage").dialog({
+            autoOpen:true,
+            modal:true,
+            close:function () {
+                if (serverStatusInterval) {
+                    clearInterval(serverStatusInterval);
+                }
+            },
+            height:'auto',
+            resizable:false,
+            width:650,
+            zIndex:1000
+        });
+        if (!hasLoading) {
+            hasLoading = true;
+            var data = getServers(0, 2);
+            if (data) {
+                for (var i = 0; i < data.length; i++) {
+                    allServerIds.push(data[i].id);
+                    var result = "<tr ><td align='center'>" + data[i].name + "</td><td align='center'>" + data[i].ip + "</td><td   align='center' id='back_test_manage_status_" + data[i].id + "'>检测中...</td><td  align='center' id='back_test_manage_info_" + data[i].id + "'>0/0/0</td><td  align='center' id='back_test_manage_op_" + data[i].id + "'><a href='javascript:void(0)'>检测中...</a></td></tr>"
+                    $("#back_test_manage_table").append(result)
+                }
+            }
+        }
+        getStatusByAjax();
+    });
+
+    function updateServersStatus(data) {
+        var serverId = data.ServerId;
+        if (data.Result == true) {
+            $("#back_test_manage_status_" + serverId).html("<font color=green>" + getBackTestServerStataus(data.data.EngineStatus) + "</font>")
+            if (data.data.EngineStatus == 1) {
+                $("#back_test_manage_op_" + serverId).html("<a href='javascript:void(0)' onclick='javascript:startBackTestServer(" + serverId + ")'>启动</a>")
+            } else {
+                $("#back_test_manage_op_" + serverId).html("<font color=green>已启动</font>")
+            }
+            $("#back_test_manage_info_" + serverId).html("<font color=black>" + data.data.Count + "</font>/<font color=green>" + data.data.FinishCount + "</font>/<font color=red>" + data.data.ErrorCount + "</font>");
+
+        } else {
+            $("#back_test_manage_status_" + serverId).html("<font color=gray>离线</font>")
+            $("#back_test_manage_op_" + serverId).html("<font color=gray>已关闭</font>")
+        }
+    }
+    function initWebSocket() {
+        var WS = window['MozWebSocket'] ? MozWebSocket : WebSocket;
+        socket = new WS('ws://localhost:9100/Push/getBackTestStatus');
+        socket.onmessage = function (event) {
+            var data = eval("(" + event.data + ")")
+            updateServersStatus(data);
+        }
+    }
+    function startBackTestServer(serverId) {
+        $.ajax({
+            type:"GET",
+            url:"/BackTestServers/startBackTest?serverId=" + serverId,
+            dataType:"json",
+            cache:false,
+            beforeSend:function () {
+                $("#back_test_manage_op_" + serverId).html("<font color=red>正在启动...</font>");
+            },
+            success:function (data) {
+                if (data.Result == true) {
+                    $("#back_test_manage_op_" + serverId).html("<font color=green>已启动</font>");
+                    $("#back_test_manage_status_" + serverId).html("<font color=green>运行中</font>");
+                } else {
+                    $("#back_test_manage_op_" + serverId).html("<font color=red>启动失败,<a href='javascript:void(0)' onclick='javascript:startBackTestServer(" + serverId + ")'>重试</a></font>");
+                }
+            },
+            error:function () {
+                $("#back_test_manage_op_" + serverId).html("<font color=red>启动失败,<a href='javascript:void(0)' onclick='javascript:startBackTestServer(" + serverId + ")'>重试</a></font>");
+            }
+        })
+    }
+    function getStatusByAjax() {
+
+        if (serverStatusInterval) {
+            clearInterval(serverStatusInterval);
+        }
+        serverStatusInterval = setInterval(function () {
+            if (allServerIds.length == 0) {
+                return;
+            }
+            var ids = allServerIds.join(",");
+            //一轮一轮来
+            var hasFinishlastCycle = true;
+            if (!hasFinishlastCycle) {
+                return;
+            }
+            hasFinishlastCycle = false;
+            for (var i = 0; i < allServerIds.length; i++) {
+                $.ajax({
+                    type:"GET",
+                    url:"/BackTestServers/getQiaBackTestStatus?serverIds=" + allServerIds[i],
+                    dataType:"json",
+                    success:function (data) {
+                        //  alert(data.length)
+                        for (var i = 0; i < data.length; i++) {
+                            updateServersStatus(data[i]);
+                        }
+                        hasFinishlastCycle = i == (allServerIds.length - 1) ? true : false;
+                    },
+                    error:function () {
+
+                    }
+                });
+            }
+        }, 5000)
+
+    }
+    function sendMessage(serverId) {
+        if (socket) {
+            var s = socket.send(serverId);
+            // socket.flush();
+        }
+    }
+    function startBackTest(serverId) {
+        backTestServerIds.push(serverId);
+    }
+    function getBackTestServerStataus(value) {
+        switch (value) {
+            case 2:
+                return "运行中";
+            case 1:
+                return "就绪";
+            default:
+                return "离线";
+
+        }
+    }
+
+
+    $("#refresh").click(function () {
+        window.location.reload();
+    })
+
+</script>
+<!--回策管理 end-->
+</body>
+

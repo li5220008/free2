@@ -1,0 +1,65 @@
+<link href="@{'/public/stylesheets/ui-lightness/jquery-ui-1.9.1.custom.css'}" rel="stylesheet">
+<script src="@{'/public/javascripts/jquery-ui-1.9.1.custom.js'}"></script>
+<form method="post"id="changeRoleForm">
+<div class="list_role_wrap">
+    <div class="checked_list">
+        <h3 class="h3_title">
+            用户列表
+        </h3>
+        <table width="100%" class="tbl_checked" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <th>姓名</th>
+                <th>账号</th>
+            </tr>
+            #{list items:activedUserList,as :'items'}
+            <tr class="tr_checked" param_id="#{emVF items.id/}" param_name="#{emVF items.name/}" param_account="#{emVF items.account/}"  style="cursor: pointer">
+                <td>#{emVF items.name/}</td>
+                <td>#{emVF items.account/}</td>
+            </tr>
+        #{/list}
+        </table>
+
+    </div>
+
+    <div class="role_user_control" style="position:relative; width:70px;">
+        <div class="common_btn">
+            <input type="button" value="添加>>" class="common_blue" id="addThisRole">
+            <input type="button" value="删除<<" class="common_blue" id="deleteThisRole">
+        </div>
+    </div>
+
+    <div class="belong_role_list">
+        <h3 class="h3_title">
+            角色用户列表
+        </h3>
+        <table width="100%" class="tb1_role_checked" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <th>姓名</th>
+                <th>账号</th>
+            </tr>
+        #{list items: roleList,as :'items'}
+            <tr  class="tr_checked_1" param_roleid="#{emVF items.id/}" param_rolename="#{emVF items.name/}" param_roleaccount="#{emVF items.account/}"  style="cursor: pointer">
+                <td >#{emVF items.name/}</td>
+                <td>#{emVF items.account/}</td>
+            </tr>
+        #{/list}
+        </table>
+
+
+    </div>
+    <div class="">
+        <input type="text" class="set_user_i" value="请输入姓名/账号">
+        <input type="text" class="set_user_i_2" value="请输入姓名/账号" >
+    </div>
+</div>
+
+
+
+
+<div class="common_btn" style="position:relative;">
+    <input type="button" value="重置" class="common_blue" id="reset_change">
+    <input type="button" value="取消" class="common_blue common_cancle" id="cancel_change">
+    <input type="button" value="确定" class="common_blue" id="submit_change">
+</div>
+    <input type="hidden" id="r_showloading" value="true"/>
+</form>

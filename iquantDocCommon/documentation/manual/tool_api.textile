@@ -1,0 +1,13 @@
+h2. 内部用的URL
+
+**指定生成某策略收益缩略图URL**
+http://ip:8100/StrategyCt/generatePic?stids={StrategyUUID}
+
+**生成所有策略收益缩略图URL**
+http://ip:8100/MockDataCt/createSmallPic
+
+**添加服务器URL**
+http://ip:8100/ServerManageCt/serverList
+
+**f10队列信息查看**
+http://ip:9300/application/queueinfo

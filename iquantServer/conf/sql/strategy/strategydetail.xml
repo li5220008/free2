@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>test sql</comment>
+    <!--策略委托信号-->
+    <entry key="order_signal">
+        <![CDATA[
+            SELECT
+              a.`SecurityID`,
+              a.`SendingTime` AS sendingtime,
+              a.`Side` AS side,
+              a.`Price` AS price,
+              a.`PositionEffect` AS positionEffect
+            FROM
+              qicore.`order_list` a
+            WHERE a.`ClOrdLinkID` = ?
+              AND a.`SendingTime` > ?
+              AND DATE_FORMAT(a.`SendingTime`, '%Y-%c-%d') = DATE_FORMAT(?, '%Y-%c-%d')
+            ORDER BY a.`SendingTime` DESC
+            LIMIT 7
+         ]]>
+    </entry>
+
+    <!--权益走势图 初始资金-->
+    <entry key="get_initial_capital">
+        <![CDATA[
+           SELECT
+              IniCapital as inicapital
+           FROM
+               qicore.`capital_list`
+           WHERE StrategyID = ?
+         ]]>
+    </entry>
+    <!--策略对比图形展示-->
+    <entry key="strategy_contrast_for_pictrue_sql">
+        <![CDATA[
+            SELECT
+              a.yield as yield,
+              a.update_time as updatedate
+            FROM
+              strategy_yield a
+            WHERE strategy_id = ?
+              AND a.update_time >= ?
+              AND a.yield_type='1'
+            ORDER BY a.update_time
+
+        ]]>
+    </entry>
+
+    <!-- 得到当前订阅截止日期-->
+    <entry key="get_orderetime_sql">
+        <![CDATA[
+            SELECT
+              *
+            FROM
+              qic_db.user_strategy_order a
+            WHERE a.`uid` = ?
+              AND a.`stid` = ?
+        ]]>
+    </entry>
+
+    <!--得到下架时间 -->
+    <entry key="getdowntime_sql">
+        <![CDATA[
+            SELECT
+              *
+            FROM
+              qic_db.`strategy_baseinfo` a
+            WHERE a.`id` = ?
+        ]]>
+    </entry>
+
+    <!--更新下架时间 -->
+    <entry key="update_downtime">
+        <![CDATA[
+            UPDATE
+              qic_db.user_strategy_order a
+            SET
+              a.`order_etime` = ?
+            WHERE a.`uid` = ?
+              AND a.`stid` = ?
+        ]]>
+    </entry>
+
+    <!--插入下架时间 -->
+    <entry key="insert_downtime">
+        <![CDATA[
+            INSERT INTO qic_db.`user_strategy_order` (uid, stid, order_stime, order_etime)
+            VALUES
+              (?, ?, NOW(), ?)
+        ]]>
+    </entry>
+
+    <!--插入下架时间 -->
+    <entry key="findUserStrategyOrder">
+        <![CDATA[
+            SELECT
+              *
+            FROM
+              qic_db.`user_strategy_order`
+            WHERE uid = ?
+              AND stid = ?
+        ]]>
+    </entry>
+
+    <!--查询用户的上传策略列表-->
+    <entry key="findStrategysByUser">
+        <![CDATA[
+            SELECT
+                 name sname,
+                 provider,
+                 status,
+                 order_count orderCount,
+                 collect_count collectCount,
+                 up_time upTime,
+                 down_time downTime,
+                 pass_time passTime,
+                 upload_time uploadTime,
+                 uso.validCount validOrderCount,
+                 sb.trade_variety tradeVariety,
+                 sb.enginetype_id enginetypeId,
+                 sb.trade_type stype
+            FROM
+                strategy_baseinfo sb
+            LEFT JOIN
+                 (
+                   SELECT
+                          count(1) validCount,
+                          stid
+
+                    from
+                           user_strategy_order
+                    where
+                          UNIX_TIMESTAMP(order_etime)>UNIX_TIMESTAMP(now())
+                    group by
+                          stid
+
+                 ) uso
+            ON
+                   uso.stid=sb.id
+            WHERE
+                   sb.stup_uid=?
+    ]]>
+    </entry>
+    <!--查询用户的上传策略列表-->
+    <entry key="countOfStrategysByUser">
+        <![CDATA[
+
+                        SELECT
+                            uso.validCount
+                        FROM
+                            strategy_baseinfo sb
+                        LEFT JOIN
+                             (
+                               SELECT
+                                      count(1) validCount,
+                                      stid
+                                from
+                                       user_strategy_order
+                                where
+                                      UNIX_TIMESTAMP(order_etime)>UNIX_TIMESTAMP(now())
+                                group by
+                                      stid
+
+                             ) uso
+                        ON
+                               uso.stid=sb.id
+                        WHERE
+                              sb.stup_uid=?
+
+    ]]>
+    </entry>
+
+
+    <entry key="strategy_baseinfo">
+        <![CDATA[
+        SELECT
+          a.id,
+          a.`st_uuid` AS stUuid,
+          a.`name` AS 'name',
+          a.`trade_variety` AS tradeVariety,
+          a.`lookback_etime` AS lookbackEtime,
+          a.`up_time` AS upTime
+        FROM
+          qic_db.`strategy_baseinfo` a
+        WHERE a.`id` = ?
+
+                ]]>
+    </entry>
+    <!--向策略基本信息表 订阅总数加1-->
+    <entry key="add_sumOrderCount_sql">
+        <![CDATA[
+        UPDATE
+          qic_db.`strategy_baseinfo`
+        SET
+          order_count = order_count + 1
+        WHERE id = ?
+                ]]>
+    </entry>
+
+
+    <entry key="findStrategyCommentList">
+
+        select
+             a.id,
+             a.uid,
+             a.stid,
+             a.dis_time disTime,
+             a.content,
+             a.star,
+             b.name userName
+        from
+            user_strategy_discuss a
+        inner join user_info b on a.uid = b.id
+        where
+            stid=:strategyId
+        order by dis_time desc
+        limit 10
+
+    </entry>
+
+    <entry key="findUserStrategyCommentList">
+
+        select
+        id,
+        uid,
+        stid,
+        dis_time disTime,
+        content,
+        star
+        from
+        user_strategy_discuss
+        where
+        stid=:stid and uid=:uid
+        limit 1
+
+    </entry>
+
+    <entry key="addStrategyUserComment">
+
+        insert into user_strategy_discuss
+        (
+            uid,
+            stid,
+            dis_time,
+            content,
+            star
+        ) values(
+            :uid,
+            :stid,
+             NOW(),
+            :content,
+            :star
+        )
+    </entry>
+
+
+</properties>

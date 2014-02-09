@@ -1,0 +1,412 @@
+<style type="text/css">
+    #addTradeAccountBtn, #tradeAccountList{ margin-left: 15px;}
+    #tradeAccountList li span{ display: inline-block; margin-right: 15px;}
+    #addTradeAccountForm p.p_valid{ float:left; width:100px;margin: 0;display: block;}
+    #addTradeAccountForm input.new_input{ width:130px; margin: 0}
+    #addTradeAccountForm div.select_short_o{margin: 0}
+    #addTradeAccountForm font.new_user_tips{min-width: 170px; max-width:170px; margin-left: 10px;}
+
+    #addTradeAccountForm label { display:block; }
+
+    #addTradeAccountForm input.text { margin-bottom:12px; width:95%; padding: .4em; }
+    #addTradeAccountForm fieldset { padding:0; border:0; margin-top:5px; }
+</style>
+
+<form  action="" method="post" class="form_new_user" id="newuserform">
+    <div style="overflow-y: auto;overflow-x:hidden; height: 300px" >
+    <table width="100%" class="tbl_new_user" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td width="20%" align="right">  <span class="red">*</span>姓名：</td>
+            <td width="80%">
+                <p class="p_valid">
+                    <input type="text"  name="userInfo.name" id="fullname" class="new_input">
+                </p>
+                <font class="new_user_tips p_l_10 nu_two">
+                    <span class="tips_ico">&nbsp;</span>
+                    <span class="tips_text">2～12位中文、字母、数字、下划线</span>
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right"><span class="red">*</span>帐号：</td>
+            <td>
+                <p class="p_valid">
+                    <input type="text" id="new_user_account" name="userInfo.account" class="new_input">
+                </p>
+                <font class="new_user_tips p_l_10 nu_two">
+                    <span class="tips_ico">&nbsp;</span>
+                    <span class="tips_text">6位数字</span>
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right"><span class="red">*</span>密码：</td>
+            <td>
+                <p class="p_valid">
+                    <input type="password" class="new_input" id="newuser_pwd" name="userInfo.password">
+                </p>
+                <font class="new_user_tips p_l_10 nu_two">
+                    <span class="tips_ico">&nbsp;</span>
+                    <span class="tips_text">密码</span>
+                </font>
+
+            </td>
+        </tr>
+        <tr>
+            <td align="right"><span class="red">*</span>再次输入密码：</td>
+            <td>
+                <p class="p_valid">
+                    <input type="password" class="new_input" id="newuser_rePassword" name="userInfo.rePassword">
+                </p>
+                <font class="new_user_tips p_l_10 nu_two">
+                    <span class="tips_ico">&nbsp;</span>
+                    <span class="tips_text">重复密码</span>
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">联系电话：</td>
+            <td>
+                <p class="p_valid">
+                    <input type="text" class="new_input" id="userInfo.phone" name="userInfo.phone">
+                </p>
+                <font class="new_user_tips p_l_10 nu_two">
+                    <span class="tips_ico">&nbsp;</span>
+                    <span class="tips_text">联系电话</span>
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right"><span class="red">*</span>E-mail：</td>
+            <td>
+                <p class="p_valid">
+                    <input type="text" class="new_input" name="userInfo.email" id="new_user_email">
+                </p>
+                <font class="new_user_tips p_l_10 nu_two">
+                    <span class="tips_ico">&nbsp;</span>
+                    <span class="tips_text">邮箱</span>
+                </font>
+            </td>
+
+        </tr>
+        <tr>
+            <td align="right">身份证号：</td>
+            <td>
+                <p class="p_valid">
+                    <input type="text" class="new_input" id="userInfo.idCard" name="userInfo.idCard">
+                </p>
+                <font class="new_user_tips p_l_10 nu_two">
+                    <span class="tips_ico">&nbsp;</span>
+                    <span class="tips_text"></span>
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">资金帐号:<input type="hidden" name="userTradeAccountStr" id="userTradeAccountStr" value=""></td>
+            <td>
+                <img src="@{'/public/images/admin/role_add.png'}" alt="增加" id="addTradeAccountBtn">
+            </td>
+        </tr>
+        <tr>
+           <td align="right">&nbsp;</td>
+           <td>
+               <ul id="tradeAccountList"></ul>
+           </td>
+        </tr>
+
+        *{<tr>}*
+            *{<td align="right">所属营业部：</td>}*
+            *{<td>}*
+                *{<div class="dialog_box">}*
+
+                    *{<input type="hidden" autocomplete="off" value="1" id="reportDate_2" name="depId">}*
+                    *{<input type="hidden" autocomplete="off" id="reportName_2">}*
+                    *{<div id="select_info_year1_2" class="sel_84_dialog new_sel_d">营业部1}*
+                    *{</div>}*
+                    *{<ul id="options_year1_2" class="sel_91_option new_sel_option" style="display: none;">}*
+
+                    *{#{list items : saleDepartments, as : 'item' }}*
+                        *{<li data-value="${item.id}">${item.name}</li>}*
+                    *{#{/list}}*
+                    *{</ul>}*
+                *{</div>}*
+            *{</td>}*
+        *{</tr>}*
+        *{<tr>}*
+            *{<td align="right">资金帐号：</td>}*
+            *{<td>}*
+                *{<p class="p_valid">}*
+                    *{<input type="text" class="new_input" name="userInfo.capitalAccount"/>}*
+                *{</p>}*
+                *{<font class="new_user_tips p_l_10 nu_two">}*
+                    *{<span class="tips_ico">&nbsp;</span>}*
+                    *{<span class="tips_text"></span>}*
+                *{</font>}*
+            *{</td>}*
+        *{</tr>}*
+        <tr>
+            <td align="right">联系地址：</td>
+            <td>
+                <p class="p_valid">
+                    <input type="text" class="new_input" name="userInfo.address" />
+                </p>
+            </td>
+            <font class="new_user_tips p_l_10 nu_two">
+                <span class="tips_ico">&nbsp;</span>
+                <span class="tips_text"></span>
+            </font>
+        </tr>
+        <tr>
+            <td align="right">邮编：</td>
+            <td>
+                <p class="p_valid">
+                    <input type="text" class="new_input" name="userInfo.postCode" />
+                </p>
+                <font class="new_user_tips p_l_10 nu_two">
+                    <span class="tips_ico">&nbsp;</span>
+                    <span class="tips_text"></span>
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+    </table>
+    </div>
+
+    <div class="new_u_control" style="margin: 30px 0 0 50px;">
+        <input type="reset" value="button" class="new_user_cancle">
+        <input type="button" onclick="javascript:$('#newuserform').submit()"  value="submit" class="new_user_register">
+    </div>
+</form>
+*{增加资金帐号的弹出框}*
+<div id="addTradeAccountDialog" title="增加资金帐号" style="display: none;">
+    <form id="addTradeAccountForm">
+        <fieldset>
+        <table>
+            <tr>
+                <td>
+                    <label for="ac_name"><span class="red">*</span>帐号名</label></td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" name="name" id="ac_name" class="new_input"/>
+                    <font class="new_user_tips p_l_10 nu_two">
+                        <span class="tips_ico">&nbsp;</span>
+                        <span class="tips_text">帐号名</span>
+                    </font>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="ac_account"><span class="red">*</span>帐号</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" name="account" id="ac_account" value="" class="new_input"/>
+                    <font class="new_user_tips p_l_10 nu_two">
+                        <span class="tips_ico">&nbsp;</span>
+                        <span class="tips_text">帐号</span>
+                    </font>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="ac_password"><span class="red">*</span>密码</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" name="password" id="ac_password" value="" class="new_input"/>
+                    <font class="new_user_tips p_l_10 nu_two">
+                        <span class="tips_ico">&nbsp;</span>
+                        <span class="tips_text">密码</span>
+                    </font>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="ac_type">类型</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                *{<input type="hidden" autocomplete="off" id="typeDate" name="type">
+                <input type="hidden" autocomplete="off" id="typeName">
+                <div id="ac_type" class="sel_84_dialog select_short_o">
+                    期货
+                </div>
+                <ul id="options_ac_type" class="sel_84_dialog select_short_o" style="display: none;">
+                    <li data-value="0">期货</li>
+                    <li data-value="1">股票</li>
+                </ul>}*
+                    <select name="type" id="ac_type">
+                        <option value="0">期货</option>
+                        <option value="1">股票</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="ac_clientId">期货公司客户号</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" name="clientId" id="ac_clientId" value="" class="new_input"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="ac_targetCompId">订单通道路由标识</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" name="targetCompId" id="ac_targetCompId" value="" class="new_input"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="ac_hedgeType">投机\套保标识</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <select name="hedgeType" id="ac_hedgeType">
+                        <option value="0">投机</option>
+                        <option value="1">套保</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        </fieldset>
+    </form>
+</div>
+
+
+<script type="text/javascript">
+var userTradeAccout = []; //用户交易帐号, 全局变量
+function addUserTradeAccout(item){
+    userTradeAccout.push(item);
+}
+//删除掉一个选项
+function delUserTradeAccout(randId){
+    userTradeAccout = $.grep(userTradeAccout, function(n, i){//过滤元素
+        var dd = n.randId != randId;
+        return n.randId != randId;
+    })
+}
+
+//判断资金账号名是否重复。
+jQuery.validator.addMethod("isNotExist",function(value,element){//判断帐号名不能重复
+    //var value ="c";
+    //var userTradeAccout= [{"name":"a","account":"b","password":"c","type":"0","clientId":"","targetCompId":"","hedgeType":"0","randId":-8910626},{"name":"b","account":"b","password":"c","type":"0","clientId":"","targetCompId":"","hedgeType":"0","randId":-1241585}]
+    var success =true;
+    if(userTradeAccout.length>0){
+        $.each(userTradeAccout, function(i, n){
+            if(n.name == value) success = false;
+        });
+    }
+    return success;
+
+},"账号名不能重复");
+
+$("#addTradeAccountForm").validate({
+    rules: {
+        name: {
+            required:true,
+            isNotExist:true
+        },
+        account: {
+            required:true
+        },
+        password: {
+            required:true
+        }
+    },
+    messages: {
+        name: {
+            required:"用户名不能为空"
+        },
+        account: {
+            required:"账号不能为空"
+        },
+        password: {
+            required:"密码不能为空"
+        }
+    },
+    submitHandler:function(form){
+        removeVlidTip();//清空验证提示CSS
+        serializeFormJson(); //序列化成json
+    },
+    success: function(label) {
+        // $(".new_user_tips").show();
+        //label.parent().parent().hide();
+        label.parent().html("OK").removeClass("tips_error").addClass("tips_ok");
+    },
+    errorPlacement: function(error, element) {//此属性纯属自定义替换样式用。
+        //$(".new_user_tips").show();
+        element.parent().parent().find(".new_user_tips").show();
+        var targetElement = element.parent().parent().find(".tips_text");
+        error.appendTo(targetElement.removeClass("tips_ok").addClass('tips_error').empty());
+    }
+
+});
+
+$("#addTradeAccountBtn").click(function(){
+    //先把界面上的元素内容清空
+    $("#ac_name").val("");
+    $("#ac_account").val("");
+    $("#ac_password").val("");
+    $("#ac_type").val("");
+    $("#ac_clientId").val("");
+    $("#ac_targetCompId").val("");
+    $("#ac_hedgeType").val("");
+
+    $("#addTradeAccountDialog").dialog("open");
+});
+
+function serializeFormJson() {
+    var item = $("#addTradeAccountForm").serializeJson();
+    item.randId = getRandomInt(-9999999, 9999999);
+    addUserTradeAccout(item);
+    //把元素列出来
+    var itemStr = "<li><span>" + item.name + "</span><span><img rnd='" + item.randId + "' class='tradeAccounDelItem' src='/public/images/admin/role_remove.png'></span></li>";
+    $("#tradeAccountList").append(itemStr);
+    $("#userTradeAccountStr").val(JSON.stringify(userTradeAccout));
+    $("#addTradeAccountDialog").dialog("close");
+}
+$("#addTradeAccountDialog").dialog({
+    position: {
+        at: "center"
+    },
+    autoOpen: false,
+    height: 470,
+    width: 350,
+    modal: true,
+    buttons: {
+        "增加": function() {
+            $("#addTradeAccountForm").submit();
+        },
+        "取消": function() {
+            $(this).dialog( "close" );
+        }
+    },
+    close: function() {
+        $(this).dialog( "close" );
+    }
+});
+
+$(".tradeAccounDelItem").live("click", function(){
+    var $this = $(this);
+    var rnd = $this.attr("rnd");
+    delUserTradeAccout(rnd);
+    $this.closest("li").remove();
+});
+downBox('ac_type', '#options_ac_type', 'typeDate', 'typeName');
+
+</script>
+

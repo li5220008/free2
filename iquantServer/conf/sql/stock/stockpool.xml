@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>stockpool  sql</comment>
+
+
+    <entry key="stockpoolSql">
+        <![CDATA[
+   SELECT distinct
+  a.StockPoolCode,
+  a.`StockPoolCode` AS id,
+  a.`StockPoolName` AS poolName,
+  se.`source` AS source,
+  se.`annualizedYield` AS annualizedYield,
+  se.`yearJensenRatio` AS yearJensenRatio,
+  IF(
+    spe.discuss_count = 0,
+    0,
+    spe.discuss_total / spe.discuss_count
+  ) AS starLevel,
+  se.`updateDate` AS updateDate,
+  a.StockNum AS stockNum,
+  spe.`collect_count` AS collectCount,
+  se.`orgId` AS orgId
+FROM
+  stp_stockpool a
+  LEFT JOIN
+    stockpool_ext se ON se.`stockPoolCode` = a.`STOCKPOOLCODE`
+  LEFT JOIN stock_pool_ext spe
+    ON spe.`spid` = a.`StockPoolCode`
+  INNER JOIN stp_style ss
+    ON ss.`StockPoolCode` = a.`StockPoolCode`
+        ]]>
+    </entry>
+
+    <entry key="stockpoolFavoriteSql">
+        <![CDATA[
+        SELECT
+  a.`StockPoolCode` AS id,
+  a.`StockPoolName` AS poolName,
+  se.`source` AS source,
+  se.`annualizedYield` AS annualizedYield,
+  se.`yearJensenRatio` AS yearJensenRatio,
+  IF(
+    spe.discuss_count = 0,
+    0,
+    spe.discuss_total / spe.discuss_count
+  ) AS starLevel,
+  se.`updateDate` AS updateDate,
+  a.StockNum AS stockNum,
+  spe.`collect_count` AS collectCount,
+  se.`orgId` AS orgId,
+  uspc.`uid` as uid
+FROM
+  stp_stockpool a
+  LEFT JOIN
+    stockpool_ext se ON se.`stockPoolCode` = a.`STOCKPOOLCODE`
+  LEFT JOIN stock_pool_ext spe
+    ON spe.`spid` = a.`StockPoolCode`
+  INNER JOIN stp_style ss
+    ON ss.`StockPoolCode` = a.`StockPoolCode`
+  INNER JOIN user_stock_pool_collect uspc
+    ON uspc.`spid` = a.`StockPoolCode`
+                ]]>
+    </entry>
+
+    <entry key="hotStockpoolSql">
+        <![CDATA[
+    SELECT * FROM (SELECT
+    a.`StockPoolCode` AS id,
+    a.`StockPoolName` AS poolName,
+    se.`source` AS source,
+    se.`annualizedYield` AS annualizedYield,
+    se.`yearJensenRatio` AS yearJensenRatio,
+    IF(
+    spe.discuss_count = 0,
+    0,
+    spe.discuss_total / spe.discuss_count
+    ) AS starLevel,
+    se.`updateDate` AS updateDate,
+    a.StockNum AS stockNum,
+    spe.`collect_count` AS collectCount,
+    se.`orgId` AS orgId
+    FROM
+    stp_stockpool a
+    LEFT JOIN
+    stockpool_ext se ON se.`stockPoolCode` = a.`STOCKPOOLCODE`
+    LEFT JOIN stock_pool_ext spe
+    ON spe.`spid` = a.`StockPoolCode`
+    INNER JOIN stp_style ss
+    ON ss.`StockPoolCode` = a.`StockPoolCode` ORDER BY collectCount DESC LIMIT 20) tab1
+     ]]>
+    </entry>
+</properties>

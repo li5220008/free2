@@ -1,0 +1,132 @@
+<table width="100%" class="tbl_perfomance" border="0" cellspacing="0" cellpadding="0">
+*{ <tr>
+                <th width="46%">指标名称</th>
+                <th width="54%">数值</th>
+            </tr>}*
+    <tr>
+        <td  width="46%">收益率</td>
+    #{if indicator.yield == null}
+        <td width="54%"><strong>#{emVFC v : indicator.yield, f : '#,##0.00',c:true/}</strong></td>
+    #{/if}
+    #{else }
+        <td width="54%"><strong>#{emVFC v : indicator.yield*100, f : '#,##0.00',u:'%',c:true/}</strong></td>
+    #{/else}
+
+    </tr>
+    <tr>
+        <td>月化收益率</td>
+        <td><strong>#{emVFC v : indicator.yieldOfMonth * 100, f : '#,##0.00', u : '%',c:true/}</strong></td>
+    </tr>
+    <tr>
+        <td>月度收益标准差</td>
+        <td><strong>#{emVF v : indicator.yieldOfMonthStandardDeviation, f : '#,##0.00'/}</strong></td>
+    </tr>
+    <tr>
+        <td>总盈利</td>
+        <td><strong>#{emVF v : indicator.overallProfitability, f : '#,##0.00'/}</strong></td>
+    </tr>
+    <tr>
+        <td>总亏损</td>
+        <td><strong>#{emVF v : indicator.overallDeficit, f : '#,##0.00'/}</strong></td>
+    </tr>
+    <tr>
+        <td>总交易天数</td>
+        <td><strong>#{emVF v : indicator.tradeDays /}</strong></td>
+    </tr>
+    <tr>
+        <td>最大空仓时间</td>
+        <td><strong>#{emVF v : indicator.mAXShortPositionTime/}</strong></td>
+    </tr>
+    <tr>
+        <td>交易次数</td>
+        <td><strong>#{emVF v : indicator.tradeCount/}</strong></td>
+    </tr>
+    <tr>
+        <td>多头交易次数</td>
+        <td><strong>#{emVF v : indicator.longPositionTradeCount/}</strong></td>
+    </tr>
+    <tr>
+        <td>空头交易次数</td>
+        <td><strong>#{emVF v : indicator.shortPositionTradeCount/}</strong></td>
+    </tr>
+    <tr>
+        <td>盈利次数</td>
+        <td><strong>#{emVF v : indicator.profitCount/}</strong></td>
+    </tr>
+    <tr>
+        <td>亏损次数</td>
+        <td><strong>#{emVF v : indicator.deficitCount/}</strong></td>
+    </tr>
+    <tr>
+        <td>持平次数</td>
+        <td><strong>#{emVF v : indicator.positionCloseCount/}</strong></td>
+    </tr>
+    <tr>
+        <td>最大连续盈利次数</td>
+        <td><strong>#{emVF v : indicator.mAXSequentialProfitCount/}</strong></td>
+    </tr>
+    <tr>
+        <td>最大连续亏损次数</td>
+        <td><strong>#{emVF v : indicator.mAXSequentialDeficitCount/}</strong></td>
+    </tr>
+    <tr>
+        <td>盈利比率</td>
+        <td><strong>#{emVF v : indicator.profitRatio, f : '#,##0.00'/}</strong></td>
+    </tr>
+    <tr>
+        <td>总盈利/总亏损（盈亏比）</td>
+        <td><strong>#{emVF v : indicator.canhsiedRatio, f : '#,##0.00'/}</strong></td>
+    </tr>
+    <tr>
+        <td>单次最大盈利</td>
+        <td><strong>#{emVF v : indicator.mAXSingleProfit, f : '#,##0.00'/}</strong></td>
+    </tr>
+    <tr>
+        <td>单次最大亏损</td>
+        <td><strong>#{emVF v : indicator.mAXSingleDeficit, f : '#,##0.00'/}</strong></td>
+    </tr>
+    <tr>
+        <td>最大盈利/总盈利</td>
+        <td><strong>#{emVF v : indicator.mAXSingleProfitRatio, f : '#,##0.00'/}</strong></td>
+    </tr>
+    <tr>
+        <td>最大亏损/总亏损</td>
+        <td><strong>#{emVF v : indicator.mAXSingleDeficitRatio, f : '#,##0.00'/}</strong></td>
+    </tr>
+    <tr>
+        <td>最大连续亏损额</td>
+        <td><strong>#{emVF v : indicator.mAXSequentialDeficitCapital, f : '#,##0.00'/}</strong></td>
+    </tr>
+    <tr>
+        <td>手续费合计</td>
+        <td><strong>#{emVF v : indicator.sumOfCommission, f : '#,##0.00'/}</strong></td>
+    </tr>
+    <tr>
+        <td>毛利润</td>
+        <td><strong>#{emVF v : indicator.grossProfit, f : '#,##0.00'/}</strong></td>
+    </tr>
+    <tr>
+        <td>净利润/单次最大亏损</td>
+        <td><strong>#{emVF v : indicator.profitLossRatio, f : '#,##0.00'/}</strong></td>
+    </tr>
+    <tr>
+        <td>月度平均盈利</td>
+        <td><strong>#{emVFC v : indicator.yieldOfMonth, f : '#,##0.00',c:true/}</strong></td>
+    </tr>
+    <tr>
+        <td>年化收益率</td>
+        <td><strong>#{emVFC v : indicator.yieldOfYear * 100, f : '#,##0.00', u : '%',c:true/}</strong></td>
+    </tr>
+    <tr>
+        <td>夏普指数</td>
+        <td><strong>#{emVF v : indicator.sharpeIndex, f : '#,##0.00' /}</strong></td>
+    </tr>
+    <tr>
+        <td>浮动盈亏</td>
+        <td><strong>#{emVF v : indicator.floatingProfitAndLoss, f : '#,##0.00'/}</strong></td>
+    </tr>
+*{<tr>
+                <td>滑价成本</td>
+                <td><strong>#{emVF v : indicator.movingCost, f : '#,##0.00'/}</strong></td>
+            </tr>}*
+</table>

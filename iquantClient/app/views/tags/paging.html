@@ -1,0 +1,24 @@
+*{
+分页标签
+1. page Page对象
+}*
+<input type="hidden" name="curPageNo"  value="${_page.pageNo}">
+<input type="hidden" name="maxPageNo"  value="${_page.totalPage}">
+<a href="javascript:void(0);" class="previous">上一页</a>
+#{if _page.preHasEllipsis()}
+    <span class="page_break"> ...</span>
+#{/if}
+#{list items: _page.curPagePreShow(), as:'i'}
+    <a href="javascript:void(0);" class="specificPage" pageNum="${i}">${i}</a>
+#{/list}
+<span class="page_current">${_page.pageNo}</span>
+#{list items: _page.curPagePostShow(), as:'i'}
+    <a href="javascript:void(0);" class="specificPage" pageNum="${i}">${i}</a>
+#{/list}
+#{if _page.postHasEllipsis()}
+    <span class="page_break"> ...</span>
+#{/if}
+<a href="javascript:void(0);" class="next">下一页</a>
+<span class="page_num">共${_page.totalPage}页</span>
+<span class="go_page">到第<input type="text" name="gotoPageNumber" class="gotoPageNumberClass" value="${_page.pageNo}" size="2">页</span>
+<span class="page_ok"><img src="@{'/public/images/st_ok.png'}"></span>

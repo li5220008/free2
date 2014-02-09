@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>Strategy sql</comment>
+
+    <!--管理策略SQL-->
+    <entry key="StrategySql">
+        <![CDATA[
+                SELECT
+                      DISTINCT sb.id AS id,
+                      sb.`status` AS STATUS,
+                      sb.name AS sname,
+                      sb.provider AS provider,
+                      sb.trade_variety AS tradeVariety,
+                      sb.trade_type AS stype,
+                      sb.collect_count AS collectCount,
+                      sb.enginetype_id enginetypeId,
+                      sb.up_time upTime,
+                      sb.upload_time uploadTime,
+                      c.nowOrder AS subscriber,
+                      sb.order_count AS allSubscriber,
+                      IF(
+                            sb.enginetype_id = 1,
+                            shl.yield_of_year,
+                            qia.average_simple_rate_of_return * 252
+                        ) AS yieldOfYear, /*年化收益率*/
+
+                      IF(
+                            sb.enginetype_id = 1,
+                            shl.profit_ratio,
+                            qia.hit_rate
+                        ) AS profitRatio, /*胜率*/
+
+                        IF(
+                            sb.enginetype_id = 1,
+                            shl.sharpe_index,
+                            qia.sharp_ratio
+                        ) AS sharpeIndex, /*夏普比率*/
+
+                      IF(
+                        sb.discuss_count = 0,
+                        0,
+                        sb.discuss_total / sb.discuss_count
+                      ) AS starLevel,
+                      /*星级*/
+                      sb.discuss_count AS discussCount
+                      /*评论总数*/
+            FROM
+              qic_db.strategy_baseinfo sb
+                          LEFT JOIN user_strategy_order uso
+                            ON sb.`id` = uso.`stid`
+                          LEFT JOIN
+                            (SELECT
+                              COUNT(1) AS nowOrder,
+                              a.`stid` AS stid
+                            FROM
+                              qic_db.user_strategy_order a
+                              INNER JOIN qic_db.strategy_baseinfo b
+                                ON a.`stid` = b.`id`
+                            WHERE a.`order_etime` > NOW()
+                            GROUP BY b.`id`) c
+                            ON sb.`id` = c.stid
+                          LEFT JOIN
+                           (SELECT
+                              a.*
+                            FROM
+                          strategy_performance_qicore a,
+                          (SELECT
+                                b.strategy_id,
+                                MAX(b.update_time) AS update_time
+                              FROM
+                                qic_db.strategy_performance_qicore b
+                              GROUP BY b.strategy_id) bm
+                            WHERE a.strategy_id = bm.strategy_id
+                              AND a.update_time = bm.update_time) AS shl
+                            ON shl.`strategy_id` = sb.id
+                          LEFT JOIN
+                            (SELECT
+                              a.*
+                            FROM
+                              qic_db.strategy_performance_qia a,
+                              (SELECT
+                                b.strategy_id,
+                                MAX(b.update_time) AS update_time
+                              FROM
+                                qic_db.strategy_performance_qia b
+                              GROUP BY b.strategy_id) bm
+                            WHERE a.strategy_id = bm.strategy_id
+                              AND a.update_time = bm.update_time) AS qia
+                            ON sb.id = qia.strategy_id
+                WHERE 1 = 1
+
+                ]]>
+    </entry>
+
+
+    <entry key="StrategyMaxOrderTimeSql">
+        <![CDATA[
+        SELECT stid as id,MAX(order_etime) as endDate FROM  `user_strategy_order` GROUP BY stid
+          ]]>
+    </entry>
+
+    <!--管理待上架和回收站SQL-->
+    <entry key="StrategyGroundingRetrieve">
+        <![CDATA[
+                    SELECT
+                                    DISTINCT sb.id AS id,
+                                    sb.`status` AS STATUS,
+                                    sb.name AS sname,
+                                    sb.provider AS provider,
+                                    sb.trade_variety AS tradeVariety,
+                                    sb.trade_type AS stype,
+                                    sb.collect_count AS collectCount,
+                                    sb.enginetype_id enginetypeId,
+                                    sb.up_time upTime,
+                                    sb.upload_time uploadTime,
+                                    sb.del_time delTime,
+                                    sb.order_count AS allSubscriber,
+                                    shl.`Retained_Profits` AS retainedProfits,
+                                    shl.`Yield` AS yield,
+                                    IF(
+                                    sb.enginetype_id = 1,
+                                    IFNULL(shl.yield_of_year,0),
+                                    IFNULL(qia.average_simple_rate_of_return * 252,0)
+                                    ) AS yieldOfYear, /*年化收益率*/
+
+                                    IF(
+                                    sb.enginetype_id = 1,
+                                    IFNULL(shl.profit_ratio,0),
+                                    IFNULL(qia.hit_rate,0)
+                                    ) AS profitRatio, /*胜率*/
+
+                                    IF(
+                                    sb.enginetype_id = 1,
+                                    IFNULL(shl.sharpe_index,0),
+                                    IFNULL(qia.sharp_ratio,0)
+                                    ) AS sharpeIndex /*夏普比率*/
+
+                    FROM
+                    qic_db.strategy_baseinfo sb
+                    LEFT JOIN
+                    (SELECT
+                              a.*
+                            FROM
+                          strategy_performance_qicore a,
+                          (SELECT
+                                b.strategy_id,
+                                MAX(b.update_time) AS update_time
+                              FROM
+                                qic_db.strategy_performance_qicore b
+                              GROUP BY b.strategy_id) bm
+                            WHERE a.strategy_id = bm.strategy_id
+                              AND a.update_time = bm.update_time) AS shl
+                    ON shl.`strategy_id` = sb.id
+                    LEFT JOIN
+                                (SELECT
+                                a.*
+                                FROM
+                                qic_db.strategy_performance_qia a,
+                                (SELECT
+                                b.strategy_id,
+                                MAX(b.update_time) AS update_time
+                                FROM
+                                qic_db.strategy_performance_qia b
+                                GROUP BY b.strategy_id) bm
+                                WHERE a.strategy_id = bm.strategy_id
+                                AND a.update_time = bm.update_time) AS qia
+                                ON sb.id = qia.strategy_id
+                    WHERE 1 = 1
+  ]]>
+    </entry>
+
+
+
+
+
+
+    <!--后台管理根据iD获取qia策略信息-->
+    <entry key="strategyQiaDetail">
+        <![CDATA[
+            SELECT
+                      sb.id AS id,
+                      sb.`status` AS STATUS,
+                      sb.name AS sname,
+                      sb.provider AS provider,
+                      sb.trade_variety AS tradeVariety,
+                      sb.trade_type AS stype,
+                      sb.collect_count AS collectCount,
+                      sb.enginetype_id enginetypeId,
+                      sb.up_time upTime,
+                      sb.upload_time uploadTime,
+                      sb.del_time delTime,
+                      MAX(uso.`order_etime`) AS endDate,
+                      shl.`sharp_ratio` AS sharpRadio,
+                      shl.`volatility`,
+                      shl.`beta`,
+                      shl.`average_simple_rate_of_return` AS averageSimpleRateOfReturn,
+                      shl.`calmar_ratio` AS calmarRatio,
+                      shl.`conditional_sharp_ratio` AS conditionalSharpRatio,
+                      shl.`excess_return_on_var` AS excessReturnOnVar,
+                      shl.`highter_partial_moments` AS highterPartialMoments,
+                      shl.`jensen_ratio` AS jensenRatio,
+                      shl.`kappa3`,
+                      shl.`conditional_var` AS conditionalVar,
+                      shl.`lower_partial_moments` AS lowerPartialMoments,
+                      shl.`maximum_drawdown` AS maximumDrawdown,
+                      shl.`modified_sharp_ratio` AS modifiedSharpRatio,
+                      shl.`mvar`,
+                      shl.`omega`,
+                      shl.`sortino_ratio` AS sortinoRatio,
+                      shl.`upside_potential_ratio` AS upsidePotentialRatio,
+                      shl.`var`,
+                      shl.`skewness`,
+                      shl.`kurtosis`,
+                      shl.`corr_with_market` AS corrWithMarket,
+                      shl.`hit_rate` AS hitRate,
+                      shl.`cumsum_simple_return` AS cumsumSimpleReturn,
+                      shl.`update_time` AS updateTime
+                    FROM
+                      qic_db.strategy_baseinfo sb
+                      LEFT JOIN user_strategy_order uso
+                        ON sb.`id` = uso.`stid`
+                      LEFT JOIN qic_db.`strategy_performance_qia` shl
+                        ON shl.`strategy_id` = sb.`id`
+                    WHERE sb.`id` = ?
+                ]]>
+    </entry>
+
+    <!--后台管理根据iD获取qicore策略信息-->
+    <entry key="strategyQicoreDetail">
+        <![CDATA[
+            SELECT
+                      sb.id AS id,
+                      sb.`status` AS STATUS,
+                      sb.name AS sname,
+                      sb.provider AS provider,
+                      sb.trade_variety AS tradeVariety,
+                      sb.trade_type AS stype,
+                      sb.collect_count AS collectCount,
+                      sb.enginetype_id enginetypeId,
+                      sb.up_time upTime,
+                      sb.upload_time uploadTime,
+                      sb.del_time delTime,
+                      MAX(uso.`order_etime`) AS endDate,
+                      sb.order_count AS allSubscriber,
+                      shl.`Retained_Profits` AS retainedProfits,
+                      shl.`Yield` AS yield,
+                      shl.`Yield_Of_Year` AS yieldOfYear,
+                      shl.`Yield_Of_Month` AS yieldOfMonth,
+                      shl.`Yield_Of_Month_Standard_Deviation` AS yomsd,
+                      shl.`Overall_Profitability` AS overallProfitability,
+                      shl.`Overall_Deficit` AS overallDeficit,
+                      shl.`Trade_Count` AS tradeCount,
+                      shl.`Profit_Count` AS profitCount,
+                      shl.`Deficit_Count` AS deficitCount,
+                      shl.`MAX_Single_Profit` AS maxSingleProfit,
+                      shl.`MAX_Single_Deficit` AS maxSingleDeficit,
+                      shl.`Trade_Days` AS tradeDays,
+                      shl.`MAX_Short_Position_Time` AS maxShortPositionTime,
+                      shl.`Long_Position_Trade_Count` AS longPositionTradeCount,
+                      shl.`Short_Position_Trade_Count` AS shortPositionTradeCount,
+                      shl.`Position_Close_Count` AS positionCloseCount,
+                      shl.`MAX_Sequential_Profit_Count` AS maxSequentialProfitCount,
+                      shl.`MAX_Sequential_Deficit_Count` AS maxSequentialDeficitCount,
+                      shl.`Profit_Ratio` AS profitRatio,
+                      shl.`Canhsied_Ratio` AS canhsiedRatio,
+                      shl.`MAX_Single_Profit_Ratio` AS maxSingleProfitRatio,
+                      shl.`MAX_Single_Deficit_Ratio` AS maxSingleDeficitRatio,
+                      shl.`MAX_Sequential_Deficit_Capital` AS maxSequentialDeficitCapital,
+                      shl.`Sum_Of_Commission` AS sumOfCommission,
+                      shl.`Gross_Profit` AS grossProfit,
+                      shl.`Profit_Loss_Ratio` AS profitLossRatio,
+                      shl.`Avg_Profit_Of_Month` AS avgProfitOfMonth,
+                      shl.`Sharpe_Index` AS sharpeIndex,
+                      shl.`Floating_Profit_And_Loss` AS floatingProfitAndLoss,
+                      shl.`Moving_Cost` AS movingCost
+                    FROM
+                      qic_db.strategy_baseinfo sb
+                      LEFT JOIN user_strategy_order uso
+                        ON sb.`id` = uso.`stid`
+                      LEFT JOIN qic_db.`strategy_performance_qicore` shl
+                        ON shl.`strategy_id` = sb.`id`
+                    WHERE sb.`id` = ?
+                ]]>
+    </entry>
+
+    <!--到期策略清空SQL-->
+    <entry key="emptyStrategy">
+        <![CDATA[
+        DELETE
+        FROM
+          qic_db.`strategy_baseinfo`
+        WHERE (
+            STATUS = 5
+            AND DATEDIFF(NOW(), down_time) > 90
+          )
+          OR (STATUS = - 100
+          AND DATEDIFF(NOW(), del_time) > 90 )
+                ]]>
+    </entry>
+
+    <!--查询选中策略id数组的最大收藏时间-->
+    <entry key="maxOrderTime">
+        <![CDATA[
+                   SELECT
+              IFNULL(MAX(order_etime) , DATE('1990-10-01')) AS orderTime
+            FROM
+              user_strategy_order
+            WHERE stid IN (#strIdGroup#)
+                ]]>
+    </entry>
+
+    <!--策略下架-->
+    <entry key="StrDown">
+        <![CDATA[
+             UPDATE
+          `strategy_baseinfo`
+        SET
+          down_time = ?,
+           STATUS = ?
+        WHERE id = ?
+                ]]>
+    </entry>
+
+    <!--查询订阅用户-->
+    <entry key="getOrderedUser">
+        <![CDATA[
+          select
+           uid
+           from
+           user_strategy_order
+           where stid=?
+           and order_etime>?
+                ]]>
+    </entry>
+
+    <!--保存下架消息-->
+    <entry key="sendUserMassage">
+        <![CDATA[
+            insert into
+                user_message
+                    (uid,message,status,title)
+                        values(?,?,1,"策略下架通知")
+                ]]>
+    </entry>
+    <!--得到策略下架时间-->
+    <entry key="getStrategyDownTime">
+        <![CDATA[
+            select
+            down_time as downTime
+             from
+                strategy_baseinfo
+                where
+                id=?
+                ]]>
+    </entry>
+
+
+
+    <!--上传策略后同步数据到qic的qstragy表中,上架的时候上传到sqm库中-->
+    <entry key="deleteStrategyFromQsm">
+        <![CDATA[
+            DELETE FROM qstrategy where StrategyID=?
+        ]]>
+    </entry>
+
+    <!--把延时下架信息存入任务调度表-->
+    <entry key="setScdulingTaskInfo">
+        <![CDATA[
+            insert into
+                scheduling_task
+                    (parameter,runtime,module,status)
+                        values(?,?,?,1)
+                ]]>
+    </entry>
+
+
+    <!--得到任务调度信息-->
+    <entry key="getScdulingTaskInfo">
+        <![CDATA[
+            select
+                id,
+                parameter,
+                runtime,
+                module,
+                status
+                from
+                scheduling_task
+                 where
+                 status =1
+                 and
+                 runtime<=NOW()
+                ]]>
+    </entry>
+
+    <!--把延时下架信息存入任务调度表-->
+    <entry key="changeTaskStatus">
+        <![CDATA[
+            update
+                scheduling_task
+                 set
+                 status =?
+                 where
+                 id =?
+                ]]>
+    </entry>
+
+    <!--删除策略-->
+    <entry key="delStrategy">
+        <![CDATA[
+            UPDATE
+              qic_db.`strategy_baseinfo` a
+            SET
+              a.`status` = ?,
+              a.`del_time` = NOW()
+            WHERE a.`id` = ?
+                ]]>
+    </entry>
+
+    <!--删除策略-->
+    <entry key="queryStraStatus">
+        <![CDATA[
+            select
+            status
+            from
+              qic_db.`strategy_baseinfo` a
+            WHERE a.`id` = ?
+                ]]>
+    </entry>
+
+    <!--同步QIA回测数据-->
+    <entry key="syncBackTestResult">
+        <![CDATA[
+           INSERT INTO strategy_performance_qicore
+                         (strategy_id,
+                          retained_profits,
+                          gross_profit,
+                          overall_profitability,
+                          overall_deficit,
+                          canhsied_ratio,
+                          trade_count,
+                          long_position_trade_count,
+                          short_position_trade_count,
+                          profit_ratio,
+                          profit_count,
+                          deficit_count,
+                          position_close_count,
+                          max_single_profit,
+                          max_single_deficit,
+                          max_single_profit_ratio,
+                          max_single_deficit_ratio,
+                          profit_loss_ratio,
+                          sum_of_commission,
+                          yield,
+                          avg_profit_of_month,
+                          floating_profit_and_loss,
+                          total_asset,
+                          yield_of_month,
+                          yield_of_year,
+                          max_sequential_deficit_capital,
+                          last_sequential_deficit_capital,
+                          max_sequential_profit_count,
+                          last_sequential_profit_count,
+                          max_sequential_deficit_count,
+                          last_sequential_deficit_count,
+                          trade_days,
+                          max_short_position_time,
+                          yield_of_month_standard_deviation,
+                          sharpe_index,
+
+                          moving_cost,
+                          type,
+                          update_time
+                           )
+                        VALUES
+                        (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1,NOW());
+                ]]>
+    </entry>
+    <!--把延时下架信息存入任务调度表-->
+    <entry key="updateStategyStatus">
+        <![CDATA[
+            update
+                strategy_baseinfo
+                 set
+                 status =?
+                 where
+                 st_uuid =?
+                ]]>
+    </entry>
+    <entry key="updateStategyStatusbyId">
+        <![CDATA[
+            update
+                strategy_baseinfo
+                 set
+                 status =?
+                 where
+                 id =?
+                ]]>
+    </entry>
+
+
+    <entry key="upShelfStrategy">
+        <![CDATA[
+            UPDATE
+              qic_db.`strategy_baseinfo` a
+            SET
+              a.`status` = ?,
+              a.`up_time` = NOW(),
+              a.run_server_id=?
+            WHERE a.`id` = ?
+        ]]>
+    </entry>
+    <entry key="deleteStrategyFromPerformance">
+        <![CDATA[
+            DELETE FROM #tableName# where strategy_id=?
+        ]]>
+    </entry>
+    <entry key="updateServerIpWhenUpShelf">
+        <![CDATA[
+            update  qstrategy set AgentIP=? where StrategyID=?
+        ]]>
+    </entry>
+    <!--同步QIA回测数据-->
+    <entry key="syncQiaBackTestResult">
+        <![CDATA[
+           INSERT INTO strategy_performance_qia
+                         (strategy_id,
+                          type,
+                          sharp_ratio,
+                          volatility,
+                          beta,
+                          average_simple_rate_of_return,
+                          calmar_ratio,
+                          conditional_sharp_ratio,
+                          excess_return_on_var,
+                          highter_partial_moments,
+                          jensen_ratio,
+                          kappa3,
+                          conditional_var,
+                          lower_partial_moments,
+                          maximum_drawdown,
+                          modified_sharp_ratio,
+                          max_single_deficit_ratio,
+                          mvar,
+                          omega,
+                          sortino_ratio,
+                          treynor_ratio,
+                          upside_potential_ratio,
+                          var,
+                          skewness,
+                          kurtosis,
+                          corr_with_market,
+                          hit_rate,
+                          cumsum_simple_return,
+                          update_time
+                           )
+                        VALUES
+                        (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW());
+                ]]>
+    </entry>
+    <!--查看策略运行状态-->
+    <entry key="checkRunStatus">
+        <![CDATA[
+            SELECT
+                id
+            FROM
+                product_strategy
+            WHERE
+                strategy_id IN (#strIdGroup#)
+            AND STATUS=1
+                ]]>
+    </entry>
+</properties>

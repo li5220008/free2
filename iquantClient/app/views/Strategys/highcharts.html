@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+
+<script src="@{'/public/javascripts/jquery-1.8.2.min.js'}" type="text/javascript" charset="utf-8"></script>
+<script src="@{'/public/javascripts/highChart/js/highcharts.js'}" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+    $(function () {
+        var chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'container3',
+                plotBorderWidth: 1,
+                type: 'line'
+            },
+            title: {
+                text: null
+            },
+            credits:{
+                enabled:false,
+                position: {
+                    align: 'left',
+                    x: 350,
+                    verticalAlign: 'bottom'
+                }
+            },
+            legend: {
+                enabled:true
+
+            },
+
+            xAxis: {
+                type: 'datetime',
+                min: Date.UTC(2010,0, 01),  //0表示1月 以此类推
+                max:Date.UTC(2010,2,31),
+                tickInterval :30*24*3600*1000,//X轴点间隔
+                labels: {
+                    align: 'left',
+                    formatter: function() {
+                        return Highcharts.dateFormat('%Y%m%d', this.value);
+                    }
+                }
+            },
+            yAxis:
+                {
+                lineWidth:1,
+               gridLineColor: 'red',
+               gridLineDashStyle: 'shortdash',
+                max:15,
+                min:-15,
+                //opposite: true,
+                tickInterval:5,
+                title: {
+                    text: null
+                },
+                labels: {
+                    formatter: function() {
+                        return this.value +'%';
+                    }
+                }
+            }
+               ,
+            tooltip: {
+                formatter: function() {
+                    return   this.series.name+'<br/><strong>日期:</strong>'+
+                            Highcharts.dateFormat('%Y%m%d', this.x) +'<strong>收益率:</strong> '+ this.y+'%' ;
+                }
+            },
+            plotOptions: {
+                series: {
+                    lineWidth:1,
+                    marker: {
+                        radius: 1 //鼠标接触时 显示点的大小
+                    }
+
+                }
+
+            },
+            series: [{
+                name:'策略A',
+                data: [
+                    [Date.UTC(2010, 0, 01), 9.05],
+                    [Date.UTC(2010, 0, 1), 5.43],
+                    [Date.UTC(2010, 0, 03), 9.23],
+                    [Date.UTC(2010, 0, 04), 2.63],
+                    [Date.UTC(2010, 0, 05), 5.23],
+                    [Date.UTC(2010, 0, 06), 7.35],
+                    [Date.UTC(2010, 0, 07), 9.12],
+                    [Date.UTC(2010, 0, 08), 15.00],
+                    [Date.UTC(2010, 0, 09), 8.04],
+                    [Date.UTC(2010, 0, 10), 5.10],
+                    [Date.UTC(2010, 0, 11), 8.59],
+                    [Date.UTC(2010, 0, 12), 4.88],
+                    [Date.UTC(2010, 0, 13), 8.54],
+                    [Date.UTC(2010, 0, 14), 3.23],
+                    [Date.UTC(2010, 0, 15), 7.51],
+                    [Date.UTC(2010, 0, 16), 8.62],
+                    [Date.UTC(2010, 0, 17), 4.21],
+                    [Date.UTC(2010, 0, 18), 7.52],
+                    [Date.UTC(2010, 0, 19), 2.52],
+                    [Date.UTC(2010, 0, 20), 4.56],
+                    [Date.UTC(2010, 0, 21), 7.22],
+                    [Date.UTC(2010, 0, 22), 3.32],
+                    [Date.UTC(2010, 0, 23), -15.00],
+                    [Date.UTC(2010, 0, 24), 9.26],
+                    [Date.UTC(2010, 0, 25), 8.27],
+                    [Date.UTC(2010, 0, 26), 7.28],
+                    [Date.UTC(2010, 0, 27), 2.23],
+                    [Date.UTC(2010, 0, 28), 5.22] ,
+                    [Date.UTC(2010, 0, 29), 1.24] ,
+                    [Date.UTC(2010, 0, 30), 3.25] ,
+                    [Date.UTC(2010, 0, 31), 8.27] ,
+                    [Date.UTC(2010, 1, 1), 0.95],
+                    [Date.UTC(2010, 1, 2), 5.43],
+                    [Date.UTC(2010, 1, 3), 9.23],
+                    [Date.UTC(2010, 1, 6), 7.35],
+                    [Date.UTC(2010, 1, 7), 9.12],
+                    [Date.UTC(2010, 1, 8), 4.08],
+                    [Date.UTC(2010, 1, 9), 8.04],
+                    [Date.UTC(2010, 1, 10), 5.10],
+                    [Date.UTC(2010, 1, 11), 8.59],
+                    [Date.UTC(2010, 1, 12), 4.88],
+                    [Date.UTC(2010, 1, 13), 8.54],
+                    [Date.UTC(2010, 1, 14), 3.23],
+                    [Date.UTC(2010, 1, 15), 7.51],
+                    [Date.UTC(2010, 1, 16), 8.62],
+                    [Date.UTC(2010, 1, 17), 4.21],
+                    [Date.UTC(2010, 1, 18), 7.52],
+                    [Date.UTC(2010, 1, 19), 2.52],
+                    [Date.UTC(2010, 1, 20), 4.56],
+                    [Date.UTC(2010, 1, 21), 2.23],
+                    [Date.UTC(2010, 1, 22), 8.24],
+                    [Date.UTC(2010, 1, 23), 7.52],
+                    [Date.UTC(2010, 1, 24), 5.62],
+                    [Date.UTC(2010, 1, 25), 2.82],
+                    [Date.UTC(2010, 1, 26), 5.32],
+                    [Date.UTC(2010, 1, 27), 1.12],
+                    [Date.UTC(2010, 1, 28), 3.52]
+                ]
+            },{
+                name:'策略B',
+                data: [
+                    [Date.UTC(2010, 0, 1), 1.08],
+                    [Date.UTC(2010, 0, 2), 4.43],
+                    [Date.UTC(2010, 0, 3), 8.23],
+                    [Date.UTC(2010, 0, 4), 5.33],
+                    [Date.UTC(2010, 0, 5), 3.23],
+                    [Date.UTC(2010, 0, 6), 3.35],
+                    [Date.UTC(2010, 0, 7), 9.72],
+                    [Date.UTC(2010, 0, 8), 5.08],
+                    [Date.UTC(2010, 0, 9), 8.44],
+                    [Date.UTC(2010, 0, 10), 3.60],
+                    [Date.UTC(2010, 0, 11), 9.59],
+                    [Date.UTC(2010, 0, 12), 4.88],
+                    [Date.UTC(2010, 0, 13), 3.54],
+                    [Date.UTC(2010, 0, 14), 9.23],
+                    [Date.UTC(2010, 0, 15), 6.51],
+                    [Date.UTC(2010, 0, 16), 8.62],
+                    [Date.UTC(2010, 0, 17), 5.21],
+                    [Date.UTC(2010, 0, 18), 3.52],
+                    [Date.UTC(2010, 0, 19), 2.52],
+                    [Date.UTC(2010, 0, 20), -1.56],
+                    [Date.UTC(2010, 0, 21), 3.22] ,
+                    [Date.UTC(2010, 0, 22), 9.08],
+                    [Date.UTC(2010, 0, 23), 2.43],
+                    [Date.UTC(2010, 0, 24), 5.23],
+                    [Date.UTC(2010, 0, 25), 2.35],
+                    [Date.UTC(2010, 0, 26), 9.72],
+                    [Date.UTC(2010, 0, 27), 3.08],
+                    [Date.UTC(2010, 0, 28), 4.44],
+                    [Date.UTC(2010, 0, 29), 1.60],
+                    [Date.UTC(2010, 0, 30), -9.59],
+                    [Date.UTC(2010, 0, 31), -4.88],
+                    [Date.UTC(2010, 1, 1), 2.08],
+                    [Date.UTC(2010, 1, 2), 4.43],
+                    [Date.UTC(2010, 1, 3), 5.23],
+                    [Date.UTC(2010, 1, 6), 2.35],
+                    [Date.UTC(2010, 1, 7), 1.72],
+                    [Date.UTC(2010, 1, 8), 6.08],
+                    [Date.UTC(2010, 1, 9), 9.44],
+                    [Date.UTC(2010, 1, 10), 2.60],
+                    [Date.UTC(2010, 1, 11), 1.59],
+                    [Date.UTC(2010, 1, 12), 5.88],
+                    [Date.UTC(2010, 1, 13), 6.54],
+                    [Date.UTC(2010, 1, 14), 7.23],
+                    [Date.UTC(2010, 1, 15), 8.51],
+                    [Date.UTC(2010, 1, 16), 1.62],
+                    [Date.UTC(2010, 1, 17), 3.21],
+                    [Date.UTC(2010, 1, 18), 2.52],
+                    [Date.UTC(2010, 1, 19), 5.52],
+                    [Date.UTC(2010, 1, 20), -6.56],
+                    [Date.UTC(2010, 1, 21), 8.62] ,
+                    [Date.UTC(2010, 1, 22), 2.72] ,
+                    [Date.UTC(2010, 1, 23), 1.32] ,
+                    [Date.UTC(2010, 1, 24), 3.82] ,
+                    [Date.UTC(2010, 1, 25), 2.72] ,
+                    [Date.UTC(2010, 1, 26), 8.32] ,
+                    [Date.UTC(2010, 1, 27), 9.22] ,
+                    [Date.UTC(2010, 1, 28), 2.32]
+                ]
+            }]
+
+        });
+    });
+</script>
+<div id="container3"> </div>
+</body>
+</html>

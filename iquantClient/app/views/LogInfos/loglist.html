@@ -1,0 +1,98 @@
+#{extends 'main.html' /}
+#{set title:'操作日志' /}
+
+#{set 'moreStyles'}
+<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/manage_admin-config-log.css'}">
+#{/set}
+
+<style type="text/css">
+    .tbl_exec th{ cursor:inherit; }
+
+</style>
+<body>
+
+
+<!--strategy_nav Begin-->
+<div class="strategy_nav">
+    <form action="@{LogInfos.loglist()}" method="post">
+    <div class="date_log_box">
+        <div class="date_log">
+            <label class="log_c">时间&nbsp;</label>
+            <input type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',readOnly:true})" id="log_begindate" name="begindate"
+                   readonly class="log_c a_datepicker" value="${begindate==null?"":begindate.format('yyyy-MM-dd')}">
+            <label class="log_c">-</label>
+            <input type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',readOnly:true})" id="log_enddate" name="enddate"
+                   readonly class="log_c a_datepicker" value="${enddate==null?"":enddate.format('yyyy-MM-dd')}">
+            <input type="image" class="log_q user_submit" src="/public/images/user_check.png" name="">
+        </div>
+    </div>
+    </form>
+</div>
+<!--strategy_nav End-->
+
+<!--main_wrap Begin-->
+<div class="main_wrap">
+
+
+    <!--sp_right Begin-->
+    <div class="sp_right_wrap">
+        <div class="content_title">
+
+
+            <div class="tab_title">
+                <table width="100%" class=" tbl_exec" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <th width="13%">操作时间</th>
+                        <th width="13%">操作人</th>
+                        <th width="14%">操作功能</th>
+                        <th width="60%">操作内容</th>
+                        *{<th width="10%">类型</th>}*
+                    </tr>
+
+                </table>
+
+                <div class="tbl_scoll log_tbl">
+                    <table width="100%" class="tbl_common tbl_exec" border="0" cellspacing="0" cellpadding="0">
+                        #{list items : logInfoDtoList,as : 'item' }
+                        <tr>
+                            <td width="13%">#{emVF v : item.cdate, f:'yyyy-MM-dd HH:mm:ss'/}</td>
+                            <td width="13%">#{emVF v : item.name/}</td>
+                            <td width="14%">#{emVF v : item.func/}</td>
+                            <td width="60%">#{emVF v : item.content/}</td>
+                            *{<td width="10%">#{emVF v : item.type/}</td>}*
+                        </tr>
+                        #{/list}
+                    </table>
+                </div>
+                <!--分页 Begin-->
+                <div class="page">
+                    <div class="page_center">
+                        <form action="@{LogInfos.loglist(begindate,enddate)}" class="pageFrom" method="get">
+                        #{paging page:page /}
+                        </form>
+                    </div>
+                </div>
+                <!--分页 End-->
+
+            </div>
+
+        </div>
+
+
+    </div>
+    <!--sp_right End-->
+
+
+
+<script src='/public/javascripts/WdatePicker.js'></script>
+
+<script>
+    (function () {
+        window.resizeHeight('.str_notice', 220);
+        window.resizeHeight('.tbl_scoll', 150);
+
+    })();
+
+
+</script>
+</body>

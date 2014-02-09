@@ -1,0 +1,424 @@
+h1. iquantWeb服务端对外接口(iquant)
+
+h3. 获取操作日志列表
+
+||项||说明||
+| url | /logInfoCt/fetchloglist |
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|begindate|Date |否|开始时间|
+|enddate|Date|否|截止时间|
+|pageNo|int|否|页码|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  "status":0,
+  "data":[
+    {
+        "cdate":"2013-07-18",
+        "name":"管理员",
+        "func":"用户状态修改",
+        "content":"禁用/开启",
+        "type":1
+    }
+  ],
+  "pageNo":2,
+  "pageSize":10,
+  "rowTotal":20
+}
+
+h3. 根据关键字更新系统配置值
+
+||项||说明||
+| url | /sysConfigCt/updateSysValueByKey |
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|key|String |否|关键字|
+|value|int|否|状态|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+    "data":true,
+    "status":0
+}
+
+h3. 批量插入用户权限
+
+||项||说明||
+| url | /RoleInfoCt/insertUserRole |
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|edate|Date |否|截止日期|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+    "status":0
+}
+
+h3. 用户授权 用户列表展示
+
+||项||说明||
+| url | /RoleInfoCt/fetchUserListByUserIdArray |
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|userIdArray|String |否|用户id数组组合成的字符串 例如："1,22,33,42,52"|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+      "data": [
+        {
+          "id": "1",
+          "account": "admin",
+          "name": "管理员",
+          "saleName": "营业部"
+        },
+        {
+          "id": "2",
+          "account": "yanqf",
+          "name": "严乔方",
+          "saleName": "营业部"
+        }
+      ],
+      "status": 0
+}
+
+h3. 根据用户ID范围 查找用户功能信息
+
+||项||说明||
+| url | /RoleInfoCt/fetchUserListBetweenId |
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|startId|int |否|开始id|
+|endId|int |否|结束id|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+      "data": [
+        {
+          "id": "1",
+          "account": "admin",
+          "name": "管理员",
+          "saleName": "营业部"
+        },
+        {
+          "id": "2",
+          "account": "yanqf",
+          "name": "严乔方",
+          "saleName": "营业部"
+        }
+      ],
+      "status": 0
+}
+
+h3. 根据角色ID 更新角色名
+
+||项||说明||
+| url | /RoleInfoCt/updateRoleNameByRid |
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|name|String |否|角色名字|
+|id|int |否|角色id|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+      "data": true,
+      "status": 0
+}
+
+h3. 新增角色名
+
+||项||说明||
+| url | /RoleInfoCt/addRoleName |
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|name|String |否|角色名字|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+      "data": true,
+      "status": 0
+}
+
+h3. 待激活用户列表
+
+||项||说明||
+| url | /UserInfoCt/activateUsersList |
+| http Method | post |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|pageNo|int |否|页码|
+
+*请求的body示例：*
+
+bc. {
+    "saleId":0,
+    "orderFlag":0,
+    "status":0,
+    "flag":1
+}
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+    "data":[
+        {
+            "id":"3",
+            "account":"liangbing",
+            "name":"梁",
+            "idCard":"123456",
+            "phone":"15013692644",
+            "saleName":"营业部","capitalAccount":"",
+            "applyDate":"2013-04-24",
+            "status":2
+        }
+    ],
+    "status":0,
+    "rowTotal":2,
+    "pageSize":20,
+    "pageNo":1
+}
+
+h3. 用户列表
+
+||项||说明||
+| url | /UserInfoCt/usersList |
+| http Method | post |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|pageNo|int |否|页码|
+
+*请求的body示例：*
+
+bc. {
+    "saleId":0,
+    "orderFlag":0,
+    "roleId":0,
+    "status":0,
+    "flag":2
+}
+
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+        "data":[
+            {
+                "id":"1",
+                "account":"admin",
+                "name":"管理员",
+                "idCard":"",
+                "phone":"",
+                "saleName":"营业部",
+                "capitalAccount":"",
+                "applyDate":"2013-03-01",
+                "status":10,
+                "roleName":"系统管理员",
+                "startDate":"2013-03-01",
+                "endDate":"2099-01-01"
+            }
+        ],
+        "status":0,
+        "rowTotal":2,
+        "pageSize":20,
+        "pageNo":1
+}
+
+h3. 到期用户列表
+
+||项||说明||
+| url | /UserInfoCt/dueUsersList |
+| http Method | post |
+
+*参数说明*
+|| url参数名||类型||是否可选||说明||
+|pageNo|int |否|页码|
+
+*请求的body示例：*
+
+bc. {
+    "saleId":0,
+    "orderFlag":0,
+    "status":0,
+    "flag":1
+}
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+        "data":[
+            {
+                "id":"6",
+                "account":"wanghq",
+                "name":"王会勤",
+                "saleName":"营业部",
+                "applyDate":"2013-03-01",
+                "status":10,
+                "endDate":"2013-07-23"
+            }
+        ],
+        "status":0,
+        "rowTotal":2,
+        "pageSize":20,
+        "pageNo":1
+}
+
+h3. 根据角色名查角色信息
+
+||项||说明||
+| url | /RoleInfoCt/fetchRoleInfoByName |
+| http Method | get |
+
+*参数说明*
+|| url参数名||类型||是否可选||说明||
+|name|String |否|角色名称|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+      "data": {
+        "id": 1,
+        "name": "系统管理员",
+        "desp": "超级管理员拥有所有权限"
+      },
+      "status": 0
+}
+
+h3. 查找用户上传的策略
+
+||项||说明||
+| url | /userStrategyManageCt/fetchUserStrategyList |
+| http Method | post |
+
+*请求的body示例：*
+
+bc. {
+      "uid": "1",
+      "tradeType": "0",
+      "status": "-1",
+      "orderType": "0",
+      "pageNo": "1",
+      "keyword": "",
+      "orderCol": "1",
+      "tradeVariety": "0",
+      "strategyLanguage": "0"
+}
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+    "data":[
+        {
+            "sname":"***********************************************",
+            "starLevel":0.0,
+            "stype":3,
+            "provider":"管理员",
+            "tradeVariety":2,
+            "collectCount":0,
+            "tradeCount":0,
+            "yield":0.0,
+            "yomsd":0.0,
+            "profitRatio":0.0,
+            "status":-100,
+            "orderCount":0,
+            "uploadTime":"2013-04-23",
+            "validOrderCount":0,
+            "passTime":"2013-04-23",
+            "discussCount":0,
+            "discussTotal":0,
+            "enginetypeId":2,
+            "sharpe":0.0
+        }
+    ],
+    "status":0,
+    "rowTotal":2,
+    "pageSize":20,
+    "pageNo":1
+}
+
+h3. 添加策略
+
+||项||说明||
+| url | /userStrategyManageCt/addStrategy |
+| http Method | post |
+
+*参数说明*
+|| url参数名||类型||是否可选||说明||
+|uid|long |否|用户ID|
+|filePath|String |否|路径|
+
+*请求的body示例：*
+
+bc. {
+     "strategyId": "402bd4136a2c4abea26a91926a782fa5",
+     "status": 0,
+     "sname": "test",
+     "provider": "test",
+     "tradeVariety": 2,
+     "stype": 3,
+     "retainedProfits": 0.0,
+     "yield": 0.0,
+     "yieldOfYear": 0.0,
+     "yomsd": 0.0,
+     "overallProfitability": 0.0,
+     "overallDeficit": 0.0,
+     "yieldOfMonth": 0.0,
+     "sharpeIndex": 0.0,
+     "tradeCount": 0,
+     "collectCount": 0,
+     "subscriber": 0,
+     "allSubscriber": 0,
+     "providerDesp": "li",
+     "desp": "li",
+     "lookbackStime": "",
+     "lookbackEtime": "",
+     "customerLookbackStartTime": "2013-07-01",
+     "customerLookbackEndTime": "2013-07-24",
+     "profitRatio": 0.0,
+     "starLevel": 0.0,
+     "discussCount": 0,
+     "enginetypeId": 2
+}
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+      "data": true,
+      "status": 0
+}
+

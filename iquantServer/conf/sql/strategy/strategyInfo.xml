@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>strategy sql</comment>
+
+    <!--策略list sql. 这是一个基本的sql. 可以拿到它后,在上面拼接-->
+    <entry key="strategyListSql">
+        <![CDATA[
+    SELECT
+    sb.id AS id,
+    sb.st_uuid AS 'uuid',
+    sb.name AS sname,
+    sb.provider AS provider, /*提供者*/
+    sb.trade_type AS stype, /*交易类型*/
+    sb.trade_variety AS tradeVariety,/*交易品种*/
+    sb.collect_count AS collectCount,/*收藏总数*/
+    sb.up_time AS upTime,/*上架时间*/
+    sb.discuss_count AS discussCount,/*评论总数*/
+    sb.enginetype_id AS enginetypeId,/*引擎类型*/
+    sb.desp AS desp, /*简介*/
+    sb.order_count AS orderCount,/*总订阅人数*/
+
+    IF(
+        sb.discuss_count = 0,
+        0,
+        sb.discuss_total / sb.discuss_count
+    ) AS starLevel, /*星级*/
+
+    IF(
+        sb.enginetype_id = 1,
+        qicore.yield_of_year,
+        qia.average_simple_rate_of_return * 252
+    ) AS yield, /*年化收益率*/
+
+    IF(
+        sb.enginetype_id = 1,
+        qicore.profit_ratio,
+        qia.hit_rate
+    ) AS profitRatio, /*胜率*/
+
+    IF(
+        sb.enginetype_id = 1,
+        qicore.sharpe_index,
+        qia.sharp_ratio
+    ) AS sharpe /*夏普比率*/
+
+FROM
+    qic_db.strategy_baseinfo sb
+    LEFT JOIN
+    (
+    SELECT a.*
+    FROM qic_db.strategy_performance_qicore a ,
+    (
+        SELECT b.strategy_id, MAX(b.update_time) AS update_time
+        FROM qic_db.strategy_performance_qicore b
+        GROUP BY b.strategy_id
+    ) spe
+    WHERE a.strategy_id = spe.strategy_id AND a.update_time = spe.update_time
+    ) AS qicore
+        ON sb.id = qicore.strategy_id
+    LEFT JOIN (
+    SELECT a.*
+    FROM qic_db.strategy_performance_qia a ,
+    (
+        SELECT b.strategy_id, MAX(b.update_time) AS update_time
+        FROM qic_db.strategy_performance_qia b
+        GROUP BY b.strategy_id
+    ) bm
+    WHERE a.strategy_id = bm.strategy_id AND a.update_time = bm.update_time
+    ) AS qia
+        ON sb.id = qia.strategy_id
+WHERE sb.status IN (4, 7)
+                ]]>
+    </entry>
+
+    <!--跟用户相关的策略list sql. 这是一个基本的sql. 可以拿到它后,在上面拼接-->
+    <entry key="strategyUserListSql">
+        <![CDATA[
+SELECT strate.*, #fieldList#
+
+FROM
+
+(
+	SELECT
+		sb.id AS id,
+		sb.st_uuid AS 'uuid',
+		sb.name AS sname,
+		sb.provider AS provider, /*提供者*/
+		sb.trade_type AS stype, /*交易类型*/
+		sb.trade_variety AS tradeVariety,/*交易品种*/
+		sb.collect_count AS collectCount,/*收藏总数*/
+		sb.up_time AS upTime,/*上架时间*/
+		sb.discuss_count AS discussCount,/*评论总数*/
+		sb.enginetype_id AS enginetypeId,/*引擎类型*/
+		sb.desp AS desp, /*简介*/
+		sb.order_count AS orderCount,/*总订阅人数*/
+
+		IF(
+			sb.discuss_count = 0,
+			0,
+			sb.discuss_total / sb.discuss_count
+		) AS starLevel, /*星级*/
+
+		IF(
+			sb.enginetype_id = 1,
+			qicore.yield_of_year,
+			qia.average_simple_rate_of_return * 252
+		) AS yield, /*年化收益率*/
+
+		IF(
+			sb.enginetype_id = 1,
+			qicore.profit_ratio,
+			qia.hit_rate
+		) AS profitRatio, /*胜率*/
+
+		IF(
+			sb.enginetype_id = 1,
+			qicore.sharpe_index,
+			qia.sharp_ratio
+		) AS sharpe /*夏普比率*/
+
+	FROM
+		qic_db.strategy_baseinfo sb
+		LEFT JOIN
+		(
+            SELECT a.*
+            FROM qic_db.strategy_performance_qicore a ,
+            (
+                SELECT b.strategy_id, MAX(b.update_time) AS update_time
+                FROM qic_db.strategy_performance_qicore b
+                GROUP BY b.strategy_id
+            ) spe
+            WHERE a.strategy_id = spe.strategy_id AND a.update_time = spe.update_time
+            ) AS qicore
+			ON sb.id = qicore.strategy_id
+		LEFT JOIN (
+		SELECT a.*
+		FROM qic_db.strategy_performance_qia a ,
+		(
+			SELECT b.strategy_id, MAX(b.update_time) AS update_time
+			FROM qic_db.strategy_performance_qia b
+			GROUP BY b.strategy_id
+		) bm
+		WHERE a.strategy_id = bm.strategy_id AND a.update_time = bm.update_time
+		) AS qia
+			ON sb.id = qia.strategy_id
+	WHERE sb.status IN (4, 7)
+
+) AS strate INNER JOIN qic_db.#user_type_table# ust ON strate.id = ust.stid
+
+WHERE ust.uid = ?
+                ]]>
+    </entry>
+
+    <entry key="getStrategyBaseInfo">
+        <![CDATA[
+        SELECT
+          a.`id` AS id,
+          a.`name` AS sname,
+          a.`trade_type` AS stype,
+          a.`up_time` AS upTime,
+          a.`provider` AS provider,
+          a.`trade_variety` AS tradeVariety,
+          a.`lookback_stime` AS lookbackStime,
+          a.`lookback_etime` AS lookbackEtime,
+          a.`desp` AS desp,
+          a.`provider_desp` AS providerDesp,
+          a.`discuss_total` AS discussTotal,
+          a.`discuss_count` AS discussCount,
+          a.`enginetype_id` AS engineTypeId
+        FROM
+          strategy_baseinfo a
+        WHERE a.`id` = ?
+                ]]>
+    </entry>
+    <!--是否评价-->
+    <entry key="isorder_sql">
+        <![CDATA[
+            SELECT
+              *
+            FROM
+              qic_db.`user_strategy_order`
+            WHERE uid = ?
+              AND stid = ?
+        ]]>
+    </entry>
+    <entry key="findUserCollectStrategy">
+
+        <![CDATA[
+        SELECT
+              usc.id id,
+              usc.uid uid,
+              usc.collect_time collectTime
+        FROM
+          user_strategy_collect usc
+        WHERE usc.`stid` = :stid and usc.`uid`=:uid
+                ]]>
+
+    </entry>
+
+
+    <entry key="updateStrategyDiscussData">
+
+        <![CDATA[
+        update
+              strategy_baseinfo sb
+        set
+              discuss_count=discuss_count+1,
+              discuss_total=discuss_total+:star
+
+        WHERE id=:stid
+                ]]>
+
+    </entry>
+
+
+</properties>

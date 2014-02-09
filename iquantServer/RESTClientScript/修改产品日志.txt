@@ -1,0 +1,388 @@
+play-thread-1-DEBUG-[2013-09-25 11:20:42,671]-play.Logger.debug(Logger.java:233)-收到请求数据:
+{
+    "id" : 4,
+    "name" : "lhj_product1",
+    "riskStocks" : [
+        {
+            "symbol" : "600000",
+            "market" : "SZ"
+        }
+    ],
+    "strategys" : [
+        {
+            "strategyId" : "10",
+            "fundsProportion" : 0.222, 
+            "accounts" : [
+                {
+                    "accountId" : 473, 
+                    "accountOrder": 1 
+                }
+            ],
+            "plates" : [
+                {
+                    "name" : "lhj_plateName",
+                    "maxPosition" : "100",
+                    "systemPlateId" :  -1,     
+                    "traceSystemPlate" : "0", 
+                    "plateStocks" : [    
+                        {
+                            "symbol" : "600008",
+                            "market" : "SZ",
+                            "status" : 0  
+                        }
+                    ]
+                }
+            ],
+            "securities" : [ 
+                {
+                    "symbol" : "600009",
+                    "market" : "SZ",
+                    "maxPosition" : 1000 
+                }
+            ]
+        }
+    ]
+}
+play-thread-1- INFO-[2013-09-25 11:20:42,671]-play.Logger.info(Logger.java:290)-修改产品, 接收到的json字符串为:
+{
+    "id" : 4,
+    "name" : "lhj_product1",
+    "riskStocks" : [
+        {
+            "symbol" : "600000",
+            "market" : "SZ"
+        }
+    ],
+    "strategys" : [
+        {
+            "strategyId" : "10",
+            "fundsProportion" : 0.222, 
+            "accounts" : [
+                {
+                    "accountId" : 473, 
+                    "accountOrder": 1 
+                }
+            ],
+            "plates" : [
+                {
+                    "name" : "lhj_plateName",
+                    "maxPosition" : "100",
+                    "systemPlateId" :  -1,     
+                    "traceSystemPlate" : "0", 
+                    "plateStocks" : [    
+                        {
+                            "symbol" : "600008",
+                            "market" : "SZ",
+                            "status" : 0  
+                        }
+                    ]
+                }
+            ],
+            "securities" : [ 
+                {
+                    "symbol" : "600009",
+                    "market" : "SZ",
+                    "maxPosition" : 1000 
+                }
+            ]
+        }
+    ]
+}
+play-thread-1- INFO-[2013-09-25 11:20:42,687]-play.Logger.info(Logger.java:290)-sql==SET autocommit=0
+play-thread-1- INFO-[2013-09-25 11:20:42,687]-play.Logger.info(Logger.java:290)-sql==
+    SELECT
+        COUNT(*) 
+    FROM
+        product_info 
+    WHERE
+        create_uid = 1 
+        AND NAME = 'lhj_product1' 
+        AND STATUS > 0 
+        and id <> 4
+play-thread-1- INFO-[2013-09-25 11:20:42,687]-play.Logger.info(Logger.java:290)-开始修改一个产品信息, id=4
+play-thread-1- INFO-[2013-09-25 11:20:42,687]-play.Logger.info(Logger.java:290)-修改产品名称
+play-thread-1-DEBUG-[2013-09-25 11:20:42,750]-play.Logger.debug(Logger.java:233)-从模板生成的sql:
+update product_info set name = :name where id = :id and create_uid = :userId
+play-thread-1- INFO-[2013-09-25 11:20:42,750]-play.Logger.info(Logger.java:290)-sql==
+    update
+        product_info 
+    set
+        name = 'lhj_product1' 
+    where
+        id = 4 
+        and create_uid = 4
+play-thread-1- INFO-[2013-09-25 11:20:42,750]-play.Logger.info(Logger.java:290)-先删除产品的其它信息, productId=4
+play-thread-1-DEBUG-[2013-09-25 11:20:42,781]-play.Logger.debug(Logger.java:233)-从模板生成的sql:
+select id from product_strategy WHERE product_id =:productId
+play-thread-1- INFO-[2013-09-25 11:20:42,781]-play.Logger.info(Logger.java:290)-sql==
+    select
+        id 
+    from
+        product_strategy 
+    WHERE
+        product_id =4
+play-thread-1- INFO-[2013-09-25 11:20:42,781]-play.Logger.info(Logger.java:290)-sql==
+    delete 
+    from
+        qstrategy 
+    where
+        StrategyID='3'
+play-thread-1- INFO-[2013-09-25 11:20:42,781]-play.Logger.info(Logger.java:290)-从qsm库中 删除id=3
+play-thread-1- INFO-[2013-09-25 11:20:42,781]-play.Logger.info(Logger.java:290)-从qsm中删除运行实例id[3]
+play-thread-1- INFO-[2013-09-25 11:20:42,796]-play.Logger.info(Logger.java:290)-sql==
+    delete 
+    from
+        qstrategy 
+    where
+        StrategyID='5'
+play-thread-1- INFO-[2013-09-25 11:20:42,796]-play.Logger.info(Logger.java:290)-从qsm库中 删除id=5
+play-thread-1- INFO-[2013-09-25 11:20:42,796]-play.Logger.info(Logger.java:290)-从qsm中删除运行实例id[5]
+play-thread-1-DEBUG-[2013-09-25 11:20:42,828]-play.Logger.debug(Logger.java:233)-从模板生成的sql:
+update product_strategy set `status`=-100  WHERE product_id =:productId and create_uid = :userId
+play-thread-1- INFO-[2013-09-25 11:20:42,828]-play.Logger.info(Logger.java:290)-sql==
+    update
+        product_strategy 
+    set
+        `status`=-100  
+    WHERE
+        product_id =4 
+        and create_uid = 1
+play-thread-1- INFO-[2013-09-25 11:20:42,828]-play.Logger.info(Logger.java:290)-软删除产品策略,产品id[4]
+play-thread-1-DEBUG-[2013-09-25 11:20:42,875]-play.Logger.debug(Logger.java:233)-从模板生成的sql:
+delete from  risk_control_secrity where  product_id =:productId and create_uid = :userId
+play-thread-1- INFO-[2013-09-25 11:20:42,875]-play.Logger.info(Logger.java:290)-sql==
+    delete 
+    from
+        risk_control_secrity 
+    where
+        product_id =4 
+        and create_uid = 1
+play-thread-1- INFO-[2013-09-25 11:20:42,875]-play.Logger.info(Logger.java:290)-软删除产品风控证券,产品id[4],row[0]
+play-thread-1-DEBUG-[2013-09-25 11:20:42,921]-play.Logger.debug(Logger.java:233)-从模板生成的sql:
+delete from  product_strategy_security where  product_strategy_id =:productStrategyId and create_uid = :userId
+play-thread-1- INFO-[2013-09-25 11:20:42,921]-play.Logger.info(Logger.java:290)-sql==
+    delete 
+    from
+        product_strategy_security 
+    where
+        product_strategy_id =3 
+        and create_uid = 1
+play-thread-1-DEBUG-[2013-09-25 11:20:42,953]-play.Logger.debug(Logger.java:233)-从模板生成的sql:
+delete from  product_strategy_security where  product_strategy_id =:productStrategyId and create_uid = :userId
+play-thread-1- INFO-[2013-09-25 11:20:42,953]-play.Logger.info(Logger.java:290)-sql==
+    delete 
+    from
+        product_strategy_security 
+    where
+        product_strategy_id =5 
+        and create_uid = 1
+play-thread-1- INFO-[2013-09-25 11:20:42,953]-play.Logger.info(Logger.java:290)-删除产品策略的证券代码,产品id[4],row[2]
+play-thread-1-DEBUG-[2013-09-25 11:20:43,000]-play.Logger.debug(Logger.java:233)-从模板生成的sql:
+update product_strategy_trade_account set `status`=-100 where product_strategy_id =:productStrategyId and create_uid = :userId
+play-thread-1- INFO-[2013-09-25 11:20:43,000]-play.Logger.info(Logger.java:290)-sql==
+    update
+        product_strategy_trade_account 
+    set
+        `status`=-100 
+    where
+        product_strategy_id =3 
+        and create_uid = 1
+play-thread-1-DEBUG-[2013-09-25 11:20:43,031]-play.Logger.debug(Logger.java:233)-从模板生成的sql:
+update product_strategy_trade_account set `status`=-100 where product_strategy_id =:productStrategyId and create_uid = :userId
+play-thread-1- INFO-[2013-09-25 11:20:43,031]-play.Logger.info(Logger.java:290)-sql==
+    update
+        product_strategy_trade_account 
+    set
+        `status`=-100 
+    where
+        product_strategy_id =5 
+        and create_uid = 1
+play-thread-1- INFO-[2013-09-25 11:20:43,046]-play.Logger.info(Logger.java:290)-删除产品策略账号,产品id[4],row[4]
+play-thread-1- INFO-[2013-09-25 11:20:43,046]-play.Logger.info(Logger.java:290)-sql==
+    select
+        trade_account_id 
+    from
+        product_strategy_trade_account 
+    where
+        product_strategy_id in(
+            3,5
+        )
+play-thread-1-DEBUG-[2013-09-25 11:20:43,078]-play.Logger.debug(Logger.java:233)-从模板生成的sql:
+update trade_account set used =:used where id =:accountId
+play-thread-1- INFO-[2013-09-25 11:20:43,078]-play.Logger.info(Logger.java:290)-sql==
+    update
+        trade_account 
+    set
+        used =0 
+    where
+        id =473
+play-thread-1-DEBUG-[2013-09-25 11:20:43,125]-play.Logger.debug(Logger.java:233)-从模板生成的sql:
+update trade_account set used =:used where id =:accountId
+play-thread-1- INFO-[2013-09-25 11:20:43,125]-play.Logger.info(Logger.java:290)-sql==
+    update
+        trade_account 
+    set
+        used =0 
+    where
+        id =473
+play-thread-1- INFO-[2013-09-25 11:20:43,125]-play.Logger.info(Logger.java:290)-将账号的used设置成0,产品id[4],row[6]
+play-thread-1- INFO-[2013-09-25 11:20:43,140]-play.Logger.info(Logger.java:290)-sql==
+    select
+        id 
+    from
+        product_strategy_plate 
+    where
+        product_strategy_id in(
+            3,5
+        )
+play-thread-1-DEBUG-[2013-09-25 11:20:43,171]-play.Logger.debug(Logger.java:233)-从模板生成的sql:
+delete from product_strategy_plate_security where plate_id =:plateId
+play-thread-1- INFO-[2013-09-25 11:20:43,171]-play.Logger.info(Logger.java:290)-sql==
+    delete 
+    from
+        product_strategy_plate_security 
+    where
+        plate_id =7
+play-thread-1- INFO-[2013-09-25 11:20:43,171]-play.Logger.info(Logger.java:290)-删除板块成份股,产品id[4],row[7]
+play-thread-1-DEBUG-[2013-09-25 11:20:43,203]-play.Logger.debug(Logger.java:233)-从模板生成的sql:
+delete from product_strategy_plate_shield_secuirty where plate_id =:plateId
+play-thread-1- INFO-[2013-09-25 11:20:43,203]-play.Logger.info(Logger.java:290)-sql==
+    delete 
+    from
+        product_strategy_plate_shield_secuirty 
+    where
+        plate_id =7
+play-thread-1- INFO-[2013-09-25 11:20:43,203]-play.Logger.info(Logger.java:290)-删除板块屏蔽代码,产品id[4],row[8]
+play-thread-1-DEBUG-[2013-09-25 11:20:43,250]-play.Logger.debug(Logger.java:233)-从模板生成的sql:
+delete from product_strategy_plate where id=:id and create_uid = :userId
+play-thread-1- INFO-[2013-09-25 11:20:43,250]-play.Logger.info(Logger.java:290)-sql==
+    delete 
+    from
+        product_strategy_plate 
+    where
+        id=7 
+        and create_uid = 1
+play-thread-1- INFO-[2013-09-25 11:20:43,250]-play.Logger.info(Logger.java:290)-删除版块,产品id[4],row[9]
+play-thread-1- INFO-[2013-09-25 11:20:43,250]-play.Logger.info(Logger.java:290)-插入产品的其它信息, productId=4
+play-thread-1- INFO-[2013-09-25 11:20:43,250]-play.Logger.info(Logger.java:290)-往风控证券表(risk_control_secrity)插入信息
+play-thread-1-DEBUG-[2013-09-25 11:20:43,296]-play.Logger.debug(Logger.java:233)-从模板生成的sql:
+insert into risk_control_secrity
+            (product_id, symbol, market, create_uid, ctime)
+        values (:productId, :symbol, :market, :userId, :ctime)
+play-thread-1- INFO-[2013-09-25 11:20:43,296]-play.Logger.info(Logger.java:290)-sql==
+    insert 
+    into
+        risk_control_secrity
+        (product_id, symbol, market, create_uid, ctime)         
+    values
+        (4, '600000', 'SZ', 1, '2013-09-25 11:20:42')
+play-thread-1- INFO-[2013-09-25 11:20:43,296]-play.Logger.info(Logger.java:290)-往产品策略关联表(product_strategy)插入信息,strategyId=10
+play-thread-1-DEBUG-[2013-09-25 11:20:43,328]-play.Logger.debug(Logger.java:233)-从模板生成的sql:
+insert into product_strategy
+            (product_id, strategy_id, funds_proportion, create_uid, ctime)
+        values (:productId, :strategyId, :fundsProportion, :userId, :ctime)
+play-thread-1- INFO-[2013-09-25 11:20:43,328]-play.Logger.info(Logger.java:290)-sql==
+    insert 
+    into
+        product_strategy
+        (product_id, strategy_id, funds_proportion, create_uid, ctime)         
+    values
+        (4, 10, 0.222, 1, '2013-09-25 11:20:42')
+play-thread-1- INFO-[2013-09-25 11:20:43,328]-play.Logger.info(Logger.java:290)-往qsm库增加信息:productStrategyId=6, strategyId=10
+play-thread-1- INFO-[2013-09-25 11:20:43,343]-play.Logger.info(Logger.java:290)-sql==
+    SELECT
+        id,
+        st_uuid as stUuid,
+        name,
+        desp,
+        trade_type as tradeType,
+        trade_variety as tradeVariety,
+        up_time as upTime,
+        down_time as downTime,
+        provider,
+        provider_desp as providerDesp,
+        lookback_stime as lookbackStime,
+        lookback_etime as lookbackEtime,
+        status,
+        discuss_total as discussTotal,
+        discuss_count as discussCount,
+        collect_count as collectCount,
+        order_count as orderCount,
+        enginetype_id as enginetypeId             
+    FROM
+        strategy_baseinfo             
+    WHERE
+        id=10
+play-thread-1- INFO-[2013-09-25 11:20:43,343]-play.Logger.info(Logger.java:290)-sql==
+    select
+        filePath filePath,
+        StrategyName strategyName,
+        AgentIP agentIp,
+        StrategyID strategyId             
+    FROM
+        qstrategy 
+    where
+        StrategyID='141a1c1121214594b9da4930c3d0adc2'
+play-thread-1-ERROR-[2013-09-25 11:20:43,343]-play.Logger.error(Logger.java:400)-For input string: "127.0.0.1"
+play-thread-1- INFO-[2013-09-25 11:20:43,343]-play.Logger.info(Logger.java:290)-往产品策略帐号关联表(product_strategy_trade_account)插入信息, productStrategyId=6
+play-thread-1-DEBUG-[2013-09-25 11:20:43,406]-play.Logger.debug(Logger.java:233)-从模板生成的sql:
+insert into product_strategy_trade_account
+            (product_strategy_id, trade_account_id, account_order, create_uid, ctime)
+        values (:productStrategyId, :accountId, :accountOrder, :userId, :ctime)
+play-thread-1- INFO-[2013-09-25 11:20:43,406]-play.Logger.info(Logger.java:290)-sql==
+    insert 
+    into
+        product_strategy_trade_account
+        (product_strategy_id, trade_account_id, account_order, create_uid, ctime)         
+    values
+        (6, 473, 1, 1, '2013-09-25 11:20:42')
+play-thread-1- INFO-[2013-09-25 11:20:43,421]-play.Logger.info(Logger.java:290)-修改资金帐号的状态为已使用, 帐号id为 [473] 
+play-thread-1-DEBUG-[2013-09-25 11:20:43,453]-play.Logger.debug(Logger.java:233)-从模板生成的sql:
+update trade_account set used =:used where id =:accountId
+play-thread-1- INFO-[2013-09-25 11:20:43,453]-play.Logger.info(Logger.java:290)-sql==
+    update
+        trade_account 
+    set
+        used =1 
+    where
+        id =473
+play-thread-1- INFO-[2013-09-25 11:20:43,453]-play.Logger.info(Logger.java:290)-往产品策略证券表(product_strategy_security)插入信息, productStrategyId=6
+play-thread-1-DEBUG-[2013-09-25 11:20:43,484]-play.Logger.debug(Logger.java:233)-从模板生成的sql:
+insert into product_strategy_security
+            (product_strategy_id, symbol, market, max_position, create_uid, ctime)
+        values (:productStrategyId, :symbol, :market, :maxPosition, :userId, :ctime)
+play-thread-1- INFO-[2013-09-25 11:20:43,484]-play.Logger.info(Logger.java:290)-sql==
+    insert 
+    into
+        product_strategy_security
+        (product_strategy_id, symbol, market, max_position, create_uid, ctime)         
+    values
+        (6, '600009', 'SZ', 1000.0, 1, '2013-09-25 11:20:42')
+play-thread-1- INFO-[2013-09-25 11:20:43,500]-play.Logger.info(Logger.java:290)-往产品策略板块信息表(product_strategy_plate)插入信息, productStrategyId=6
+play-thread-1-DEBUG-[2013-09-25 11:20:43,546]-play.Logger.debug(Logger.java:233)-从模板生成的sql:
+insert into product_strategy_plate
+            (product_strategy_id, name, max_position, system_plate_id, trace_system_plate, create_uid, ctime)
+        values (:productStrategyId, :name, :maxPosition, :systemPlateId, :traceSystemPlate, :userId, :ctime)
+play-thread-1- INFO-[2013-09-25 11:20:43,546]-play.Logger.info(Logger.java:290)-sql==
+    insert 
+    into
+        product_strategy_plate
+        (product_strategy_id, name, max_position, system_plate_id, trace_system_plate, create_uid, ctime)         
+    values
+        (6, 'lhj_plateName', 100.0, -1.0, 0, 1, '2013-09-25 11:20:42')
+play-thread-1- INFO-[2013-09-25 11:20:43,546]-play.Logger.info(Logger.java:290)-往产品策略板块对应的成份股(product_strategy_plate_security)插入数据, plateId=8
+play-thread-1-DEBUG-[2013-09-25 11:20:43,593]-play.Logger.debug(Logger.java:233)-从模板生成的sql:
+insert into product_strategy_plate_security
+            (plate_id, symbol, market)
+        values (:plateId, :symbol, :market)
+play-thread-1- INFO-[2013-09-25 11:20:43,593]-play.Logger.info(Logger.java:290)-sql==
+    insert 
+    into
+        product_strategy_plate_security
+        (plate_id, symbol, market)         
+    values
+        (8, '600008', 'SZ')
+play-thread-1- INFO-[2013-09-25 11:20:43,593]-play.Logger.info(Logger.java:290)-没有要屏蔽的股票
+play-thread-1- INFO-[2013-09-25 11:20:43,593]-play.Logger.info(Logger.java:290)-结束修改一个产品信息
+play-thread-1- INFO-[2013-09-25 11:20:43,593]-play.Logger.info(Logger.java:290)-sql==commit
+play-thread-1- INFO-[2013-09-25 11:20:43,593]-play.Logger.info(Logger.java:290)-sql==SET autocommit=1

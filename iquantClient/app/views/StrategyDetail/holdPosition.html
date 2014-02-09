@@ -1,0 +1,357 @@
+#{if enginetypeId==1}
+<table width="100%" border="0" class="tbl_exec" cellspacing="0" cellpadding="0">
+    <tr>
+        <th width="17%">代码</th>
+        *{<th width="15%">名称</th>}*
+        <th width="17%">方向</th>
+        <th width="17%">持仓量</th>
+        *{<th width="11%">品种</th>}*
+        *{<th width="12%">交易所</th>}*
+        <th width="17%">最新</th>
+        <th width="16%">涨跌</th>
+        <th width="16%">涨幅</th>
+        <th class="for_til_width"><span class="for_til_width">&nbsp;</span></th>
+    </tr>
+</table>
+
+
+<div class="tbl_scoll tbl_for_scroll" style="" id="holdPosition_qicore_scoll">
+    <table width="100%" border="0" class="tbl_common tbl_exec tbl_no_scroll" id="holdPosition_qicore_table"
+           cellspacing="0"
+           cellpadding="0">
+
+
+        #{list items : strategyPositionDtoList, as : 'item'}
+            <tr>
+                <td width="17%">
+                    <div>
+                        *{<a href="javascript:jumpToQuote('#{emVF v : item.securityid/}');" style="text-decoration: none">#{emVF v :item.securityid /}</a>}*
+                        <a style="text-decoration: none">#{emVF v :item.securityid /}</a>
+                    </div>
+                    *{#{if item.trade_variety == 1}
+                        <div class="popup_two">
+                            <div>#{emVF v :item.securityid /}</div>
+                            <div class="pop_link">
+                                <div class="popup_kline"><a
+                                        href="javascript:jumpToQuote('#{emVF v : item.securityid/}');">K线</a></div>
+                                <div class="popup_f10"><a href="javascript:qicScriptContext.jumpToF10('#{emVF v : item.securityid/}');">F10</a></div>
+                            </div>
+                        </div>
+                    #{/if}
+                    #{else}
+                        <div style="cursor: pointer">
+                            <a href="javascript:jumpToQuote('#{emVF v : item.securityid/}');" style="text-decoration: none">#{emVF v :item.securityid /}</a>
+                        </div>
+                    #{/else}}*
+                </td>
+                *{<td width="15%">
+                    <div style="cursor: pointer">
+                        <a href="javascript:jumpToQuote('#{emVF v : item.securityid/}');" style="text-decoration: none">#{emVF v : item.symbol/}</a>
+                    </div>
+                    }**{#{if item.trade_variety == 1}
+                        <div class="popup_two">
+                            #{emVF v : item.symbol/}
+                            <div class="pop_link">
+                                <div class="popup_kline"><a
+                                        href="javascript:jumpToQuote('#{emVF v : item.securityid/}');">K线</a></div>
+                                <div class="popup_f10"><a href="javascript:qicScriptContext.jumpToF10('#{emVF v : item.securityid/}');">F10</a></div>
+                            </div>
+                        </div>
+                    #{/if}
+                    #{else}
+                        <div style="cursor: pointer">
+                            <a href="javascript:jumpToQuote('#{emVF v : item.securityid/}');" style="text-decoration: none">#{emVF v : item.symbol/}</a>
+                        </div>
+                    #{/else}}**{
+                </td>}*
+                <td width="17%">#{emVF v : item.getSide()/}</td>
+                <td width="17%">#{emVF v : item.positionqty/}</td>
+                *{<td width="12%">#{emVF v : item.securityexchange/}</td>}*
+                <td width="17%">--</td>
+                <td width="16%">--</td>
+                <td width="16%">--</td>
+            </tr>
+        #{/list}
+    </table>
+    <input type="hidden" id="h_showloading" value="true"/>
+</div>
+#{/if}
+#{elseif enginetypeId==2}
+
+<table width="100%" border="0" class="tbl_exec" cellspacing="0" cellpadding="0">
+    <tr>
+        <th width="17%">代码</th>
+        *{<th width="13%">名称</th>}*
+        <th width="17%">方向</th>
+        <th width="17%">持仓比例</th>
+        *{<th width="11%">交易品种</th>}*
+        *{<th width="14%">交易所</th>}*
+        <th width="17%">最新</th>
+        <th width="16%">涨跌</th>
+        <th width="16%">涨幅</th>
+        <th class="for_til_width"><span class="for_til_width">&nbsp;</span></th>
+    </tr>
+</table>
+
+
+<div class="tbl_scoll tbl_for_scroll" style="" id="holdPosition_qia_scoll">
+    <table width="100%" border="0" class="tbl_common tbl_exec tbl_no_scroll" id="holdPosition_qia_table" cellspacing="0"
+           cellpadding="0">
+
+        #{list items : strategyPositionDtoList, as : 'item'}
+            <tr>
+                <td width="17%">
+                    #{if item.isStock().equals("1")}
+                        <div class="popup_two">
+                            <div class="get_value">#{emVF v :item.securityid /}</div>
+                            *{<div class="pop_link">
+                                <div class="popup_kline"><a
+                                        href="javascript:jumpToQuote('#{emVF v : item.securityid/}');">K线</a></div>
+                                <div class="popup_f10"><a href="javascript:qicScriptContext.jumpToF10('#{emVF v : item.securityid/}');">F10</a></div>
+                            </div>}*
+                        </div>
+                    #{/if}
+                    #{elseif item.isStock().equals("2")}
+                        <div>
+                            *{<a href="javascript:jumpToQuote('#{emVF v : item.securityid/}');" style="text-decoration: none">#{emVF v :item.securityid /}</a>}*
+                            <a  style="text-decoration: none">#{emVF v :item.securityid /}</a>
+                        </div>
+                    #{/elseif}
+                    #{else }
+                        <div>#{emVF v :item.securityid /}</div>
+                    #{/else}
+                *{  #{emVF v :item.securityid/}}*
+
+                </td>
+                *{<td width="13%">
+                    #{if item.trade_variety == 1}
+                        <div class="popup_two">
+                            #{emVF v : item.name/}
+                            <div class="pop_link">
+                                <div class="popup_kline"><a
+                                        href="javascript:jumpToQuote('#{emVF v : item.securityid/}');">K线</a></div>
+                                <div class="popup_f10"><a href="javascript:qicScriptContext.jumpToF10('#{emVF v : item.securityid/}');">F10</a></div>
+                            </div>
+                        </div>
+                    #{/if}
+                    #{else}
+                        <div style="cursor: pointer">
+                            <a href="javascript:jumpToQuote('#{emVF v : item.securityid/}');" style="text-decoration: none">#{emVF v : item.name/}</a>
+                        </div>
+                    #{/else}
+                </td>}*
+                <td width="17%">
+                    #{if item.isStock().equals("1")}
+                            买
+                    #{/if}
+                    #{elseif item.isStock().equals("2")}
+                        #{if item.positions>0}
+                            多
+                        #{/if}#{else }
+                            空
+                        #{/else}
+                    #{/elseif}
+                </td>
+                <td width="17%"><strong>#{emVF v : item.positions/}</strong></td>
+                *{<td width="11%"> #{if item.trade_variety == 1}股票#{/if}
+                    #{elseif item.trade_variety == 2}期货#{/elseif}
+                    #{else}混合#{/else}</td>}*
+                *{<td width="14%">
+                    #{if "1".equals(item.securityexchange)}上交所#{/if}
+                    #{elseif "2".equals(item.securityexchange)}深交所#{/elseif}
+                    #{elseif "3".equals(item.securityexchange)}港交所#{/elseif}
+                    #{elseif "4".equals(item.securityexchange)}中金所#{/elseif}
+                    #{elseif "5".equals(item.securityexchange)}大连期货#{/elseif}
+                    #{elseif "6".equals(item.securityexchange)}郑州期货#{/elseif}
+                </td>}*
+                <td width="17%">
+                   --
+                </td>
+                <td width="16%">
+                   --
+                </td>
+                <td width="16%">
+                   --
+                </td>
+                <input type="hidden" value="${item.securityexchange}"/>
+            </tr>
+        #{/list}
+    </table>
+    <input type="hidden" id="h_showloading" value="true"/>
+</div>
+
+#{/elseif}
+
+<script>
+    $(document).ready(function () {
+        //scrollObj = new ScrollPage({complete:"", getUrl:getLoadUrl, scrollTarget:"#holdPosition_qicore_scoll", appendTarget:"#holdPosition_qicore_table", pageNo:2});
+        //scrollObj2 = new ScrollPage({complete:"", getUrl:getLoadUrl, scrollTarget:"#holdPosition_qia_scoll", appendTarget:"#holdPosition_qia_table", pageNo:2});
+       //qicScriptContext.subscriptionQuotation(combinQuotationInfo(), "updateQuotationInfo");
+    });
+
+    function getLoadUrl() {
+        var url = "@{StrategyDetail.moreHoldPosition(id,enginetypeId)}";
+        return url;
+    }
+
+    function jumpToF10(code) {
+        qicScriptContext.jumpToF10(code);
+    }
+
+    function jumpToQuote(code) {
+        if (code.substr(0, 1) == "6") {
+            qicScriptContext.jumpToQuoteChart(1, code);
+        } else {
+            qicScriptContext.jumpToQuoteChart(2, code);
+        }
+    }
+</script>
+<script>
+
+//组装行情数据
+function combinQuotationInfo(){
+    var type;
+    var scode;
+    var codeArray = [];
+    $('#holdPosition_qia_table tr').each(function () {
+        scode = $(this).find('td').eq(0).find('div').eq(0).find('div').eq(0).html();
+        if( $(this).children('input').eq(0).val()=="2"){
+            type = 2;
+        }else{
+            type = 1;
+        }
+        //codeArray.push("{\"type\":"+type+",\"code:\""+scode+"\"}");
+        codeArray.push({type: type, code: scode});
+    });
+
+    //return  jQuery.param(codeArray);
+    return JSON.encode(codeArray);
+}
+
+//更新行情数据
+function updateQuotationInfo(stockInfo){
+    var data = eval('(' + stockInfo + ')');
+    var engineTypeId = ${enginetypeId};
+    for(var i=0;i<data.length;i++){
+        if(engineTypeId == 1) {
+            $("#holdPosition_qia_table tr").each(function(){
+                if($(this).find('td').eq(0).find('div').eq(0).find('div').eq(0).html() == data[i].Code){
+                    $(this).children('td').eq(6).html("<strong style='vertical-align: middle;'>"+data[i].Price.toFixed(2)+"</strong>");
+                    if(data[i].Change>0){
+                        $(this).children('td').eq(7).html("<strong style='vertical-align: middle; color: red'>"+data[i].Change.toFixed(2)+"</strong>");
+                    }else if(data[i].Change<0){
+                        $(this).children('td').eq(7).html("<strong style='vertical-align: middle; color: green'>"+data[i].Change.toFixed(2)+"</strong>");
+
+                    }else{
+                        $(this).children('td').eq(7).html("<strong style='vertical-align: middle;'>"+data[i].Change.toFixed(2)+"</strong>");
+
+                    }
+                    if(data[i].ChangeRate>0){
+                        $(this).children('td').eq(8).html("<strong style='vertical-align: middle;color: red'>"+data[i].ChangeRate.toFixed(2)+"</strong>");
+
+                    }else if(data[i].ChangeRate<0){
+                        $(this).children('td').eq(8).html("<strong style='vertical-align: middle; color: green'>"+data[i].ChangeRate.toFixed(2)+"</strong>");
+
+                    }else{
+                        $(this).children('td').eq(8).html("<strong style='vertical-align: middle;'>"+data[i].ChangeRate.toFixed(2)+"</strong>");
+
+                    }
+                }
+            })
+        }
+    }
+}
+
+
+var JSON = {
+    useHasOwn: ({}.hasOwnProperty ? true: false),
+    pad: function(n) {
+        return n < 10 ? "0" + n: n;
+    },
+    m: {
+        "\b": '\\b',
+        "\t": '\\t',
+        "\n": '\\n',
+        "\f": '\\f',
+        "\r": '\\r',
+        '"': '\\"',
+        "\\": '\\\\'
+    },
+    encodeString: function(s) {
+        if (/["\\\x00-\x1f]/.test(s)) {
+            return '"' + s.replace(/([\x00-\x1f\\"])/g,
+                    function(a, b) {
+                        var c = a[b];
+                        if (c) {
+                            return c;
+                        }
+                        c = b.charCodeAt();
+                        return "\\u00" + Math.floor(c / 16).toString(16) + (c % 16).toString(16);
+                    }) + '"';
+        }
+        return '"' + s + '"';
+    },
+    encodeArray: function(o) {
+        var a = ["["],b, i, l = o.length,v;
+        for (i = 0; i < l; i += 1) {
+            v = o[i];
+            switch (typeof v) {
+                case "undefined":
+                case "function":
+                case "unknown":
+                    break;
+                default:
+                    if (b) {
+                        a.push(',');
+                    }
+                    a.push(v === null ? "null": this.encode(v));
+                    b = true;
+            }
+        }
+        a.push("]");
+        return a.join("");
+    },
+    encodeDate: function(o) {
+        return '"' + o.getFullYear() + "-" + pad(o.getMonth() + 1) + "-" + pad(o.getDate()) + "T" + pad(o.getHours()) + ":" + pad(o.getMinutes()) + ":" + pad(o.getSeconds()) + '"';},
+    encode: function(o) {
+        if (typeof o == "undefined" || o === null) {
+            return "null";
+        } else if (o instanceof Array) {
+            return this.encodeArray(o);
+        } else if (o instanceof Date) {
+            return this.encodeDate(o);
+        } else if (typeof o == "string") {
+            return this.encodeString(o);
+        } else if (typeof o == "number") {
+            return isFinite(o) ? String(o) : "null";
+        } else if (typeof o == "boolean") {
+            return String(o);
+        } else {
+            var self = this;
+            var a = ["{"],b,i,v;
+            for (i in o) {
+                if (!this.useHasOwn || o.hasOwnProperty(i)) {
+                    v = o[i];
+                    switch (typeof v) {
+                        case "undefined":
+                        case "function":
+                        case "unknown":
+                            break;
+                        default:
+                            if (b) {
+                                a.push(',');
+                            }
+                            a.push(self.encode(i), ":", v === null ? "null": self.encode(v));
+                            b = true;
+                    }
+                }
+            }
+            a.push("}");
+            return a.join("");
+        }
+    },
+    decode: function(json) {
+        return eval("(" + json + ')');
+    }
+};
+</script>

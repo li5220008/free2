@@ -1,0 +1,75 @@
+<!--用户权限管理 Begin-->
+<form method="post" id="authorizaForm">
+    <div class="list_role_wrap">
+        <div class="checked_list">
+            <h3 class="h3_title">
+                已选用户列表
+            </h3>
+            <table width="100%" class="tbl_checked" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <th>姓名</th>
+                    <th>帐号</th>
+                    <th>所属营业部</th>
+                </tr>
+                #{list items:userList, as : 'item'}
+                    <tr userid="#{emVF item.id /}" class="tr_checked">
+                        <td>#{emVF item.name /}</td>
+                        <td>#{emVF item.account /}</td>
+                        <td>#{emVF item.saleName /}</td>
+                    </tr>
+                #{/list}
+            </table>
+
+        </div>
+
+        <div class="belong_role_list">
+            <h3 class="h3_title">
+                所属角色
+            </h3>
+            <ul class="role_list">
+            #{list items:roleList ,as :'item'}
+                <li>
+                    <input name="role" id="authorizationrole_#{emVF item.id/}" type="checkbox" value="#{emVF item.id/}">
+                    <label for="role_#{emVF item.id/}">#{emVF item.name /}</label>
+                </li>
+            #{/list}
+            </ul>
+        </div>
+    </div>
+
+    <div class="privilege_date">
+        <div class="privilege_datepicker">
+            <strong>权限期限</strong>
+            <input type="text" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',readOnly:true})" id="start_applydate" name="start_applydate" readonly="realonly" value="" realValue="2099-09-09" class="a_datepicker">
+        </div>
+        <div class="privilege_radio">
+            <label>
+                <a href="#" id="oneweek">一周</a></label>
+            <label>
+                <a href="#" id="onemonth">一个月</a></label>
+            <label>
+                <a href="#" id="threemonth">三个月</a></label>
+            <label>
+                <a href="#" id="halfyear">半年</a></label>
+            <label>
+                <a href="#" id="oneyear">一年</a></label>
+
+            <label>
+                <a href="#" id="twoyear">两年</a></label>
+        </div>
+        <!--日期选择器 begin-->
+        <script type="text/javascript">
+
+
+        </script>
+        <!--日期选择器 end-->
+    </div>
+
+    <div class="common_btn privilege_btn">
+        <input type="reset" value="重置" class="common_blue" id="authorize_reset">
+        <input type="button" value="取消" class="common_blue common_cancle" id="authorize_cancel">
+        <input type="button" value="确定" class="common_blue" id="authorization">
+    </div>
+    <input type="hidden" id="u_showloading" value="true"/>
+</form>
+<!--用户权限管理 End-->

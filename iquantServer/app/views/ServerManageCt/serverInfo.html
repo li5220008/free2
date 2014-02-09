@@ -1,0 +1,36 @@
+#{extends 'main.html' /}
+<body>
+<form action="@{ServerManageCt.addServer()}" method="post">
+    <p>
+        服务类型: <select name="backTestServerDto.type">
+        <option value="1">Agent运行</option>
+        <option value="0">回测</option>
+        <option value="2">实时模拟</option>
+    </select>
+    </p>
+    <p>
+        策略类型: <select name="backTestServerDto.enginetypeId">
+        <option value="1">QICORE</option>
+        <option value="2">QIA</option>
+    </select>
+    </p>
+    <p>ip: <input type="text" name="backTestServerDto.ip" id="ip" required></p>
+
+    <p>服务器名称: <input type="text" name="backTestServerDto.serverName" id="name" required></p>
+
+    <p>添加服务器: <input type="submit" value="提交" id="submit"></p>
+    <a href="@{ServerManageCt.serverList()}">列表</a>
+</form>
+
+<script>
+//       $("#submit").click(function(){
+//           var ip = $("#ip").val();
+//           var name = $("#name").val();
+//           if (ip == "" || name == "") {
+//               alert ("ip 或 服务器名称不能为空！");
+//               return;
+//           }
+//       })
+</script>
+</body>
+</html>

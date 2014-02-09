@@ -1,0 +1,1 @@
+{"delProduct":{"method":"GET","url":"http://192.168.103.104:9100/productCt/delProduct?id=3&ntToken=5e412f0c6bcaa8cc8ffadaddc8d3688f65bba20419d64ac35b368252bd80224930cb9b87cc15d018a0c72b92126d8d9b","body":"","overrideMimeType":false,"headers":[]}}

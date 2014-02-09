@@ -1,0 +1,45 @@
+h1. iquantWeb服务端对外接口(iquant)
+
+h2. 统一说明
+
+*返回内容以下面json格式为模板*
+
+bc. {
+  "status":"返回状态",
+  "data":"返回内容",
+  "message":"补充说明",
+  "errors":"错误说明",
+  "pageSize":"每页记录数",
+  "pageNo":"当前页",
+  "rowTotal":"总记录数"
+}
+
+ **详细说明**
+
+||项||类型||格式||说明||
+| status | int |--|1.请求失败；0.请求成功|
+| data | json |详见具体定义|json格式，存放client需要的具体信息|
+| message | String |--|备用字段，记录异常等辅助信息|
+| errors | json |json|json格式，记录错误日志信息,参见error参数举例说明|
+| pageSize | int |--|用于分页统计,每页记录数|
+| pageNo | int |--|用于分页统计，当前页|
+| rowTotal | int |--|用于分页统计，总记录数|
+
+**errors参数举例说明**
+
+bc. {
+    "errors":
+        [
+            {
+              "field" : "name",//对应字段
+              "message" : "名称为空"//错误信息描述
+            },
+            {
+              "field" : "account",
+              "message" : "账号为空"
+            }
+        ]
+}
+
+
+

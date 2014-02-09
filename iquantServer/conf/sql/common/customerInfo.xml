@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>用户自定义资源, 包含自选股, 模板等</comment>
+
+    <!--插入一个自选股组-->
+    <entry key="addCustSecGroup">
+        <![CDATA[
+INSERT INTO cust_sec_group (NAME, sname, flag, u_id, p_id, ctime)
+VALUES (:name, :sname, :flag, :userId, :sysProductId, :ctime)
+                ]]>
+    </entry>
+
+    <!--判断自选股组名是否存在-->
+    <entry key="custSecGroupNameExist">
+<![CDATA[
+SELECT COUNT(*) FROM cust_sec_group WHERE u_id =? AND p_id = ? AND `name` = ?
+]]>
+    </entry>
+
+    <!--同名的自选股组-->
+    <entry key="custSecGroupSameName">
+<![CDATA[
+select id from cust_sec_group where u_id = ? and  p_id = ? and name = ? order by ctime desc
+]]>
+    </entry>
+
+    <!--按组id删除自选股明细-->
+    <entry key="delCustSecDetailByGid">
+<![CDATA[
+delete from cust_sec_list where u_id = ? and p_id = ? and group_id = ?
+]]>
+    </entry>
+
+    <!--按id删除自选股组-->
+    <entry key="delCustSecGroupById">
+<![CDATA[
+delete from cust_sec_group where u_id = ? and p_id = ? and id = ?
+]]>
+    </entry>
+
+    <!--返回用户在这个产品上的自选股组. 只返回每个名称的最新的那条记录
+    这个是 2013-09-28号之前的sql
+    select id, name, sname, DATE_FORMAT(ctime, '%Y-%m-%d %T') as ctime, flag
+    from cust_sec_group as a
+    where not exists(
+      select 1 from cust_sec_group as b
+      where a.name = b.name
+        and b.ctime > a.ctime
+    )
+    and u_id = ? and p_id = ?
+    -->
+    <entry key="fetchCustSecGroupLatest">
+<![CDATA[
+SELECT a.id, a.name, a.sname, DATE_FORMAT(a.ctime, '%Y-%m-%d %T') AS ctime, a.flag
+FROM cust_sec_group AS a
+    INNER JOIN (
+        SELECT name, MAX(ctime) AS maxCtime
+        FROM cust_sec_group
+        WHERE
+            u_id = :uid
+            AND p_id = :pid
+        GROUP BY name
+    ) AS b
+WHERE
+    a.name = b.name
+    AND a.ctime = b.maxCtime
+    AND a.u_id = :uid
+    AND a.p_id = :pid
+]]>
+    </entry>
+
+    <!--获取指定组名称的历史记录. 按由近及远的方式返回-->
+    <entry key="fetchCustSecGroupByNameAll">
+    <![CDATA[
+select a.id, a.name, a.sname, DATE_FORMAT(a.ctime, '%Y-%m-%d %T') AS ctime, flag
+from cust_sec_group a
+where u_id = ? and p_id = ? and name = ?
+order by a.ctime desc
+    ]]>
+    </entry>
+
+    <!--增加自选股明细-->
+    <entry key="addCustSecListByGid">
+<![CDATA[
+INSERT INTO cust_sec_list (group_id, exchange, scode, u_id, p_id, ctime, comments)
+VALUES (:groupId, :exchange, :scode, :userId, :sysProductId, :ctime, :comment);
+]]>
+    </entry>
+
+    <!--修改自选股明细-->
+    <entry key="updateCustSecListById">
+        <![CDATA[
+UPDATE cust_sec_list
+SET exchange = :exchange, scode = :scode, ctime = :ctime, comments = :comment
+WHERE id = :id
+                ]]>
+    </entry>
+
+    <!--获取指定自选股组名称,最新的自选股明细-->
+    <entry key="fetchCustSecGroupByGroupIds">
+        <![CDATA[
+SELECT
+    a.id, a.scode, a.exchange, DATE_FORMAT(a.ctime, '%Y-%m-%d %T') AS ctime, comments as comment
+FROM
+    cust_sec_list AS a
+WHERE a.group_id IN
+    (
+            #ids#
+    )
+]]>
+    </entry>
+
+    <!--取指定组名的最新的自选股组id-->
+    <entry key="fetchLatestCustSecGroupIdsByName">
+        <![CDATA[
+        SELECT a.id
+        FROM cust_sec_group AS a
+            INNER JOIN (
+                SELECT name, MAX(ctime) AS maxCtime
+                FROM cust_sec_group
+                WHERE
+                    u_id = :uid
+                    AND p_id = :pid
+                    and name = :name
+                GROUP BY NAME
+            ) AS b
+        WHERE
+            a.name = b.name
+            AND a.ctime = b.maxCtime
+            AND a.u_id = :uid
+            AND a.p_id = :pid
+            and a.name = :name
+]]>
+    </entry>
+
+    <!--返回自选股组明细-->
+    <entry key="fetchCustSecListByGid">
+    <![CDATA[
+select id, scode, exchange, DATE_FORMAT(ctime, '%Y-%m-%d %T') AS ctime, comments as comment from cust_sec_list where u_id = ? and p_id = ? and group_id = ?
+    ]]>
+    </entry>
+
+    <!-- 给自选股增加备注信息 -->
+    <entry key="updateCustSecCommentsById">
+    <![CDATA[
+update cust_sec_list set comments = :comments where u_id = :uid and p_id = :pid and id = :id
+        ]]>
+    </entry>
+
+    <!--删除一条自选股明细-->
+    <entry key="delCustSecListById">
+    <![CDATA[
+delete from cust_sec_list where u_id = ? and p_id = ? and id = ?
+    ]]>
+    </entry>
+
+    <!--增加一个用户自定义指标-->
+    <entry key="addCustIndex">
+        <![CDATA[
+INSERT INTO cust_index
+(NAME, content, u_id, p_id, ctime)
+VALUES (:name, :content, :userId, :sysProductId, :ctime);
+                ]]>
+    </entry>
+
+    <!--修改一个用户自定义指标-->
+    <entry key="editCustIndex">
+        <![CDATA[
+UPDATE cust_index
+SET
+    NAME = :name,
+    content = :content
+WHERE id = :id AND u_id = :userId
+                ]]>
+    </entry>
+
+
+    <!--删除一个用户自定义指标-->
+    <entry key="delCustIndex">
+<![CDATA[
+delete from cust_index where u_id = ? and p_id = ? and id = ?
+]]>
+    </entry>
+
+    <!--返回用户自定义指标-->
+    <entry key="fetchCustIndex">
+<![CDATA[
+select id, name  from cust_index where u_id = ? and p_id = ?
+]]>
+    </entry>
+
+    <!--根据自定义指标id,返回指标内容-->
+    <entry key="fetchCustIndexContentByid">
+<![CDATA[
+select content from cust_index where u_id = ? and p_id = ? and id = ?
+]]>
+    </entry>
+
+    <!--增加一个用户自定义模板-->
+    <entry key="addCustTemplate">
+<![CDATA[
+INSERT INTO qic_db.cust_template
+(NAME, content, category, u_id, p_id, ctime )
+VALUES (:name, :content, :category, :userId, :sysProductId, :ctime)
+]]>
+    </entry>
+
+    <!--修改一个用户自定义模板-->
+    <entry key="editCustTemplate">
+        <![CDATA[
+UPDATE cust_template
+SET
+	NAME = :name,
+    content = :content
+WHERE id = :id AND u_id = :userId
+                ]]>
+    </entry>
+
+    <!--删除一个用户自定义模板-->
+    <entry key="delCustTemplate">
+<![CDATA[
+delete from cust_template where u_id = ? and p_id = ? and id = ?
+]]>
+    </entry>
+
+    <!--返回用户自定义模板-->
+    <entry key="fetchCustTemplateListByCategory">
+<![CDATA[
+select id, name from cust_template where u_id = ? and p_id = ? and category = ?
+]]>
+    </entry>
+
+    <!--根据自定义指标id,返回模板内容-->
+    <entry key="fetchCustTemplateContentByid">
+<![CDATA[
+select content from cust_template where u_id = ? and p_id = ? and id = ?
+]]>
+    </entry>
+
+    <!--检查模板名称是否重复-->
+    <entry key="custTemplateExistName">
+<![CDATA[
+select id from cust_template where u_id = ? and p_id = ? and category = ? and name = ?
+]]>
+    </entry>
+</properties>

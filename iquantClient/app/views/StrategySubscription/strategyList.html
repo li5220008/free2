@@ -1,0 +1,408 @@
+#{extends 'main.html' /}
+#{set title:'策略列表' /}
+
+#{set 'moreStyles'}
+<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/global-strategysuper.css'}">
+#{/set}
+#{set 'moreScripts'}
+<script src="@{'/public/javascripts/highChart/js/highcharts.js'}" type="text/javascript" charset="utf-8"></script>
+<script src="@{'/public/javascripts/highChart/highchartstheme.js'}" type="text/javascript" charset="utf-8"></script>
+#{/set}
+
+<!--strategy_nav Begin-->
+<div class="strategy_nav">
+    <div class="stra_options">
+        <ul class="rank_item">
+            <li #{if myselect==1||myselect==0}class="rank_item_focus"#{/if}><span id="yield">收益排行</span></li>
+            <li #{if myselect==2}class="rank_item_focus"#{/if}><span id="collectCount">人气排行</span></li>
+            <li #{if myselect==3}class="rank_item_focus"#{/if}><span id="upTime">最新上架</span></li>
+        </ul>
+    </div>
+
+    <ul class="nav_func">
+        <li>
+            <div class="str_sup_number">
+            #{if content!=null||cnd!=null}
+                当前搜索结果:
+            #{/if}
+            #{else }
+                当前订阅:
+            #{/else}
+            ${page.rowTotal}
+            </div>
+        </li>
+        <li class="nav_search">
+            <form action="@{StrategySubscription.strategyList()}" name="keyform" method="get">
+                <input type="text" class="key_strategy" value="${content}" placeholder="策略名称/策略师"  name="content">
+                <input type="hidden" name="myselect" value="${myselect}">
+                <input type="submit" class="btn_submit">
+            </form>
+        </li>
+        <li class="more_search" id="dialog-link">高级搜索</li>
+        <li class="n_contrast">开始对比</li>
+        <li class="list_pic">
+            <span class="stra_pic">大图</span>
+            <a href="@{StrategySubscription.strategyList(myselect,content,true)}" class="stra_list">列表</a>
+        </li>
+    </ul>
+</div>
+<!--strategy_nav End-->
+
+<!--main_wrap Begin-->
+<div class="main_wrap">
+    <div class="main">
+        <ul class="main_list">
+        #{list items : sbdList, as : 'item'}
+            <li class="constract_list constract_common">
+                <table class="tbl_wrap" width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td width="40%"><a href="@{StrategyDetail.detail(item.id,item.enginetypeId)}"><img src="/smallImages/st_${item.uuid}.png" class="str_img"></a></td>
+                        <td valign="top">
+                            <div class="content_wrap">
+                                <div class="cont_til">
+                                    <a href="@{StrategyDetail.detail(item.id,item.enginetypeId)}" class="st_c_til">
+                     	                <span>
+                                             <span class="tool_tips">#{emVF item.sname/}</span>
+                                             #{if (new java.util.Date()).before(item.upTime+7)}
+                                                 <span class="strategy_new">&nbsp;</span>
+                                             #{/if}
+                                         </span>
+                                    </a>
+                                </div>
+                                <div class="all_star">
+                                    #{if item.starLevel>4.7}
+                                        <span class="all_star_10"> </span>
+                                    #{/if}
+                                    #{if item.starLevel<=4.7 &&item.starLevel>4.2}
+                                        <span class="all_star_9"> </span>
+                                    #{/if}
+                                    #{if item.starLevel<=4.2 &&item.starLevel>3.7}
+                                        <span class="all_star_8"> </span>
+                                    #{/if}
+                                    #{if item.starLevel<=3.7 &&item.starLevel>3.2}
+                                        <span class="all_star_7" > </span>
+                                    #{/if}
+                                    #{if item.starLevel<=3.2 &&item.starLevel>2.7}
+                                        <span class="all_star_6" > </span>
+                                    #{/if}
+                                    #{if item.starLevel<=2.7 &&item.starLevel>2.2}
+                                        <span class="all_star_5"> </span>
+                                    #{/if}
+                                    #{if item.starLevel<=2.2 &&item.starLevel>1.7}
+                                        <span class="all_star_4" > </span>
+                                    #{/if}
+                                    #{if item.starLevel<=1.7 &&item.starLevel>1.2}
+                                        <span class="all_star_3" > </span>
+                                    #{/if}
+                                    #{if item.starLevel<=1.2 &&item.starLevel>0.7}
+                                        <span class="all_star_2"> </span>
+                                    #{/if}
+                                    #{if item.starLevel<=0.7 &&item.starLevel>0}
+                                        <span class="all_star_1"> </span>
+                                    #{/if}
+                                    <span>(${item.discussCount }人已评价)</span>
+                                </div>
+
+                                <dl class="strategy_options">
+                                    <dd>年化收益率:<span>#{emVFC v:item.yield * 100, f:'#,#0.00', u:'%' ,c:true, l:true /}</span></dd>
+                                    <dd>#{emVF item.provider/}</dd>
+                                    <dd>上架时间:<span>#{emVFC item.upTime, f:'yyyy-MM-dd'/}</span></dd>
+                                    <dd>#{if item.tradeVariety ==1  }股票#{/if}
+                                        #{if item.tradeVariety ==2  }期货#{/if}
+                                        #{if item.tradeVariety ==3  }混合#{/if} / #{if item.stype ==1  }选股型#{/if}
+                                        #{if item.stype ==2  }择时型#{/if}
+                                        #{if item.stype ==3  }交易型#{/if}
+                                        #{if item.stype ==4  }其他#{/if}
+                                    </dd>
+                                    <dd class="strategy_options_breif">
+                                        <span class="strategy_options_subtitle">策略简介:</span>
+                                        <span class="str_opitons_text tool_tips" style="cursor:pointer">#{emVF item.desp/}</span>
+                                    </dd>
+                                    <dd class="strategy_options_button">
+                                        #{if collectSet.contains((item.id).intValue())}
+                                                #{hasAuth '5'}<span data-strategyid="${item.id}" class="add_collect add_collect_2">&nbsp;</span>#{/hasAuth}
+                                        #{/if}
+                                        #{else}
+                                                #{hasAuth '5'}<span data-strategyid="${item.id}" class="add_collect">&nbsp;</span>#{/hasAuth}
+                                        #{/else}
+                                        <span class="constract" data-compare-check="${item.id}" data-compare="${item.id}">
+                                            <label>
+                                                <input name="" type="checkbox" value="">
+                                                加入对比
+                                            </label>
+                    </span>
+                                    </dd>
+                                </dl>
+                            </div>
+                            #{if page.pageNo<2 && item_index<=3 &&myselect!=3}
+                                <div class="strategy_top${item_index}">&nbsp;  </div>
+                            #{/if}
+                        </td>
+                    </tr>
+                </table>
+            </li>
+        #{/list}
+        #{else }
+            <p align="center" style="font-size: 18px;font-style: inherit;">没有结果，请按策略名称或策略师姓名查询或者没有订阅</p>
+        #{/else}
+        </ul>
+    </div>
+
+#{if advanceSearch}
+    <!--高级搜索分页 Begin -->
+    <div class="page">
+        <div class="page_center">
+            <form action="@{StrategySubscription.advanceSearch(cnd,myselect)}" class="pageFrom" method="get">
+                #{paging page:page /}
+            </form>
+        </div>
+    </div>
+    <!--高级搜索分页 End-->
+#{/if}
+
+#{if ! advanceSearch}
+    <!--list分页 Begin -->
+    <div class="page">
+        <div class="page_center">
+            <form action="@{StrategySubscription.strategyList(myselect, content)}" class="pageFrom" method="get">
+                #{paging page:page /}
+            </form>
+        </div>
+    </div>
+    <!--list分页 End-->
+#{/if}
+
+</div>
+<!--main_wrap End-->
+
+
+<!--搜索设置 Begin-->
+<div class="search_set_wrap" title="搜索设置">
+    <div class="search_list">
+        <h3 class="h3_title">我的搜索列表</h3>
+
+        <ul class="search_ul" id="ut_ul_list" style="margin-top: 26px;">
+        #{list items:utList, as:'ut'}
+            <li id="ut_${ut.id}">${ut.name}</li>
+        #{/list}
+        </ul>
+
+        <div class="set_control">
+            <button id="delCndBtn"><img src="@{'/public/images/set_remove.jpg'}"></button>
+            <button id="addCndBtn"><img src="@{'/public/images/set_add.jpg'}"></button>
+        </div>
+
+    </div>
+
+    <div class="search_set">
+        <h3 class="h3_title">搜索条件设置</h3>
+
+        <form id="cndForm" name="cndForm" action="@{StrategySubscription.advanceSearch()}">
+            <table width="100%" border="0" class="set_tbl" cellspacing="0" cellpadding="0">
+                <input type="hidden" name="myselect" value="${myselect}">
+                <tr>
+                    <td width="17%" align="right">交易类型</td>
+                    <td align="left">
+                        <div class="dialog_box">
+                            <input type="hidden" id="tradeTypeId" name="cnd.tradeType" autocomplete="off" value="-999">
+                            <div class="sel_84_dialog new_sel_d" id="select_tradeType" style="color: rgb(0, 0, 0);">全部</div>
+                            <ul style="display: none;" class="sel_91_option new_sel_option" id="options_tradeType">
+                                <li class="tradeType_-999" data-value="-999">全部</li>
+                                <li class="tradeType_1" data-value="1">选股型</li>
+                                <li class="tradeType_2" data-value="2">择时型</li>
+                                <li class="tradeType_3" data-value="3">交易型</li>
+                                <li class="tradeType_4" data-value="4">其他</li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">交易品种</td>
+                    <td align="left">
+                        <div class="dialog_box">
+                            <input type="hidden" id="tradeVarietyId" name="cnd.tradeVariety" autocomplete="off" value="-999">
+                            <div class="sel_84_dialog new_sel_d" id="select_tradeVariety" style="color: rgb(0, 0, 0);">全部</div>
+                            <ul style="display: none;" class="sel_91_option new_sel_option" id="cndTradeVariety">
+                                <li class="trade_-999" data-value="-999">全部</li>
+                                <li class="trade_1" data-value="1">股票</li>
+                                <li class="trade_2" data-value="2">期货</li>
+                                <li class="trade_3" data-value="3">混合</li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">收益率</td>
+                    <td align="left">
+                        <input type="number" step="0.1" value="" name="cnd.yieldDown" id="yieldDown"/>
+                        &nbsp;<b>%</b>&nbsp;到&nbsp;
+                        <input type="number" step="0.1" value="" name="cnd.yieldUp" id="yieldUp"/>&nbsp;<b>%</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">获胜率</td>
+                    <td align="left">
+                        <input type="number" step="0.1" value="" name="cnd.profitRatioDown" id="profitRatioDown"/>&nbsp;<b>%</b>
+                        &nbsp;到&nbsp;
+                        <input type="number" step="0.1" value="" name="cnd.profitRatioUp" id="profitRatioUp"/>&nbsp;<b>%</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">用户评级</td>
+                    <td align="left">
+                        <!--模仿下拉框 Begin-->
+                        <div class="select_wrap" style="position: relative; top:8px;">
+                            <div class="dialog_box">
+                                <input type="hidden" id="starDown" name="cnd.starDown" autocomplete="off"> *{li的html内容}*
+                                <input type="hidden" id="starDown_dn" autocomplete="off"> *{li的data-name对应的值}*
+
+                                <div class="sel_84_dialog" id="select_starDown">
+                                    <span class="star_0">0 </span>
+                                </div>
+
+                                <ul class="sel_91_option sel_six" id="options_starDown">
+                                    <li class="star_0" data-name="0">0</li>
+                                    <li class="star_1" data-name="1">1</li>
+                                    <li class="star_2" data-name="2">2</li>
+                                    <li class="star_3" data-name="3">3</li>
+                                    <li class="star_4" data-name="4">4</li>
+                                    <li class="star_5" data-name="5">5</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!--模仿下拉框 End-->
+
+                        <span class="sel_float" style="position: relative; top:10px; left:1px;">&nbsp;到&nbsp;</span>
+
+                        <!--模仿下拉框 Begin-->
+                        <div class="select_wrap" style="position: relative; top:-10px; left:23px;">
+
+                            <div class="dialog_box">
+                                <input type="hidden" id="starUp" name="cnd.starUp" autocomplete="off">
+                                <input type="hidden" id="starUp_dn" autocomplete="off">
+
+                                <div class="sel_84_dialog" id="select_starUp">
+                                    <span class="star_5">5</span>
+                                </div>
+
+                                <ul class="sel_91_option sel_six" id="options_starUp">
+                                    <li class="star_5" data-name="5">5</li>
+                                    <li class="star_4" data-name="4">4</li>
+                                    <li class="star_3" data-name="3">3</li>
+                                    <li class="star_2" data-name="2">2</li>
+                                    <li class="star_1" data-name="1">1</li>
+                                    <li class="star_0" data-name="0">0</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!--模仿下拉框 End-->
+                    </td>
+                </tr>
+            </table>
+        </form>
+
+    </div>
+</div>
+<!--搜索设置 End-->
+
+<!--策略对比 Begin-->
+<div class="stategy_constact" title="策略对比"></div>
+<!--策略对比 End-->
+
+<!--jquery-ui插件 Begin-->
+<link href="@{'/public/stylesheets/ui-lightness/jquery-ui-1.9.1.custom.css'}" rel="stylesheet">
+<script src="@{'/public/javascripts/jquery-ui-1.9.1.custom.js'}"></script>
+<script>
+    //浏览器宽度小于1240时,列表的变化
+    (function () {
+        var clientWidth = $("body")[0].clientWidth;
+        var liEle = $(".constract_common");
+        var mainWrap = $(".main_wrap");
+
+        if (clientWidth <= 1240) {
+            mainWrap.css("width", "inherit")
+            liEle.css({margin:"0 0 8px 0px", "margin-left":(clientWidth - 600) / 2})
+        }
+
+        window.onresize = function () {
+            var dynWidth = $("body")[0].clientWidth;
+            if (dynWidth <= 1240) {
+                mainWrap.css("width", "inherit")
+                liEle.css({margin:"0 0 8px 0px", "margin-left":(dynWidth - 600) / 2})
+            } else {
+                mainWrap.css("width", "1240");
+                liEle.css({margin:"0 8px 8px 0px"});
+            }
+        };
+
+    })();
+
+    window.moreSearch();
+    downBox('select_info_year1_2', '#options_year1_2', 'reportDate_2', 'reportName_2');
+    downBox('select_info_year1_2', '#advance', 'reportDate_2', 'reportName_2');
+</script>
+<!--jquery-ui插件 End-->
+
+<!--jqtransform插件 Begin-->
+<link rel="stylesheet" href="@{'/public/jqtransformplugin/jqtransform.css'}" type="text/css" media="all"/>
+<script src="@{'/public/jqtransformplugin/jquery.jqtransform.js'}"></script>
+<script type="text/javascript">
+    $(function () {
+        $('.nav_form').jqTransform({imgPath:_gQic.ctx + "/public/jqtransformplugin/img/"});
+    });
+</script>
+<!--jqtransform插件 End-->
+<script>
+    var utListSize =${utList!=null?utList.size():0};
+    $("#options_year1_2 li").live("click", function () {
+        var a = $("#reportDate_2").val();
+        var content = "${content}";
+        window.location.href = "/StrategySubscription/strategyList?myselect=" + a + "&content=" + content;
+    });
+
+    $("#advance li").live("click", function () {
+        var form = $('#advform')[0].action;
+        var a = $("#reportDate_2").val();
+        url = form + "&myselect=" + a;
+        window.location.href = url;
+
+    });
+
+    downBox('select_tradeType', '#options_tradeType', 'tradeTypeId', 'reportName_3');
+    downBox('select_tradeVariety', '#cndTradeVariety', 'tradeVarietyId', 'reportName_4');
+
+</script>
+
+*{条件管理js}*
+<script type="text/javascript">
+    var renameCondRoute = #{jsRoute @SearchConditionManage.renameOrNewCond(':id', ":name") /} //改名url
+    var saveCondRoute = #{jsRoute @SearchConditionManage.editStrategyCond() /}  //保存url. 修改url
+    var delCondRoute = #{jsRoute @SearchConditionManage.delCond(':id') /} //删除url
+    var strategyContrastRoute = #{jsRoute @StrategySubscription.strategyContrast() /} //删除url
+    var utListsize = 1;
+    var utMap = {}; //用户策略map
+    #{list items:utList, as:'ut'}
+    utMap['${ut.id}'] = ${ut.content.raw()};
+    #{/list}
+
+    var cndType = 1; //条件的类型. 1.策略, 2.股票池 这个变量不能删除, 有用
+</script>
+<script type="text/javascript" src="@{'/public/javascripts/condManage.js'}"></script>
+
+<style type="text/css">
+    .cndSelected {
+        background-color: #6ca9e1;
+    }
+</style>
+<script>
+    $("#yield").live("click", function(){
+        window.location.href="/StrategySubscription/strategyList?myselect="+1;
+    });
+    $("#collectCount").live("click", function(){
+        window.location.href="/StrategySubscription/strategyList?myselect="+2;
+    });
+    $("#upTime").live("click", function(){
+        window.location.href="/StrategySubscription/strategyList?myselect="+3;
+    });
+    qicTips();
+</script>

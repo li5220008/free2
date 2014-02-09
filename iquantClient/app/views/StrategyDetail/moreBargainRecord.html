@@ -1,0 +1,31 @@
+#{list items : executionRecordDtoList, as : 'item'}
+<tr>
+    <td width="20%"><strong>#{emVF v : item.sendingtime, f : 'yyyy-MM-dd HH:mm:ss'/}</strong></td>
+    <td width="20%"><strong>
+        <div>
+            <a *{href="javascript:jumpToQuote('#{emVF v : item.securityid/}');"}*
+               style="text-decoration: none">#{emVF v :item.securityid /}</a>
+        </div>
+    </strong></td>
+    *{<td width="12%">
+        <div style="cursor: pointer">
+            <a href="javascript:jumpToQuote('#{emVF v : item.securityid/}');"
+               style="text-decoration: none"> #{emVF v : item.name/}</a>
+        </div>
+    </td>}*
+    <td width="20%">
+        #{emVF v : item.getSide()/}
+    </td>
+    <td width="20%"><strong>#{emVF v : item.avgpx, f:'#,##0.00'/}</strong></td>
+    <td width="20%"><strong>#{emVF v : item.lastpx/}</strong></td>
+    *{<td width="12%">
+        #{if item.trade_variety == 1}股票#{/if}
+        #{elseif item.trade_variety == 2}期货#{/elseif}
+        #{else}混合#{/else}
+    </td>
+    <td width="12%">
+        --
+    </td>}*
+</tr>
+#{/list}
+

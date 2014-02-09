@@ -1,0 +1,97 @@
+#{extends 'main.html' /}
+<body>
+<h2>服务器列表</h2>
+<table border="1" cellspacing="0" cellpadding="0" align="center">
+
+    <tr>
+        <th width="25%" align="center">ip</th>
+        <th width="25%" align="center">服务器类型</th>
+        <th width="25%" align="center">策略类型</th>
+        <th width="25%" align="center">操作</th>
+    </tr>
+#{list items : list,as : 'item'}
+    <tr>
+        <td align="center">#{emVF v : item.ip/}</td>
+        #{if item.type == 1}
+            <td align="center">Agent服务器</td>
+        #{/if}
+        #{elseif  item.type == 2}
+            <td align="center">实时模拟服务器</td>
+        #{/elseif }
+        #{else }
+            <td align="center">回测服务器</td>
+        #{/else}
+        #{if item.enginetypeId == 1}
+            <td align="center">QICORE</td>
+        #{/if}
+        #{else }
+            <td align="center">QIA</td>
+        #{/else}
+        <td align="center">
+            <input type="button" value="删除" id="del_server">
+            #{if item.status == 1}
+                <input type="button" value="启用" class="operate">
+            #{/if}
+            #{else }
+                <input type="button" value="禁用" class="operate">
+            #{/else}
+            <input type="hidden" id="server_id" value="${item.id}">
+            <input type="hidden" id="server_status" value="${item.status}">
+        </td>
+        <td></td>
+    </tr>
+#{/list}
+    <a href="@{ServerManageCt.serverInfo()}">添加服务器</a>
+</table>
+<script>
+
+    var delServer = #{jsRoute @ServerManageCt.delBackTestServer()/}
+    var changeStatus = #{jsRoute @ServerManageCt.changeStatus()/}
+    $("#del_server").live("click",function(){
+        var serverId = $(this).parent().find('input').eq(2).val();
+        if(confirm("确认要删除?")) {
+            $.ajax({
+                url:delServer.url(),
+                data:{"id":serverId},
+                dataType:"text",
+                type:"get",
+                success:function(data){
+                    alert(data);
+                    setTimeout(function(){
+                        window.location.reload();
+                    },400);
+                }
+            });
+        }
+    });
+
+    $(".operate").live('click',function(){
+        var serverId = $(this).parent().find('input').eq(2).val();
+        var serverStatus = $(this).parent().find('input').eq(3).val();
+
+        if (serverStatus == 0) {
+            serverStatus = 1;
+        } else {
+            serverStatus = 0;
+        }
+        $.ajax({
+            url:changeStatus.url(),
+            data:{"id":serverId,"status":serverStatus},
+            dataType:"text",
+            type:"get",
+            success:function(data){
+                if (serverStatus == 0) {
+                    $(this).parent().find('input').eq(1).val("禁用");
+                } else {
+                    $(this).parent().find('input').eq(1).val("启用");
+                }
+                setTimeout(function(){
+                    window.location.reload();
+                },400);
+            }
+        })
+    })
+
+
+</script>
+</body>

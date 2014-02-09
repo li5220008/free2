@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>角色用户  sql</comment>
+
+
+    <entry key="roleInfoSql">
+        <![CDATA[
+                SELECT
+  ui.`id` AS id,
+  ui.`account` AS account,
+  ui.`name` AS NAME,
+  ui.`phone` AS phone,
+  sd.`name` AS saleName,
+  ui.`capital_account` AS capitalAccount,
+  ui.`edate` AS endDate,
+  ui.`status` AS STATUS
+FROM
+  user_info ui
+  LEFT JOIN sale_department sd
+    ON ui.`sale_dep` = sd.`id`
+  INNER JOIN user_role ur
+    ON ur.`uid` = ui.`id`
+  INNER JOIN role_info ri
+    ON ri.`id` = ur.`rid`
+WHERE ui.status<>-100
+  AND ri.`id` = ?
+                ]]>
+
+    </entry>
+    <entry key="findAllRole">
+        <![CDATA[
+                SELECT
+
+                      id,
+                      name
+                FROM
+                      role_info
+          ]]>
+
+    </entry>
+
+    <!--保存角色基本信息 -->
+    <entry key="saverolebasicinfo">
+        <![CDATA[
+        UPDATE
+          qic_db.role_info
+        SET
+          desp = ?
+        WHERE id = ?
+                ]]>
+
+    </entry>
+
+    <!--查询角色基本信息 -->
+    <entry key="getrolebasicinfo">
+        <![CDATA[
+        SELECT
+          id,
+          name,
+          desp
+        FROM
+          role_info
+        WHERE id = ?
+                ]]>
+
+    </entry>
+
+    <!--增加角色名-->
+    <entry key="insertRoleName">
+        <![CDATA[
+            insert into
+            role_info(name)
+            values(?)
+        ]]>
+
+    </entry>
+
+
+    <!--删除角色名-->
+    <entry key="deleteRoleName">
+        <![CDATA[
+            delete from
+             role_info
+              where
+               id=?
+        ]]>
+
+    </entry>
+
+    <!--修改角色名-->
+    <entry key="updateRoleName">
+        <![CDATA[
+            update
+             role_info
+             set
+              name=?
+             where id=?
+        ]]>
+
+    </entry>
+    <!-- 删除角色权限-->
+    <entry key="deleteFunctionInfoByRoleId">
+        <![CDATA[
+
+                    DELETE
+
+                    FROM
+                          role_function
+
+                    WHERE
+                          rid=?
+        ]]>
+
+    </entry>
+
+    <!-- 删除用户角色-->
+    <entry key="deleteUserRoleByRoleId">
+        <![CDATA[
+
+                    DELETE
+
+                    FROM
+                          user_role
+
+                    WHERE
+                          rid=?
+        ]]>
+
+    </entry>
+    <!-- 增加角色权限-->
+    <entry key="addFunctionInfoByRoleId">
+        <![CDATA[
+
+                     INSERT  INTO
+                               role_function(
+                                 rid,
+                                 fid
+                               )VALUES(?,?)
+        ]]>
+
+    </entry>
+    <!-- 查询最近20个已授权用户-->
+    <entry key="queryLastTwentyUser">
+        <![CDATA[
+        SELECT
+          a.id as id,
+          a.NAME as name,
+          a.account as account
+        FROM
+          user_info a
+        WHERE a.status = 10
+          AND a.id NOT IN
+          (SELECT
+            uid
+          FROM
+            user_role b
+          WHERE b.rid = ?)
+          ORDER BY
+          a.sdate DESC
+          limit 20
+        ]]>
+
+    </entry>
+
+    <!-- 给定账号或姓名 查询已授权用户-->
+    <entry key="queryUserByName">
+        <![CDATA[
+        SELECT
+          a.id as id,
+          a.NAME as name,
+          a.account as account
+        FROM
+          user_info a
+        WHERE a.status = 10
+          AND
+          (a.name=? OR a.account=?)
+        ]]>
+
+    </entry>
+
+
+    <!-- 查询最近20个当前角色用户-->
+    <entry key="queryLastTwentyRoleUser">
+        <![CDATA[
+        SELECT
+          a.id as id,
+          a.name as name,
+          a.account as account
+        FROM
+          user_info a
+          INNER JOIN
+          user_role b
+          ON a.id=b.uid
+          WHERE b.rid=?
+          AND a.status<>-100
+          ORDER BY
+          a.sdate DESC
+          limit 20
+        ]]>
+
+    </entry>
+
+    <!-- 给定账号或姓名 查询当前角色用户-->
+    <entry key="queryRoleUser">
+        <![CDATA[
+        SELECT
+           a.id as id,
+          a.name as name,
+          a.account as account
+        FROM
+          user_info a
+          INNER JOIN
+          user_role b
+          ON a.id=b.uid
+          WHERE
+          (a.name=? OR a.account=?)
+          AND
+          b.rid=?
+          AND
+          a.status<>-100
+        ]]>
+
+    </entry>
+
+    <!-- 查询 用户角色-->
+    <entry key="queryUserRoleById">
+        <![CDATA[
+        SELECT
+            *
+        FROM
+          user_role
+         WHERE
+           uid=?
+          AND
+           rid=?
+
+        ]]>
+    </entry>
+    <!-- insert 用户角色-->
+    <entry key="insertUserRolebyId">
+        <![CDATA[
+        insert
+           into
+          user_role
+           (uid,rid)
+          values
+           (?,?)
+        ]]>
+    </entry>
+
+    <!-- 查询 用户角色-->
+    <entry key="deleteUserRolebyId">
+    <![CDATA[
+        delete
+        FROM
+          user_role
+         WHERE
+           uid=?
+          AND
+           rid=?
+
+        ]]>
+    </entry>
+    <!-- 查询 角色用户-->
+    <entry key="findUserByRoleId">
+    <![CDATA[
+        select
+        uid
+        FROM
+          user_role
+         WHERE
+           rid=?
+
+        ]]>
+    </entry>
+    <!-- 更新用户状态-->
+    <entry key="updateUserStatus">
+    <![CDATA[
+        update
+          user_info
+          set
+          status = ?
+         WHERE
+           id=?
+
+        ]]>
+    </entry>
+    <!-- 查询 用户角色-->
+    <entry key="findRoleByUserId">
+    <![CDATA[
+        select
+        rid
+        FROM
+          user_role
+         WHERE
+           uid=?
+
+        ]]>
+    </entry>
+
+    <entry key="findRoleByName">
+        <![CDATA[
+                SELECT
+                      id,
+                      name,
+                      desp
+                FROM
+                      role_info
+                where
+                       name=?
+          ]]>
+
+    </entry>
+</properties>

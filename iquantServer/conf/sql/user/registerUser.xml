@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>registerUser  sql</comment>
+
+    <entry key="registerAddUser">
+        <![CDATA[
+                      INSERT INTO
+                               user_info(
+                                 name,
+                                 account,
+                                 pwd,
+                                 phone,
+                                 email,
+                                 idcard,
+                                 address,
+                                 post,
+                                 capital_account,
+                                 sdate,
+                                 edate,
+                                 status,
+                                 apply_date
+                               )VALUES(?,?,?,?,?,?,?,?,?,?,?,?,NOW())
+
+        ]]>
+    </entry>
+
+
+    <entry key="fetchAllDepartment">
+        <![CDATA[
+                SELECT id,NAME FROM sale_department
+                ]]>
+    </entry>
+
+
+</properties>

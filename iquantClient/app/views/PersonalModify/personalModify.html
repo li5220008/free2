@@ -1,0 +1,235 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>个人资料修改</title>
+#{get 'moreStyles' /}
+    <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.png'}">
+*{这里定义全局变量, 用javascript表示. 如上下文路径等}*
+    <script type="text/javascript">
+        var _gQic = {
+            "ctx":"${play.ctxPath}"
+        };
+    </script>
+    <script src="@{'/public/javascripts/jquery-1.8.2.js'}" type="text/javascript" charset="utf-8"></script>
+    <script src="@{'/public/javascripts/global-qic.js'}" type="text/javascript"></script>
+    <script src="@{'/public/javascripts/global-page.js'}" type="text/javascript"></script>
+#{get 'moreScripts' /}
+    <script type="text/javascript" src="@{'/public/javascripts/jquery.validate.js'}"></script>
+    <script src="@{'/public/javascripts/messages_cn.js'}" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/personalmodify.css'}">
+    <link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/global-admin.css'}">
+
+    <style>
+        .red{ color: red; font-size: 12px; padding: 0 3px;}
+    </style>
+
+</head>
+
+<body>
+<div class="strategy_nav">
+
+</div>
+<div class="box">
+
+    <h2 class="info_h2">
+        个人资料修改
+    </h2>
+<form id="newForm">
+    <table width="100%" class="tbl_modify" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td width="11%" align="right">帐号：</td>
+            <td width="32%">#{emVF v : userInfo.account/}</td>
+            <td width="17%" align="right">&nbsp;</td>
+            <td width="40%">&nbsp;</td>
+        </tr>
+        <tr>
+            <td align="right"><span class="red">*</span>姓名：</td>
+            <td>
+                <input type="text" class="inp_common" id="name" name="userInfoDto.name" value="#{emVF v : userInfo.name/}">
+                <font class="new_user_tips p_l_10 nu_two">
+                    <span class="tips_ico">&nbsp;</span>
+                    <span class="tips_text"></span>
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right"><span class="red">*</span>E-mail：</td>
+            <td>
+                <input type="text" class="inp_common" id="email" name="userInfoDto.email" value="#{emVF v : userInfo.email/}">
+                <input type="hidden" id="oriEmail" name="oriEmail" value="#{emVF v : userInfo.email/}">
+                <font class="new_user_tips p_l_10 nu_two">
+                    <span class="tips_ico">&nbsp;</span>
+                    <span class="tips_text"></span>
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">联系电话：</td>
+            <td>
+                <input type="text" class="inp_common" id="phone" name="userInfoDto.phone" value="#{emVF v : userInfo.phone/}">
+                <font class="new_user_tips p_l_10 nu_two">
+                    <span class="tips_ico">&nbsp;</span>
+                    <span class="tips_text"></span>
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">联系地址：</td>
+            <td colspan="3"><input type="text" class="inp_common inp_address" id="address" name="userInfoDto.address" value="#{emVF v : userInfo.address/}">
+            </td>
+        </tr>
+    </table>
+
+    <table width="100%" class="tbl_modify" border="0" cellspacing="0" cellpadding="0">
+
+        <tr>
+            <td width="11%" align="right"><span class="red">*</span>当前密码：</td>
+            <td width="89%">
+                <input type="password" class="inp_common" id="curPwd" name="userInfoDto.password">
+                <font class="new_user_tips p_l_10 nu_two">
+                    <span class="tips_ico">&nbsp;</span>
+                    <span class="tips_text"></span>
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">新密码：</td>
+            <td>
+                <input type="password" class="inp_common" id="newPwd" name="newPassword">
+                <font class="new_user_tips p_l_10 nu_two">
+                    <span class="tips_ico">&nbsp;</span>
+                    <span class="tips_text"></span>
+                </font>
+            </td>
+        </tr>
+        <tr>
+            <td align="right">确认密码：</td>
+            <td>
+                <input type="password" class="inp_common" id="rePwd" name="userInfoDto.rePassword">
+                <font class="new_user_tips p_l_10 nu_two">
+                    <span class="tips_ico">&nbsp;</span>
+                    <span class="tips_text"></span>
+                </font>
+            </td>
+        </tr>
+
+
+    </table>
+
+    <div class="m_sc"><input type="image" id="personal_submit" src="/public/images/m_save.png">
+    </div>
+</form>
+</div>
+
+
+<script>
+    jQuery.validator.addMethod("isPwd",function(value,element){
+        return /^[a-z0-9A-Z_]{6,15}$/.test(value);
+    },"密码只能是6-15位的数字和字母的组合");
+
+    $(document).ready(function() {
+        $("#newForm").validate({
+            submitHandler:function(form){
+
+                $.ajax({
+                    url:'/PersonalModify/modifySuccess',
+                    data:getFormValue(),
+                    dataType:"json",
+                    type:'post',
+                    success:function(data){
+                        if(data.success){
+                            $.qicTips({
+                                target:'#personal_submit',
+                                level:1,
+                                message:data.message
+                            });
+                        }
+                    }
+                });
+
+            },
+            rules: {
+                "userInfoDto.name": "required",
+                "userInfoDto.email": {
+                    required:true,
+                    email:true,
+                    remote:{
+                        url: '/PersonalModify/checkEmail',
+                        type:"post",
+                        dataType: "json",
+                        data:{
+                            email:function() { return $("#email").val() + "," + $("#oriEmail").val();}
+                        }
+                    }
+                },
+                "userInfoDto.phone":{
+                    digits:true
+                },
+                "userInfoDto.password":{
+                    required:true,
+                    remote: {
+                        url: '/PersonalModify/checkPassword',
+                        type:"post",
+                        dataType: "json",
+                        data:{
+                            password:function() { return $("#curPwd").val();}
+                        }
+                    },
+                    isPwd:true
+                },
+                "newPassword":{
+                    isPwd:true
+                },
+                "userInfoDto.rePassword":{
+                    equalTo:'#newPwd',
+                    isPwd:true
+                }
+            },
+            messages:{
+                "userInfoDto.name" :" 请输入姓名",
+                "userInfoDto.email":{
+                    required:" 请输入email地址",
+                    email:"请输入一个有效的Email地址",
+                    remote:"邮箱格式不正确或已被其他用户注册激活"
+                },
+                "userInfoDto.phone":{
+                    digits:"电话必须是数字"
+                },
+                "userInfoDto.password":{
+                  required:"请输入当前密码",
+                    remote:"当前密码输入错误"
+                },
+                "userInfoDto.rePassword":{
+                    equalTo:'确认密码和新密码不同'
+                }
+            },
+            success: function(label) {
+                label.parent().parent().hide();
+                label.parent().html("OK").removeClass("tips_error").addClass("tips_ok");
+            },
+            errorPlacement: function(error, element) {
+                element.parent().parent().find(".new_user_tips").show();
+                var targetElement = element.parent().parent().find(".tips_text");
+                error.appendTo(targetElement.removeClass("tips_ok").addClass('tips_error').empty());
+            }
+
+        });
+
+    });
+
+    function getFormValue(){
+        var form_value = $("#newForm").serializeArray();
+        return form_value;
+    }
+
+    $(window).keyup(function(event) {
+        if (event.keyCode == "13") {//keyCode=13是回车键
+            $('#personal_submit').click();
+        }
+    });
+
+
+</script>
+</body>
+</html>

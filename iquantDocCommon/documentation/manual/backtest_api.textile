@@ -1,0 +1,965 @@
+h1. QIC相关文档
+
+h1. 变更记录
+
+||日期||作者||备注||
+|2013-05-27|刘建力|创建|
+
+h2. 策略回测API
+
+h3. 查询qicore待回测列表
+
+**请求url**
+
+http://{HOST.URL}/external/GetStrategy/getBackTestStrategy
+
+**返回数据格式**
+
+json
+
+**HTTP请求方式**
+
+POST、GET
+
+**访问权限**
+
+客户端ip需有访问权限,具体权限由qic配置
+
+**请求参数**
+
+无需参数,服务器会根据ip返回相应的待回测策略信息
+
+**返回结果**
+
+JSON示例
+
+h5. 获取成功
+
+bc. {
+  "message": "操作成功",
+  "status": 0,
+  "data": [
+            {
+              "path": "/data/excel/official/a85e42c3797a4251b3e37cd1c6fde5ba",
+              "sid": "a85e42c3797a4251b3e37cd1c6fde5ba",
+              "sname": "Test2222222",
+              "backTestStartTime","2012-05-01",
+              "backTestEndTime","2012-05-26",
+              "state":2
+            }
+  ]
+}
+
+h5. 获取失败
+
+bc. {
+    "message":"无权限",
+    "status":-1
+}
+
+**返回字段说明**
+||字段名||字段类型||字段说明||
+|status|int|成功失败标志 0 表示获取成功 -1表示获取失败,只有这两种状态|
+|message|String	|附加说明消息|
+|data|Array|策略集合，json数组|
+|path|String|策略加载目录|
+|sid|String|策略id|
+|backTestStartTime|string|回测开始时间|
+|backTestEndTime|string|回测结束时间|
+|sname|String|策略名|
+|state|int|当前策略状态 2沙箱测试，3.回测中|
+
+h3. 查询qia待回测列表
+
+**请求url**
+
+http://{HOST.URL}/external/GetStrategy/getQiaBackTestStrategy
+
+**返回数据格式**
+
+json
+
+**HTTP请求方式**
+
+POST、GET
+
+**访问权限**
+
+客户端ip需有访问权限,具体权限由qic配置
+
+**请求参数**
+
+无需参数,服务器会根据ip返回相应的待回测策略信息
+
+**返回结果**
+
+JSON示例
+
+h5. 获取成功
+
+bc. {
+      "message": "操作成功",
+      "status": 0,
+      "data": [
+                {
+                  "path": "/data/excel/official/a85e42c3797a4251b3e37cd1c6fde5ba",
+                  "sid": "a85e42c3797a4251b3e37cd1c6fde5ba",
+                  "sname": "Test2222222",
+                  "backTestStartTime","2012-05-01",
+                  "backTestEndTime","2012-05-26",
+                  "state":2
+                }
+      ]
+    }
+
+
+h5. 获取失败
+
+bc. {
+    "message":"无权限",
+    "status":-1
+}
+
+**返回字段说明**
+||字段名||字段类型||字段说明||
+|status|int|成功失败标志 0 表示获取成功 -1表示获取失败,只有这两种状态|
+|message|String	|附加说明消息|
+|data|Array|策略集合，json数组|
+|path|String|策略加载目录|
+|sid|String|策略id|
+|backTestStartTime|string|回测开始时间|
+|backTestEndTime|string|回测结束时间|
+|sname|String|策略名|
+|state|int|当前策略状态 2沙箱测试，3.回测中|
+
+h3. 回测re-check
+
+p(note). **特别注意**
+此接口qia、qicore回测时通用
+
+**请求url**
+
+http://{HOST.URL}/external/GetStrategy/checkBackTestStatus
+
+**返回数据格式**
+
+json
+
+**HTTP请求方式**
+
+POST、GET
+
+**访问权限**
+
+客户端ip需有访问权限,具体权限由qic配置
+
+**请求参数**
+
+||参数名||必需||类型||说明||
+|sid|true|string|策略uuid|
+|etype|false|int|取值范围[1,2],1：代表qicore策略 2：代表qia策略 不传默认为qicore策略|
+
+**返回结果**
+
+JSON示例
+
+h5. 可回测
+
+bc. {
+      "message": "可回测",
+      "status": 0,
+}
+
+
+
+h5. 不可回测
+
+bc. {
+    "message":"无权限，该策略可能已被其它服务器回测",
+    "status":-1
+}
+
+**返回字段说明**
+||字段名||字段类型||字段说明||
+|status|int|成功失败标志 0 表示可回测,-1表示不可回测|
+|message|String	|附加说明消息
+
+h3. qicore回测绩效数据同步
+
+
+**请求url**
+
+http://{HOST.URL}/external/GetStrategy/syncBackTestResult
+
+**返回数据格式**
+
+json
+
+**HTTP请求方式**
+
+仅POST
+
+p(note). **特别注意**
+将请求内容写到body后提交
+
+**访问权限**
+
+客户端ip需有访问权限,具体权限由qic配置
+
+**请求参数**
+
+||字段名||必需||字段类型||说明||
+|status|true|int|回测成功失败 0成功 1失败|
+|strategyId	|true	|string	|策略id|
+|retainedProfits|false|double|总盈利+总亏损|
+|grossProfit|false|double|净利润+总手续费|
+|overallProfitability|false|double|∑每次盈利交易的金额; 一次交易的获利金额大于0，则该次交易为盈利交易|
+|overallDeficit|false|double|∑每次亏损交易的金额； 一次交易的获利金额小于0，则该次交易为亏损交易|
+|canhsiedRatio|false|double|总盈利/总亏损|
+|tradeCount|false|double|Select count "资金变动流水表中，影响因素为平仓完全成交或平仓部 分撤销的记录条数"|
+|longPositionTradeCount|false|double|持仓方向为多头的交易次数|
+|shortPositionTradeCount|false|double|持仓方向为空头的交易次数|
+|profitRatio|false|double|盈利次数 / 总交易次数|
+|profitCount|false|double|一次交易的获利大于0，记为1次盈利，将该次数汇总|
+|deficitCount|false|double|一次交易的获利小于0，记为1次亏损，将该次数汇总|
+|positionCloseCount|false|double|一次交易的获利等于0，记为1次亏损，将该次数汇总|
+|maxSingleProfit|false|double|Max(所有盈利交易的金额)|
+|maxSingleDeficit|false|double|Max{abs(所有亏交易的金额)}|
+|maxSingleProfitRatio|false|double|单次最大盈利/总盈利|
+|maxSingleDeficitRatio|false|double	|单次最大亏损/总亏损|
+|profitLossRatio|false|double|净利润/单次最大亏损|
+|sumOfCommission|false|double|∑每次盈利交易的金额|
+|yield|	false|double|净利润 / 初始资金|
+|avgProfitOfMonth|false|double|(净利润 / 总交易的天数) ×21.75|
+|floatingProfitAndLoss|false|double|回验结束时，如尚有未平持仓用结束点持仓的最新成交价计 算浮动盈亏|
+|totalAsset	|false|double|--
+|yieldOfMonth|false|double|(收益率/总交易天数)× 21.75|
+|yieldOfYear|false|double|(收益率 / 总交易的天数)×252|
+|maxSequentialDeficitCapital|false|double|Max(连续亏损产生的亏损金额)|
+|lastSequentialDeficitCapital|false|double|待回测的策略id|
+|maxSequentialProfitCount|false|double|Max（连续盈利的交易次数）|
+|lastSequentialProfitCount|false|double	|待回测的策略id|
+|maxSequentialDeficitCount|false|double	|Max（连续亏损的交易次数）|
+|lastSequentialDeficitCount|false|double|待回测的策略id|
+|tradeDays|false|string|依据交易时间区间和交易日历计算(SELECT COUNT)|
+|maxShortPositionTime|false	|int|连续空仓的最大天数|
+|yieldOfMonthStandardDeviation	|false|double|s^2=[(x1-x)^2+(x2-x)^2 +...(xn-x)^2]/（n-1） ；其中，当交易天数小于30天时，xi是每日收益率的月化值，当交易天数大于30天时，xi是月收益率，x为xi序列均 值|
+|sharpeIndex|false|double|√12（月化收益率-年无风险收益率/12）/月度收益率标准 差|
+|movingCost|false|int|(∑理论成交价-实际成交价)/交易次数|
+
+**请求示例**
+
+bc. {
+  "status": 0,
+  "data":
+    {
+      " retainedProfits ": "111.2",
+      " strategyId ": "a85e42c3797a4251b3e37cd1c6fde5ba",
+       .
+       .此处省略N个字
+       .
+       其它字段按参数说明中的参数名来设置
+}
+}
+
+
+**返回结果**
+
+JSON示例
+
+h5. 同步成功
+
+bc. {
+      "message": "同步成功",
+      "status": 0,
+}
+
+h5. 同步失败
+
+bc. {
+    "message":"同步失败，请求数据有误",
+    "status":-1
+}
+
+
+**返回字段说明**
+||字段名||字段类型||字段说明||
+|status|int|成功失败标志 0 表示成功,-1表示失败|
+|message|String	|附加说明消息
+
+
+h3. qia回测绩效数据同步
+
+
+**请求url**
+
+http://{HOST.URL}/external/GetStrategy/syncQiaBackTestResult
+
+**返回数据格式**
+
+json
+
+**HTTP请求方式**
+
+仅POST
+
+p(note). **特别注意**
+将请求内容写到body后提交
+
+**访问权限**
+
+客户端ip需有访问权限,具体权限由qic配置
+
+**请求参数**
+
+||字段名||必需||字段类型||说明||
+|status|true|int|回测成功失败 0成功 1失败|
+|strategyId	|true	|string	|策略id|
+
+**请求示例**
+
+h5. 将以下json格式数据写入body
+
+bc. {
+  "status": 0,
+  "data":{
+      "strategyId ": "a85e42c3797a4251b3e37cd1c6fde5ba",
+  }
+}
+
+**返回结果**
+
+JSON示例
+
+h5. 同步成功
+
+bc. {
+      "message": "同步成功",
+      "status": 0,
+}
+
+h5. 同步失败
+
+bc. {
+    "message":"同步失败，请求数据有误",
+    "status":-1
+}
+
+
+**返回字段说明**
+||字段名||字段类型||字段说明||
+|status|int|成功失败标志 0 表示成功,-1表示失败|
+|message|String	|附加说明消息
+
+h3. 查询qia策略运行列表
+
+**请求url**
+
+http://{HOST.URL}/external/GetStrategy/getInRunningStrategy
+
+**返回数据格式**
+
+json
+
+**HTTP请求方式**
+
+POST、GET
+
+**访问权限**
+
+客户端ip需有访问权限,具体权限由qic配置
+
+**请求参数**
+
+无需参数,服务器会根据ip返回相应的待回测策略信息
+
+**返回结果**
+
+JSON示例
+
+h5. 获取成功
+
+bc. {
+      "message": "操作成功",
+      "status": 0,
+      "data": [
+                {
+                  "path": "/data/excel/official/a85e42c3797a4251b3e37cd1c6fde5ba",
+                  "sid": "a85e42c3797a4251b3e37cd1c6fde5ba",
+                  "sname": "Test2222222",
+                  "backTestStartTime","2012-05-01",
+                  "backTestEndTime","2012-05-26",
+                  "state":4
+                }
+      ]
+    }
+
+
+h5. 获取失败
+
+bc. {
+    "message":"无权限",
+    "status":-1
+}
+
+**返回字段说明**
+||字段名||字段类型||字段说明||
+|status|int|成功失败标志 0 表示获取成功 -1表示获取失败,只有这两种状态|
+|message|String	|附加说明消息|
+|data|Array|策略集合，json数组|
+|path|String|策略加载目录|
+|sid|String|策略id|
+|backTestStartTime|string|回测开始时间|
+|backTestEndTime|string|回测结束时间|
+|sname|String|策略名|
+|state|int|当前策略状态 2沙箱测试，3.回测中|
+
+h3. 回测失败通知
+
+p(note). **特别注意**
+此接口调用后会将分配到当前请求客户端IP所有处于"回测中"的策略状态标识为"回测失败"
+
+**请求url**
+
+http://{HOST.URL}/external/GetStrategy/noticeTestFailure
+
+**返回数据格式**
+
+json
+
+**HTTP请求方式**
+
+POST、GET
+
+**访问权限**
+
+客户端ip需有访问权限,具体权限由qic配置
+
+**请求参数**
+
+无
+
+**返回结果**
+
+JSON示例
+
+h5. 通知成功
+
+bc. {
+      "message": "通知成功
+      "status": 0
+    }
+
+h5. 通知失败
+
+bc. {
+    "message":"通知失败",
+    "status":-1
+}
+
+
+**返回字段说明**
+||字段名||字段类型||字段说明||
+|status|int|成功失败标志 0 表示通知成功 -1表示通知失败,只有这两种状态|
+|message|String	|附加说明消息|
+
+
+h3. 回测服务器状态查询
+
+
+**请求url**
+
+http://{HOST.URL}:9501/backtest/status
+
+**返回数据格式**
+
+json
+
+**HTTP请求方式**
+
+POST、GET
+
+**访问权限**
+
+无
+
+**请求参数**
+
+无
+
+**返回结果**
+
+JSON示例
+
+h5. 成功
+
+bc. {
+      "Result":true,
+      "message": "服务器正常"
+      "data": {
+          "Count":"3",
+          "EngineStatus":"1",
+          "ErrorCount":"1" ,
+          "FinishCount":"2"
+      }
+    }
+
+h5. 服务器离线
+
+bc. {
+    "message":"服务器忙碌",
+    "Result":false
+}
+
+
+**返回字段说明**
+||字段名||字段类型||字段说明||
+|Result|boolean|服务器状态标识 true 服务器常跑 false,服务器不正常，忙碌|
+|message|String	|附加说明消息|
+|data|object|当前回测相关信息|
+|Count|int|回测策略总数|
+|EngineStatus|int|回测引擎状态 1：准备就绪 2：运行中 |
+|ErrorCount|int|回测失败数|
+|FinishCount|int|回测成功数|
+
+h3. 启动回测服务器
+
+
+**请求url**
+
+http://{HOST.URL}:9501/backtest/start
+
+**返回数据格式**
+
+json
+
+**HTTP请求方式**
+
+POST、GET
+
+**访问权限**
+
+无
+
+**请求参数**
+
+无
+
+**返回结果**
+
+JSON示例
+
+h5. 启动成功
+
+bc. {
+      "Result":true,
+      "message": "启动成功"
+ }
+
+h5. 启动失败
+
+bc. {
+    "message":"服务器正忙，启动失败",
+    "Result":false
+}
+
+
+**返回字段说明**
+||字段名||字段类型||字段说明||
+|Result|boolean|服务器状态标识 true :启动成功 false:启动失败|
+|message|String	|附加说明消息|
+
+
+h2. 系统权限API
+
+**系统权限代号说明**
+||功能或菜单名||功能编号(id)||父功能编号(pid)||
+|策略|2|1|
+|策略库|3|40|
+|策略订阅及评价|4|2|
+|我的收藏，(取消)|5|2|
+|策略编写|6|2|
+|策略上传 |7|2|
+|信号查看|8|2|
+|股票池|9|1|
+|我的收藏和评价|10|9|
+|组合浏览|11|9|
+|数据|12|1|
+|指数|13|12|
+|股票|14|12|
+|债券|15|12|
+|基金|16|12|
+|期货|17|12|
+|外汇|18|12|
+|f10|19|12|
+|用户管理 |20|1|
+|用户权限管理 |21|20|
+|角色管理 |22|20|
+|上架管理|23|2|
+|配置管理|24|1|
+|操作日志|25|1|
+|管理所有策略|26|23|
+|管理个人策略|27|23|
+|市场全景|29|12|
+|商品|32|12|
+|市场资讯|34|1|
+|今日头条|35|34|
+|公司公告|36|34|
+|研究报告|37|34|
+|资讯索引|38|34|
+|策略列表|40|2|
+|本地策略、策略模板|41|40|
+|新建|43|2|
+|历史记录|45|2|
+|交易|46|1|
+|设置|47|46|
+|盯市|48|46|
+|绩效分析|49|46|
+
+
+h3. 查询用户权限
+
+**请求url**
+
+http://{HOST.URL}/external/GetFunctions/getUserFunctions
+
+**返回数据格式**
+
+json
+
+**HTTP请求方式**
+
+POST、GET
+
+**访问权限**
+
+需先进行登入
+
+**请求参数**
+
+无
+
+**返回结果**
+
+JSON示例
+
+h5. 获取成功
+
+bc. {
+      "message": "获取成功
+      "status": 0,
+      "data": [1,2,3,4,5] //拥有的权限id
+}
+
+h5. 获取失败
+
+bc. {
+    "message":"请先登入",
+    "status":-1
+}
+
+**返回字段说明**
+||字段名||字段类型||字段说明||
+|status|int|成功失败标志 0 表示获妈成功 -1表示获取失败,只有这两种状态|
+|message|String	|附加说明消息|
+|data|array|用户拥有的权限编号ID列表|
+
+
+h2. 资讯索引API
+
+h3. 普通搜索
+
+**请求url**
+
+http://{HOST.URL}/search
+
+**返回数据格式**
+
+json
+
+**HTTP请求方式**
+
+POST
+
+**访问权限**
+
+无
+
+**请求参数**
+
+||字段名||必需||字段类型||字段说明||
+|cmd|true|String |命令类型 每个请求对应一个不同的cmd 此请求值为 : commonInfoSearch|
+|pageNo|true|int|查询页码|
+|pageSize|true|int|请求条数|
+|keyword|true|String|关键字|
+|startTime|true|String|发布起始时间|
+|endTime|true|String|发布结束时间|
+|itype|true|int|类型 0：全部  1：新闻 2：公告  3： 研报
+|pageNo|true|int|查询页码
+|sortField|true|String|排序字段
+|sortType|true|int|0 升序 1降序
+
+**请求示例**
+
+h5. 将如下数据写入body
+
+bc. {
+  cmd : commonsearch
+  pageNo :1
+  pageSize :10
+  keyword : "刘建力"
+  startTime:2013-01-01
+  endTime:2013-04-05
+  itype: 1|2|3
+}
+
+
+**返回结果**
+
+JSON示例
+
+h5. 获取成功
+
+bc. {
+      "status": 0
+       total:1000000
+       pageNo:1
+       pageSize : 10
+       data :[
+          {
+           updatedate:2012-03-04//更新时间
+    	   symbols :[ "0000002","000001"]//证券代码
+    	   title:"标题",
+           itype：1|2|3
+    	   attach:"附件地址",
+    	   newsid :"10001"，
+           annid :"10001",
+           repid :"10001"
+        }
+    ]
+}
+
+h5. 获取失败
+
+bc. {
+    "message":"搜索失败",
+    "status":-1
+}
+
+**返回字段说明**
+||字段名||字段类型||字段说明||
+|status|int |0 成功  -1失败|
+|message|String|附加说明消息，搜索失败时才有
+|pageNo	|int|查询页码|
+|pageSize|int|请求条数|
+|updatedate|String|更新时间|
+|itype|int|类型1：新闻 2：公告  3： 研报|
+|data|Array|结果集  json数组|
+|symbols|Array|证券代码|
+|attach|string|附件地址|
+|total|long|总条数|
+|newsid|long|新闻数据库主键id 仅当itype =1时值有效|
+|newsid|long|公告数据库主键id 仅当itype =2时值有效|
+|repid|long|研报数据库主键id 仅当 itype=3时值有效|
+
+h3. 高级搜索
+
+**请求url**
+
+http://{HOST.URL}/search
+
+**返回数据格式**
+
+json
+
+**HTTP请求方式**
+
+POST
+
+**访问权限**
+
+无
+
+**请求参数**
+
+||字段名||必需||字段类型||字段说明||
+|cmd|true|String |命令类型 每个请求对应一个不同的cmd 此请求值为 : advanceInfoSearch|
+|pageNo|true|int|查询页码|
+|pageSize|true|int|请求条数|
+|keyword|true|String|关键字|
+|startTime|true|String|发布起始时间|
+|endTime|true|String|发布结束时间|
+|itype|true|int|类型 0：全部  1：新闻 2：公告  3： 研报
+|nsource|true|Array|新闻来源|
+|ncids|true|Array|新闻分类|
+|acids|true|Array|公告分类|
+|aiids|true|Array|分行行业分类|
+|rsource|true|Arrary|研报来源|
+|rcids|true|Arrary|研报分类|
+|riids|true|Array|研报行业分类|
+|symbols|true|Array|股票代码|
+|sortField|true|String|排序字段
+|sortType|true|int|0 升序 1降序
+
+**请求示例**
+
+h5. 将如下数据写入body
+
+bc. {
+        cmd : "advanceInfoSearch"
+        pageNo :1
+        pageSize :10
+        nsource :["来源1"，"来源2"，"来源3"]
+        ncids :["10001"，"100022"，"1004"]
+        acids :["10001"，"100022"，"1004"]
+        aiids :["10001"，"100022"，"1004"]
+        rsource:["10001"，"100022"，"1004"]
+        rcids:["10001"，"100022"，"1004"]
+        riids:["10001"，"100022"，"1004"],
+        symbols:["000001,"000002"]
+}
+
+
+**返回结果**
+
+JSON示例
+
+h5. 获取成功
+
+bc. {
+      "status": 0
+       total:1000000
+       pageNo:1
+       pageSize : 10
+       data :[
+          {
+           updatedate:2012-03-04//更新时间
+    	   symbols :[ "0000002","000001"]//证券代码
+    	   title:"标题",
+           itype：1|2|3
+    	   attach:"附件地址",
+    	   newsid :"10001"，
+           annid :"10001",
+           repid :"10001"
+        }
+    ]
+}
+
+h5. 获取失败
+
+bc. {
+    "message":"搜索失败",
+    "status":-1
+}
+
+**返回字段说明**
+||字段名||字段类型||字段说明||
+|status|int |0 成功  -1失败|
+|message|String|附加说明消息，搜索失败时才有
+|pageNo	|int|查询页码|
+|pageSize|int|请求条数|
+|updatedate|String|更新时间|
+|itype|int|类型1：新闻 2：公告  3： 研报|
+|data|Array|结果集  json数组|
+|symbols|array|证券代码|
+|attach|string|附件地址|
+|total|long|总条数|
+|newsid|long|新闻数据库主键id 仅当itype =1时值有效|
+|newsid|long|公告数据库主键id 仅当itype =2时值有效|
+|repid|long|研报数据库主键id 仅当 itype=3时值有效|
+
+
+h3. 按个股搜索
+
+**请求url**
+
+http://{HOST.URL}/search
+
+**返回数据格式**
+
+json
+
+**HTTP请求方式**
+
+POST
+
+**访问权限**
+
+无
+
+**请求参数**
+
+||字段名||必需||字段类型||字段说明||
+|cmd|true|String |命令类型 每个请求对应一个不同的cmd 此请求值为 : symbolInfoSearch|
+|pageNo|true|int|查询页码|
+|pageSize|true|int|请求条数|
+|symbols|true|array|股票代码|
+|itype|true|int|类型 0：全部  1：新闻 2：公告  3： 研报
+|pageNo|true|int|查询页码
+|sortField|true|String|排序字段
+|sortType|true|int|0 升序 1降序
+
+**请求示例**
+
+h5. 将如下数据写入body
+
+bc. {
+      cmd : "symbolInfoSearch"
+      pageNo :1
+      pageSize :10
+      symbols :["000001"，"000002"，"0000003"]
+      itype :["1"，"3"，"2"]
+}
+
+
+
+**返回结果**
+
+JSON示例
+
+h5. 获取成功
+
+bc. {
+      "status": 0
+       total:1000000
+       pageNo:1
+       pageSize : 10
+       data :[
+          {
+           updatedate:2012-03-04//更新时间
+    	   symbols :[ "0000002","000001"]//证券代码
+    	   title:"标题",
+           itype：1|2|3
+    	   attach:"附件地址",
+    	   newsid :"10001"，
+           annid :"10001",
+           repid :"10001"
+        }
+    ]
+}
+
+h5. 获取失败
+
+bc. {
+    "message":"搜索失败",
+    "status":-1
+}
+
+**返回字段说明**
+||字段名||字段类型||字段说明||
+|status|int |0 成功  -1失败|
+|message|String|附加说明消息，搜索失败时才有
+|pageNo	|int|查询页码|
+|pageSize|int|请求条数|
+|updatedate|String|更新时间|
+|itype|int|类型1：新闻 2：公告  3： 研报|
+|data|Array|结果集  json数组|
+|symbols|array|证券代码|
+|attach|string|附件地址|
+|total|long|总条数|
+|newsid|long|新闻数据库主键id 仅当itype =1时值有效|
+|newsid|long|公告数据库主键id 仅当itype =2时值有效|
+|repid|long|研报数据库主键id 仅当 itype=3时值有效|
+
+
+

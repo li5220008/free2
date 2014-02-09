@@ -1,0 +1,38 @@
+<!--基本信息 Begin-->
+<table width="100%" class="tbl_base_info" border="0" cellspacing="0" cellpadding="0" id="strategy_id"
+       st_id="${strategyBaseinfo.id}" enginetype_id="${strategyBaseinfo.enginetypeId}" >
+    <tr>
+        <td width="31%"><strong>策略名称:#{emVF v : strategyBaseinfo.name /}</strong></td>
+        <td width="69%">&nbsp;</td>
+    </tr>
+    <tr>
+        <td>
+            <p class="base_p1">持仓品种: ${strategyBaseinfo.tradeVarietyCnName()}<br/>
+                策略类型: ${strategyBaseinfo.tradeTypeCnName()}</p>
+        </td>
+        <td>
+            <p class="base_p1">
+                回验开始时间: #{emVF v : strategyBaseinfo.lookbackStime, f:'yyyy-MM-dd'/}<br/>
+                回测结束时间: #{emVF v : strategyBaseinfo.lookbackEtime, f:'yyyy-MM-dd'/}
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <div class="base_hr">&nbsp;</div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <strong>策略简介</strong><br/>
+            <p class="base_p2">#{emVF v : strategyBaseinfo.desp/} </p>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <strong>策略师简介</strong><br/>
+            <p class="base_p2">#{emVF v : strategyBaseinfo.providerDesp/} </p>
+        </td>
+    </tr>
+</table>
+<!--基本信息 End-->

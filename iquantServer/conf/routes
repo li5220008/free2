@@ -1,0 +1,79 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                                       Application.index
+
+# Ignore favicon requests
+GET     /favicon.ico                            404
+
+# Map static resources from the /app/public folder to the /public path
+GET     /public/                                staticDir:public
+
+#---------------原SSO的配置  start---------------------#
+
+#获取本产品功能列表
+GET     /api/fetchFunction                                         VirtualProductCt.fetchFuction
+
+#获取其它产品功能列表
+GET     /api/fetchOtherPFunction/p/{<[0-9]+>pid}                   VirtualProductCt.fetchOtherProductFunction
+
+#自选股组
+POST     /api/custSecGroup                                         CustomerInfoCt.addCustSecGroup
+GET      /api/custSecGroup/existName                               CustomerInfoCt.existCustSecGroupName
+POST     /api/custSecGroup/delByName                               CustomerInfoCt.delCustSecGroupByName
+DELETE   /api/custSecGroup/{<[0-9]+>id}                            CustomerInfoCt.delCustSecGroupById
+GET      /api/custSecGroup/latest                                  CustomerInfoCt.fetchCustSecGroupLatest
+GET      /api/custSecGroup/history                                 CustomerInfoCt.fetchCustSecGroupByNameAll
+#按自选股组名称查找最新的自选股明细
+GET      /api/custSecGroup/byname/latestDetail                     CustomerInfoCt.fetchCustSecGroupByNameLatestDetail
+
+#自选股明细
+POST     /api/custSecList/g/{<[0-9]+>gid}                          CustomerInfoCt.addCustSecListByGid
+POST     /api/custSecList/g/{<[0-9]+>gid}/batchAddOrEdit           CustomerInfoCt.batchAddOrEditCustSecListByGid
+DELETE   /api/custSecList/{<[0-9]+>id}                             CustomerInfoCt.delCustSecListById
+GET      /api/custSecList/g/{<[0-9]+>gid}                          CustomerInfoCt.fetchCustSecListByGid
+POST     /api/custSecList/{<[0-9]+>id}/updateCustSecComments      CustomerInfoCt.updateCustSecCommentsById
+
+#自定义指标
+POST     /api/custIndex                                            CustomerInfoCt.addCustIndex
+DELETE   /api/custIndex/{<[0-9]+>id}                               CustomerInfoCt.delCustIndex
+PUT      /api/custIndex/{<[0-9]+>id}                               CustomerInfoCt.editCustIndex
+GET      /api/custIndex                                            CustomerInfoCt.fetchCustIndex
+#返回自定义指标内容
+GET      /api/custIndex/{<[0-9]+>id}/content                       CustomerInfoCt.fetchCustIndexContentByid
+
+#自定义模板
+POST     /api/custTemplate                                         CustomerInfoCt.addCustTemplate
+DELETE   /api/custTemplate/{<[0-9]+>id}                            CustomerInfoCt.delCustTemplate
+PUT      /api/custTemplate/{<[0-9]+>id}                            CustomerInfoCt.editCustTemplate
+GET      /api/custTemplate/{<[0-9]+>category}                      CustomerInfoCt.fetchCustTemplateListByCategory
+#返回自定义模板内容
+GET      /api/custTemplate/{<[0-9]+>id}/content                    CustomerInfoCt.fetchCustTemplateContentByid
+GET      /api/custTemplate/existName                               CustomerInfoCt.custTemplateExistName
+#发送系统邮件
+*     /mail/sendEmail                                            UserInfoCt.sendEmailToSystem
+
+#虚拟产品
+
+GET     /api/fetchStrategyWithState/{state}                        VirtualProductCt.fetchStrategyWithState
+
+#---------------原SSO的配置 end---------------------#
+
+#---------------原show的配置 start---------------------#
+
+
+#---------------原show的配置 end---------------------#
+
+
+
+#---------------原manage的配置 start---------------------#
+
+#---------------原manage的配置 end---------------------#
+
+
+
+# Catch all
+*       /{controller}/{action}                  {controller}.{action}
+*       /{external}/{controller}/{action}                  {external}.{controller}.{action}

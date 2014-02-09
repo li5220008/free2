@@ -1,0 +1,209 @@
+#{extends 'manage_main.html' /}
+#{set title:'后台管理-配置管理' /}
+#{set 'moreStyles'}
+<link rel="stylesheet" type="text/css" href="@{'public/stylesheets/manage_admin-config-log.css'}">
+#{/set}
+<link href="@{'/public/stylesheets/ui-lightness/jquery-ui-1.9.1.custom.css'}" rel="stylesheet">
+<script src="@{'/public/javascripts/jquery-ui-1.9.1.custom.js'}"></script>
+
+
+<body>
+
+
+<!--strategy_nav Begin-->
+<div class="strategy_nav">
+    <ul class="manage_top_menu">
+        <li class="mt_current"><a href="#">通知管理</a></li>
+    </ul>
+</div>
+<!--strategy_nav End-->
+
+<!--main_wrap Begin-->
+<div class="main_wrap">
+    <!--sp_right Begin-->
+    <div class="sp_right_wrap">
+        <div class="content_title">
+            <div class="tab_title">
+                <ul class="tab_li" id="menuTab">
+                    <li class="display">策略下架通知</li>
+                  <!-- <li #{if tab==1} class="display"#{/if}>策略上架通知</li>
+                   <li #{if tab==3} class="display"#{/if}>其他消息通知</li>-->
+                </ul>
+
+            </div>
+        </div>
+        <ul class="sub_content stable_content" id="subContImp">
+            <li  class="display">
+                <div class="common_user_bar">
+                    &nbsp;
+                </div>
+                <div class="config_content">
+                    <div class="str_notice">
+                        <h3 class="c_h3">通知内容:</h3>
+                        <table>
+                            <tr><td width="50%">下架名称:[$strategy.Name]</td><td width="50%">下架时间:[$strategy.DownTime]</td></tr>
+                            <tr><td width="50%">策略提供者:[$strategy.Provider]</td><td width="50%">策略简介:[$strategy.Desp]</td></tr>
+                        </table>
+                        <textarea class="notice_txtarea" rows="3" cols="200" readonly id="downStr" >${keyValue}</textarea>
+                        <div class="control_active">
+                            <div class="control_active_wrap">
+                                <span class="strategy_upload_btn">编辑</span>
+                                <span class="add_checkstr2" id="add2">保存</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+            <li>
+
+                <div class="common_user_bar">
+                    &nbsp;
+                </div>
+                <div class="config_content">
+                    <div class="str_notice">
+                        <h3 class="c_h3">通知内容：</h3>
+                            <table>
+                                <tr><td width="33%">策略名称:[$strategy.Name]</td><td width="33%">上架时间:[$strategy.UpTime]</td><td width="34%">策略提供者:[$strategy.Provider]</td></tr>
+                                <tr><td width="33%">交易类型:[$strategy.TradeType]</td><td width="33%">交易品种:[$strategy.TradeVariety]</td><td width="34%">策略简介:[$strategy.Desp]</td></tr>
+                            </table>
+                            <textarea class="notice_txtarea" rows="3" cols="200" readonly id="upStr" >${keyValue}</textarea>
+                        <div class="control_active">
+                            <div class="control_active_wrap">
+                                <span class="strategy_upload_btn">编辑</span>
+                                <span class="add_checkstr1" id="add1">保存</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+            <li>
+
+                <div class="common_user_bar">
+                    &nbsp;
+                </div>
+                <div class="config_content">
+                    <div class="str_notice">
+                        <h3 class="c_h3">通知内容:</h3>
+                        <table>
+                            <tr><td width="36%">用户名称:[$userInfo.Name]</td><td width="34%">新密码:[$userInfo.Pwd]</td><td width="30%">帐号:[$userInfo.Account]</td></tr>
+                        </table>
+                            <textarea  class="notice_txtarea" rows="3" cols="200" readonly id="otherStr" >${keyValue}</textarea>
+                        <div class="control_active">
+                            <div class="control_active_wrap">
+                                <span class="strategy_upload_btn">编辑</span>
+                                <span class="add_checkstr3" id="add3">保存</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <!--sp_right End-->
+
+</div>
+<!--main_wrap End-->
+<script>
+    (function(){
+        window.resizeHeight('.str_notice', 191)
+
+      //  $(".tab_li li").live("click", function(){
+        //    var index = $(this).index();
+          //  if(index==0){
+            //    window.location.href="/configInfos/configManage?tab=1&keyName=strategyUpMsg";
+            //}else if(index==1){
+              //  window.location.href="/configInfos/configManage?tab=2&keyName=strategyDownMsg";
+            //}else {
+              //  window.location.href="/configInfos/configManage?tab=3&keyName=otherMsg";
+            //}
+
+        //});
+
+        //jQ tab切换
+        $(".tab_li li").click(function(){
+            var index = $(this).index();
+            $(".tab_li").children("li").removeClass().eq(index).addClass('display');
+            $(".sub_content").children("li").removeClass().eq(index).addClass('display')
+        });
+    })();
+
+    $('.strategy_upload_btn').click(function(){
+        $('textarea').attr("readonly",false);
+    })
+
+    $('#add1').click(function(){
+        var content =$('#upStr').val();
+        var tab = "${tab}";
+        var keyName="${keyName}";
+        $.ajax({
+            url: "/configInfos/saveMsg",
+            data: {tab:tab,content:content,keyName:keyName},
+            type:"POST",
+            dataType:"json",
+            success:function (data) {
+                if(data.flag){
+                    //$.qicTips({message:data.msg, level:1, target:'#add1', mleft:0, mtop:-60});
+                   // alert("保存成功!");
+                   // window.location.reload()//刷新页面
+                }
+                else{
+                    $.qicTips({message:data.msg, level:2, target:'#add1', mleft:0, mtop:-60});
+                }
+            }
+        });
+
+    })
+    $('#add2').click(function(){
+        var content =$('#downStr').val();
+        var tab = "${tab}";
+        var keyName="${keyName}";
+        if(content==""){
+            $.qicTips({message:'模板内容不能为空', level:2, target:'#add2', mleft:0, mtop:-30});
+            $('textarea').attr("readonly",false);
+            return;
+        }else{
+        $.ajax({
+                    url: "/configInfos/saveMsg",
+                    data: {tab:tab,content:content,keyName:keyName},
+                    type:"POST",
+                    dataType:"json",
+                    success:function (data) {
+                        if(data.flag){
+                            $.qicTips({message:data.msg, level:1, target:'#add2', mleft:0, mtop:-30});
+                        }
+                        else{
+                            $.qicTips({message:data.msg, level:2, target:'#add2', mleft:0, mtop:-30});
+                        }
+                    }
+                });
+        }
+    })
+
+    $('#add3').click(function(){
+        var content =$('#otherStr').val();
+        var tab = "${tab}";
+        var keyName="${keyName}";
+        $.ajax({
+            url: "/configInfos/saveMsg",
+            data: {tab:tab,content:content,keyName:keyName},
+            type:"POST",
+            dataType:"json",
+            success:function (data) {
+                if(data.flag){
+                    //$.qicTips({message:data.msg, level:1, target:'#add2', mleft:0, mtop:-60});
+                    alert("保存成功!");
+                    window.location.reload()//刷新页面
+                }
+                else{
+                    $.qicTips({message:data.msg, level:2, target:'#add2', mleft:0, mtop:-60});
+                }
+            }
+        });
+    })
+
+
+    textareaEdit(".strategy_upload_btn", ".add_checkstr2", ".notice_txtarea")
+</script>
+</body>

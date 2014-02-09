@@ -1,0 +1,317 @@
+h1. 用户自定义信息对外接口
+
+p(note). **特别注意**
+以下api都要求带ntToken参数, 也就是都需要token做为参数
+
+p(note). **提示**
+如果你的http客户端不支持 @PUT@ , @DELETE@ 方法, 则可以用 @POST@ 方法进行替换, 且还要带上一个参数 @x-http-method-override@ , 值为相应的方法名.
+如替换 @DELETE@ 方法, 则设置 **x-http-method-override=DELETE**
+
+h4. 返回值统一说明
+
+**参数校验错误** 返回, 如下格式的json对象
+
+bc. {
+  "validateErrors":[
+      {"key":"id", "msg":"Incorrect value"},
+      {"key":"id", "msg":"20__id必须"}
+   ]
+}
+
+也就是返回的json对象的key值为 **@validateErrors@** , 其值为一个数组类型, 每个错误对象包含键
+**@key@** 对应的参数名
+**@msg@** 错误信息. 其中错误信息以 @错误号__描述信息@ 的格式. 其中错误号的对应, 请参考 "错误集中定义":files/messages.txt
+
+**其它错误** 返回, 如下格式的json对象
+
+bc. {"error":"500_相应实体不存在"}
+
+也就是返回的json对象的key为 **@error@** , 其值为一个字符串, 描述错误信息.
+
+**增加成功**, 返回如下格式的json对象
+
+bc. {"id":5,"success":true}
+
+**@id@** 增加成功的记录id.
+
+**修改成功**, 返回如下格式的json对象
+
+bc. {"id":5,"success":true}
+
+**@id@** 修改的记录id.
+
+**删除成功**, 返回如下格式的json对象
+
+bc. {"id":5,"effect":1,"success":true}
+
+**@id@** 删除的记录id.
+**@effect@** 删除记录的条数
+
+h2. 用户自选股组
+
+h3. 增加一个自选股组
+
+||项||说明||
+| url | /api/custSecGroup |
+| http Method | POST |
+| url上的参数说明 | 无 |
+| 其它参数说明 | **name:** string 名称 <br> **sname** string 简称  <br> **flag** 类型 int 1.条件股; 2.自选股; 3.其它 |
+| 返回结果 | 见上统一描述 |
+| 举例 | |
+
+h3. 判断自选股组名称是否存在
+
+||项||说明||
+| url | /api/custSecGroup/existName |
+| http Method | GET |
+| url上的参数说明 | 无 |
+| 其它参数说明 | **name:** string 名称  |
+| 返回结果 | 存在返回1, 不存在返回0 |
+| 举例 | |
+
+h3. 删除同名的自选股组
+
+会把本身及明细数据删除
+
+||项||说明||
+| url | /api/custSecGroup/delByName |
+| http Method | POST |
+| url上的参数说明 | 无 |
+| 其它参数说明 | **name:** string 名称  |
+| 返回结果 | 0 没有删除. 1 删除成功 |
+| 举例 | |
+
+h3. 删除一个自选股组
+
+会把本身及明细数据删除
+
+|| 项 || 说明 ||
+| url | /api/custSecGroup/{id} |
+| http Method | DELETE |
+| url上的参数说明 | **id** long|
+| 其它参数说明 | 无|
+| 返回结果 | 见上统一描述 |
+| 举例 | |
+
+h3. 返回用户在这个产品上的自选股组. 只返回每个名称的最新的那条记录
+
+|| 项 || 说明 ||
+| url | /api/custSecGroup/latest |
+| http Method | GET |
+| url上的参数说明 | 无 |
+| 其它参数说明 | 无 |
+| 返回结果 | 返回json数组, 里面的每一个json对象的key值为<br> **id** long <br> **name** string <br> **sname** string <br> **ctime** 创建时间 (日期时间格式 yyyy-mm-dd hh:mm:ss) <br> **flag** int 1.条件股; 2.自选股; 3.其它 |
+| 举例 | |
+
+h3. 获取指定组名称的历史记录. 按由近及远的方式返回
+
+|| 项 || 说明 ||
+| url | /api/custSecGroup/history |
+| http Method | GET |
+| url上的参数说明 | 无 |
+| 其它参数说明 | **name:** string 名称 |
+| 返回结果 | 返回json数组, 里面的每一个json对象的key值为<br> **id** long <br> **name** string <br> **sname** string <br> **ctime** 创建时间 (日期时间格式 yyyy-mm-dd hh:mm:ss) <br> **flag** int 1.条件股; 2.自选股; 3.其它 |
+| 举例 | |
+
+h3. 获取指定自选股组名称,最新的自选股明细
+
+|| 项 || 说明 ||
+| url | /api/custSecGroup/byname/latestDetail |
+| http Method | GET |
+| url上的参数说明 | 无 |
+| 其它参数说明 | **name:** string 自选股组名称 |
+| 返回结果 | 返回json数组. 里面的每个json对象包含key值<br/> **id** long <br/> **scode** string 股票代码 <br/> **exchange** string 市场代码 <br/> **ctime** string 创建日期(yyyy-mm-dd hh:mm:ss) |
+| 举例 | |
+
+
+h2. 用户自选股明细
+
+h3. 增加一个自选股明细
+
+|| 项 || 说明 ||
+| url | /api/custSecList/g/{gid} |
+| http Method | POST |
+| url上的参数说明 | **gid** 组id|
+| 其它参数说明 | **scode** 股票代码|
+|  | **exchange** 市场代码|
+| 返回结果 | 见上统一描述 |
+| 举例 | |
+
+h3. 批量增加/修改自选股明细
+
+|| 项 || 说明 ||
+| url | /api/custSecList/g/{gid}/batchAddOrEdit |
+| http Method | POST |
+| url上的参数说明 | **gid** 组id|
+| 其它参数说明 | **paramJson** json对象数组,包含要增加或修改的信息, json格式详见下面的代码说明 |
+| 返回结果 | 返回json对象 @{"success" : true , "msg" : "批量操作成功" }@ |
+| 举例 | |
+*json参数举例说明*
+
+bc. [
+      {
+        id:2, //要修改的自选股明细记录 id
+        scode:'700612', //股票代码
+        exchange:'sz' //市场代码
+      },
+      {
+        id:-1, //id为 -1, 则表示是新增加记录. 注: 也可以不要这个属性.
+        scode:'700610', //股票代码
+        exchange:'sh'//市场代码
+      }
+]
+
+h3. 删除一个自选股明细
+
+|| 项 || 说明 ||
+| url | /api/custSecList/{id} |
+| http Method | DELETE |
+| url上的参数说明 | **id** long|
+| 其它参数说明 | 无 |
+| 返回结果 | 见上统一描述 |
+| 举例 | |
+
+h3. 按自选股组id查询该组下面的股票明细
+
+|| 项 || 说明 ||
+| url | /api/custSecList/g/{gid} |
+| http Method | GET |
+| url上的参数说明 | **gid** 组id|
+| 其它参数说明 | 无 |
+| 返回结果 | 返回json数组. 里面的每个json对象包含key值<br/> **id** long <br/> **scode** string 股票代码 <br/> **exchange** string 市场代码 <br/> **ctime** string 创建日期(yyyy-mm-dd hh:mm:ss) |
+| 举例 | |
+
+h3. 修改自选股备注信息
+
+|| 项 || 说明 ||
+| url | /api/custSecList/{id}/updateCustSecComments |
+| http Method | POST |
+| url上的参数说明 | **id** id 整数|
+| 其它参数说明 | **comment** 备注信息 |
+| 返回结果 | 操作成功 |
+| 举例 | |
+
+
+h2. 用户自定义指标
+
+h3. 增加一个自定义指标
+
+|| 项 || 说明 ||
+| url | /api/custIndex |
+| http Method | POST |
+| url上的参数说明 | 无 |
+| 其它参数说明 | |
+| | **name** string 名称|
+| | **content** string 内容|
+| 返回结果 | 见上统一描述 |
+| 举例 | |
+
+h3. 删除一个自定义指标
+
+|| 项 || 说明 ||
+| url | /api/custIndex/{id} |
+| http Method | DELETE |
+| url上的参数说明 | **id** long |
+| 其它参数说明 | 无 |
+| 返回结果 | 见上统一描述 |
+| 举例 | |
+
+h3. 修改一个自定义指标
+
+|| 项 || 说明 ||
+| url | /api/custIndex/{id} |
+| http Method | PUT |
+| url上的参数说明 | **id** long |
+| 其它参数说明 | |
+| | **name** string 名称 (可选) |
+| | **content** string 内容 (可选) |
+| 返回结果 | 见上统一描述 |
+| 举例 | |
+
+h3. 查询用户的自定义指标集合
+
+|| 项 || 说明 ||
+| url | /api/custIndex |
+| http Method | GET |
+| url上的参数说明 | 无 |
+| 其它参数说明 | 无 |
+| 返回结果 | 返回json对象数组, 每个json对象包含key值<br/> **id** long <br/> **name** string 名称|
+| 举例 | |
+
+h3. 按自定义指标id返回指标内容
+
+|| 项 || 说明 ||
+| url | /api/custIndex/{id}/content |
+| http Method | GET |
+| url上的参数说明 | **id** long |
+| 其它参数说明 | 无 |
+| 返回结果 | 返回字符串, 指标内容 |
+| 举例 | |
+
+h2. 用户自定义模板
+
+h3. 增加一个自定义模板
+
+|| 项 || 说明 ||
+| url | /api/custTemplate |
+| http Method | POST |
+| url上的参数说明 | 无|
+| 其它参数说明 | |
+| | **name** string 名称|
+| | **content** string 内容|
+| | **category** int 分类|
+| 返回结果 | 见上统一描述 |
+| 举例 | |
+
+h3. 删除一个自定义模板
+
+|| 项 || 说明 ||
+| url | /api/custTemplate/{id} |
+| http Method | DELETE |
+| url上的参数说明 | **id** long |
+| 其它参数说明 | 无 |
+| 返回结果 | 见上统一描述 |
+| 举例 | |
+
+h3. 修改一个自定义模板
+
+|| 项 || 说明 ||
+| url | /api/custTemplate/{id} |
+| http Method | PUT |
+| url上的参数说明 | **id** long |
+| 其它参数说明 | |
+| | **name** string 名称 (可选) |
+| | **content** string 内容 (可选) |
+| 返回结果 | 见上统一描述 |
+| 举例 | |
+
+h3. 查询用户的自定义模板集合
+
+|| 项 || 说明 ||
+| url | /api/custTemplate/{category} |
+| http Method | GET |
+| url上的参数说明 | **category** int 分类|
+| 其它参数说明 | 无 |
+| 返回结果 | 返回json对象数组, 每个json对象包含key值<br/> **id** long <br/> **name** string 名称  |
+| 举例 | |
+
+h3. 按自定义模板id返回模板内容
+
+|| 项 || 说明 ||
+| url | /api/custTemplate/{id}/content |
+| http Method | GET |
+| url上的参数说明 | **id** long |
+| 其它参数说明 | 无 |
+| 返回结果 |  返回字符串, 指标内容 |
+| 举例 | |
+
+h3. 查询模板是否重名
+
+|| 项 || 说明 ||
+| url | /api/custTemplate/existName |
+| http Method | GET |
+| url上的参数说明 | 无 |
+| 其它参数说明 |  |
+| | **category** int  分类 |
+| | **name** string  名称 |
+| 返回结果 |  long, 重名返回 这个名称的模板id, 不重名返回 @-1@ |

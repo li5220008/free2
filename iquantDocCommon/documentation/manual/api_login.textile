@@ -1,0 +1,216 @@
+h1. 登陆 认证 退出 对外接口
+
+sso对外接口分为需要token 和 不需要token两类.
+
+h2. 不需要token
+
+h3. <a name="fetchTokenWithCryp">用户登陆获取token **(密码使用md5后加密后传输)**</a>
+
+||项||说明||
+|url|/api/login|
+|http Method|GET|
+|url上的参数说明|无|
+|其它参数说明| |
+| | **u:** 用户名|
+| | **p:** 密码(**经过md5加密**)|
+| | **mac** mac地址, 形如 @00E06F05EA4E@ |
+| | **pid** @Long型@ 产品id,sso系统分配给每个产品的id,一般会写在客户端的配置文件里(固定死的)|
+| | **type(可选)** @String型@ api 返回用户数据权限信息|
+|成功(不带type) |返回 **@JSON@** 类型, 如:  { "sucess": true,"token" : "**String** token信息" } |
+|成功(带type=showEDate) |返回 **@JSON@** 类型, 如:  { "sucess": true,"edate": 用户权限到期日期 ,"token" : "**String** token信息" } |
+|成功(带type=api)|返回 **@JSON@** 类型, 如:  { "sucess": true, "token" : "**String** token信息", "power" : "**String** 数据权限信息" } |
+|失败|返回 **@JSON@** 类型, 如:  { "sucess": false, "message" : "**String** 失败提示信息" }|
+|举例(不带type)| @/api/login?u=wen66&p=ICy5YqxZB1uWSwcVLSNLcA==&mac=00E06F05EA4E&pid=1@  <br/> 成功 返回 { "success" : true, "token" : "f6631ef287face53019e62da5" } |
+|举例(带type=showEDate)| @/api/login?u=wen66&p=ICy5YqxZB1uWSwcVLSNLcA==&mac=00E06F05EA4E&pid=1&type=showEDate@  <br/> 成功 返回 { "success" : true,"edate": "2014-01-01", "token" : "f6631ef287face53019e62da5" } |
+|举例(带type=api)| @/api/login?u=wen66&p=ICy5YqxZB1uWS==&mac=00E06F05EA4E&pid=1&type=api@  <br/> 成功 返回格式如下：|
+bc. {
+    "success": true,
+    "token": "f6631ef287face53019e62da52d675ef4fbc7d2aea35af182d2e35569568455f",
+    "power": [
+        {
+            "logiccode": "LC000001",
+            "content":"sdate:2010-01-01&&edate:2013-01-01"
+        },
+        {
+            "logiccode": "LC000002",
+            "content":"sdate:2010-01-01&&edate:2013-01-01"
+        },
+        {
+            "logiccode": "LC000003",
+            "content":"sdate:2010-01-01&&edate:2013-01-01"
+        }
+    ]
+}
+
+p(note). **特别注意**
+因为这里的p(密码)是经过md5加密的,可能就会出现 @URL@ 不允许使用的字符,所以设置这个参数时, 要使用 @UTF-8@ 进行 @URL编码@ .
+关于 "URL编码请参考":http://www.ruanyifeng.com/blog/2010/02/url_encoding.html
+
+h4. 参考
+
+* "mac地址说明":http://baike.baidu.com/view/69334.htm
+* "md5百度百科":http://baike.baidu.com/view/7636.htm
+* "md5维基百科":http://zh.wikipedia.org/wiki/MD5
+* "md5 c#":http://msdn.microsoft.com/en-us/library/system.security.cryptography.md5.aspx
+
+
+h3. <a name="fetchTokenWithoutCryp">用户登陆获取token **(密码使用明文传输)**</a>
+
+||项||说明||
+|url|/api/loginWithoutCryp|
+|http Method|GET|
+|url上的参数说明|无|
+|其它参数说明| |
+| | **u:** 用户名 |
+| | **p:** 密码(**原文**) |
+| | **mac** mac地址, 形如 @00E06F05EA4E@ |
+| |**pid** @Long型@ 产品id,sso系统分配给每个产品的id,一般会写在客户端的配置文件里(固定死的)|
+| | **type(可选)** @String型@ api 返回用户数据权限信息|
+|成功(不带type)|返回 **@JSON@** 类型, 如:  { "sucess": true, "token" : "**String** token信息" } |
+|成功(带type=showEDate) |返回 **@JSON@** 类型, 如:  { "sucess": true,"edate": 用户权限到期日期 ,"token" : "**String** token信息" } |
+|成功(带type=api)|返回 **@JSON@** 类型, 如:  { "sucess": true, "token" : "**String** token信息", "power" : "**String** 数据权限信息" } |
+
+|失败|返回 **@JSON@** 类型, 如:  { "sucess": false, "token" : "**String** 失败提示信息" }|
+|举例(不带type)| @/api/loginWithoutCryp?u=wen66&p=123&mac=00E06F05EA4E&pid=1@  <br/> 成功 返回 { "success" : true, "token" : "f6631ef287face53019e62da52d6568455f" } |
+|举例(带type=showEDate)| @/api/login?u=wen66&p=123==&mac=00E06F05EA4E&pid=1@  <br/> 成功 返回 { "success" : true, "edate": "2014-01-01", "token" : "f6631ef287face53019e62da5" } |
+|举例(带type=api)| @/api/loginWithoutCryp?u=wen66&p=123&mac=00E06F05EA4E&pid=1&type=api@  <br/> 成功 返回JSON如下|
+bc. {
+    "success": true,
+    "token": "f6631ef287face53019e62da52d675ef4fbc7d2aea35af182d2e35569568455f",
+    "power": [
+        {
+            "logiccode": "LC000001",
+            "content":"sdate:2010-01-01&&edate:2013-01-01"
+        },
+        {
+            "logiccode": "LC000002",
+            "content":"sdate:2010-01-01&&edate:2013-01-01"
+        },
+        {
+            "logiccode": "LC000003",
+            "content":"sdate:2010-01-01&&edate:2013-01-01"
+        }
+    ]
+}
+
+
+h3. <a name="checkToken">检查token是否有效</a>
+
+接口说明
+||项||说明||
+|url|/api/checkLoginToken|
+|http Method|GET|
+|url上的参数说明|无|
+|其它参数说明|**token:** token值 |
+| | **clientId** 客户端自行设定的标识 |
+| | **type(可选)** @String型@ api 返回用户名和用户数据权限信息|
+|返回结果| 返回json对象, json对象key值 @clientId@ String 类型, 参数clientId值 <br/> @validResult@  int, 0 token无效, 1 token有效|
+|举例(不带type)|/api/checkLoginToken?token=f6631ef287face53019e62da52d675ef4fbc7d235569568455f&clientId=aaa111 <br/> 返回 { "clientId" : "aaa111", "validResult" : 1 } |
+|举例(带type)|/api/checkLoginToken?token=f6631ef287face53019e62da52d675e5af182d2e35569568455f&clientId=aaa111&type=api <br/> 返回JSON如下 |
+bc. {
+    "clientId": "aaa111",
+    "validResult": 1,
+    "username": "wen66",
+    "power": [
+        {
+            "logiccode": "LC000001",
+            "content":"sdate:2010-01-01&&edate:2013-01-01"
+        },
+        {
+            "logiccode": "LC000002",
+            "content":"sdate:2010-01-01&&edate:2013-01-01"
+        },
+        {
+            "logiccode": "LC000003",
+            "content":"sdate:2010-01-01&&edate:2013-01-01"
+        }
+    ]
+}
+
+h2. 需要token
+
+p(note). **注意**
+需要token的接口都必须在访问时,带上 **@loginToken@** 这个参数,且值为登陆获取的token.
+在下面的接口参数说明中不重复这个参数
+
+p(note). **特别注意**
+如果所带的token为非法token, 则直接返回 http状态码 **403**, 同时在响应体里带有
+
+bc. <h1>token失效, 请重新取token</h1>
+
+请使用 **http状态码** 进行判断, 因为响应体可能以后会做修改, 而http状态码,则不会改变.
+
+h3. <a name="fetchFunction">获取用户本产品功能列表</a>
+
+接口说明
+||项||说明||
+|url|/api/fetchFunction|
+|http Method|GET|
+|url上的参数说明|无|
+|其它参数说明|无|
+|成功|**@JSON@** 类型. 返回用户在这个产品上的权限列表( **@JSON@** 数组格式) 如<br/> [ { " code " : " F005 ", " name " : " 行情 " } , { " code " : " F005005 ", " name " : " 股票 " } ]  <br/> 这里的code是有如下规律的: 以f开头, 然后每三个字符代表一个级别, 这里都是数字型的字符, 可以用数字的大小来判断同一级别上的前后关系 |
+|失败| |
+|举例||
+
+h3. <a name="fetchOtherProductFunction">获取用户在其它产品上的功能列表</a>
+
+接口说明
+||项||说明||
+|url|/api/fetchOtherPFunction/p/{pid}|
+|http Method|GET|
+|url上的参数说明|@pid@ 产品id|
+|其它参数说明|无|
+|成功|**@JSON@** 类型. 返回用户在这个产品上的权限列表( **@JSON@** 数组格式) 如<br/> [ { " code " : " F005 ", " name " : " 行情 " } , { " code " : " F005005 ", " name " : " 股票 " } ] <br/> 这里的code是有如下规律的: 以f开头, 然后每三个字符代表一个级别, 这里都是数字型的字符, 可以用数字的大小来判断同一级别上的前后关系 |
+|失败| |
+|举例| |
+
+h3. <a name="logout">退出</a>
+
+接口说明
+||项||说明||
+|url|/api/logout|
+|http Method|GET|
+|url上的参数说明|无|
+|其它参数说明|无|
+|成功|**@String@** 类型, @ok@|
+|失败|无|
+|举例|/api/logout?loginToken=d25bd4ab5cb9ce230af978cb56452a9f345408ab71e781153e3821dc9a620d83f48c74287db8d111cb0f22b3ebc4564f <p>返回ok</p> <p>退出后,将注销token,以后在使用这个token为 **@无效@** </p>|
+
+
+h3. <a name="sendEmail">发送邮件接口</a>
+
+接口说明
+||项||说明||
+|url|/mail/sendEmail |
+|http Method|post|
+|端口|8100|
+|参数说明|见下面说明|
+|成功|返回JSON如下:|
+|失败|返回JSON|
+
+参数说明:
+
+bc. {
+    "accepterEmail": "接受者邮箱",
+    "title": "邮件标题",
+    "content": "邮件内容" ,
+    "userAccount": "用户账号"
+}
+
+成功返回json:
+
+bc. {
+     "data": {
+         "success": "success"
+       },
+       "status": 0
+}
+
+失败返回json:
+
+bc. {
+    "data": {
+        "success": "Failure"
+      },
+      "status": 0
+}

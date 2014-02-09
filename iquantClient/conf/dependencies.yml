@@ -1,0 +1,23 @@
+# Application dependencies
+
+require:
+    - play
+    - play -> redis 0.3
+    - play -> excel 1.2.3
+    - play -> guice 1.2
+    - org.apache.ant-> ant 1.8.1 :
+            transitive: false
+    - com.google.guava -> guava 14.0.1 :
+        transitive: false
+    - commons-dbutils -> commons-dbutils 1.5
+    - org.apache.poi -> poi-ooxml-schemas 3.8 :
+            transitive: false
+    - iquantCommon -> iquantCommon
+
+
+repositories:
+    - MyModules:
+        type:     local
+        artifact: ${application.path}/../[module]
+        contains:
+            - iquantCommon

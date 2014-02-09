@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment> 策略对比表格展示sql</comment>
+
+ <!--策略对比表格展示 qic-->
+    <entry key="StrategyContrastForQIC">
+<![CDATA[
+  SELECT
+    a.yield_of_year as yieldofyear,
+    a.sharpe_index as sharpeindex,
+    a.profit_ratio as profitratio
+  FROM
+    qic_db.strategy_performance_qicore a
+  WHERE  a.strategy_id = ?
+  order by a.update_time desc
+  limit 1
+]]>
+    </entry>
+    <!--策略对比表格展示 qia-->
+    <entry key="StrategyContrastForQIA">
+<![CDATA[
+   SELECT
+    a.average_simple_rate_of_return*252 AS yieldofyear,
+    a.sharp_ratio AS sharpeindex,
+    a.hit_rate AS profitratio
+    FROM qic_db.strategy_performance_qia a
+    WHERE a.strategy_id = ?
+  order by a.update_time desc
+  limit 1
+]]>
+    </entry>
+    <!--策略对比 策略基本信息-->
+    <entry key="StrategyContrastInfo">
+<![CDATA[
+  SELECT
+    name,
+    up_time as upTime,
+    enginetype_id as enginetypeId,
+    discuss_count as discussCount,
+    collect_count as collectCount,
+    order_count as orderCount,
+    IF(
+      discuss_count = 0,
+      0,
+      discuss_total /discuss_count
+    ) AS starLevel
+  FROM
+     qic_db.strategy_baseinfo
+  WHERE  id = ?
+]]>
+    </entry>
+    <!--策略对比 查询策略的当前订阅数-->
+    <entry key="getCurrentOrderNum">
+    <![CDATA[
+        SELECT
+            COUNT(*)
+        FROM
+            user_strategy_order
+        WHERE
+            stid=? AND order_etime>=NOW()
+    ]]>
+        </entry>
+
+ <!--低频历史绩效指标表-->
+    <entry key="low_freq_strategy_contrast">
+        <![CDATA[
+    SELECT
+      c.YieldOfMonthStandardDeviation AS ymsd,
+      c.SharpeIndex AS sharpeindex,
+      c.TradeDays AS tradedays
+    FROM
+      qicore.low_freq_hist_indicator c
+    WHERE c.strategyid = ?
+    ORDER BY updatetime DESC
+    LIMIT 0, 1
+]]>
+    </entry>
+
+    <!--需要计算收益率的策略id, 也就是三个月前的-->
+    <entry key="need_calc_yield_strategy_uuid">
+<![CDATA[
+SELECT DISTINCT
+  StrategyID
+FROM
+  qicore.high_freq_hist_indicator
+WHERE UpdateTime >= ADDDATE(NOW(), INTERVAL -3 MONTH)
+]]>
+    </entry>
+
+    <!--策略高频收益率-->
+    <entry key="strategy_yield_high_list">
+<![CDATA[
+SELECT
+  DATE_FORMAT(a.UpdateTime, '%Y-%m-%d') AS updateDate,
+  a.Yield AS yield
+FROM
+  qicore.high_freq_hist_indicator a
+WHERE a.StrategyID = ?
+  /* AND a.UpdateTime > ADDDATE(?, INTERVAL -1 DAY) */
+  AND a.UpdateTime > ?
+ORDER BY a.UpdateTime DESC
+]]>
+    </entry>
+
+    <!--有初始资金的策略, 用这个来做画图的依据-->
+    <entry key="hasInitCapitalStrategy">
+<![CDATA[
+SELECT DISTINCT
+    StrategyID as sid,
+    IniCapital as initCapital
+FROM
+    capital_list b
+where IniCapital > 0
+]]>
+    </entry>
+
+    <entry key="hasInitCapitalStrategyWithUUIDs">
+    <![CDATA[
+    SELECT DISTINCT
+        StrategyID as sid,
+        IniCapital as initCapital
+    FROM
+        capital_list b
+    where IniCapital > 0
+        and StrategyID in (#idList#)
+    ]]>
+        </entry>
+
+    <!--资金变化收益率计算  #initCapital# 初始资金占位 -->
+    <entry key="yieldCalcFromCapital">
+<![CDATA[
+SELECT
+    d.StrategyID AS sid,
+    DATE_FORMAT(d.TransactTime, '%Y-%m-%d') AS transactDate,
+    CAST( (c.TotalAsset - #initCapital#) / #initCapital# AS DECIMAL(16, 4) ) AS yield
+
+FROM
+    qicore.capital_change_list AS c ,
+
+	(
+		SELECT StrategyID, MAX(TransactTime) AS TransactTime FROM capital_change_list
+		WHERE StrategyID = ?
+		    AND DATE_FORMAT(TransactTime, '%Y-%m-%d')  > ?
+		GROUP BY DATE_FORMAT(TransactTime, '%Y-%m-%d')
+	) AS d
+WHERE
+    c.StrategyID = d.StrategyID
+    AND c.TransactTime = d.TransactTime
+
+ORDER BY d.TransactTime
+
+]]>
+    </entry>
+
+    <!--策略日收益率最大日期-->
+    <entry key="max_yield_date">
+<![CDATA[
+SELECT
+  a.strategy_id AS strategyID,
+  DATE_FORMAT(MAX(a.update_time), '%Y-%m-%d') AS maxDate
+FROM
+  qic_db.strategy_yield a
+GROUP BY a.strategy_id
+]]>
+    </entry>
+
+    <entry key="max_yield_date_WithUUIDs">
+    <![CDATA[
+    SELECT
+      a.strategy_id AS strategyID,
+      DATE_FORMAT(MAX(a.update_time), '%Y-%m-%d') AS maxDate
+    FROM
+      qic_db.strategy_yield a
+    where strategy_id in (#idList#)
+    GROUP BY a.strategy_id
+    ]]>
+        </entry>
+
+    <!--插入到策略日收益率表-->
+    <entry key="insert_strategy_daily_yield">
+<![CDATA[
+INSERT INTO qic_db.strategy_yield
+    (strategy_id, yield,  update_time,run_type,yield_type)
+VALUES (?,?,?,?,?);
+]]>
+    </entry>
+
+    <!--3个月的策略日收益数据-->
+    <entry key="strategy_daily_yied_3month">
+<![CDATA[
+SELECT
+  a.yield,
+  a.update_time as updateDate
+FROM
+  qic_db.strategy_yield a
+WHERE a.strategy_id = ?
+  AND a.yield_type='1'
+  AND a.update_time >= DATE_ADD(NOW(), INTERVAL -3 MONTH)
+ORDER BY a.update_time
+]]>
+    </entry>
+
+    <!--需要要图的策略, 这里要注意一下 status的状态-->
+    <entry key="need_draw_pic_strategy">
+<![CDATA[
+SELECT DISTINCT
+  a.st_uuid AS strategyID
+FROM
+  qic_db.strategy_baseinfo a
+WHERE a.status > 0
+]]>
+    </entry>
+
+    <!--策略初始资金-->
+    <entry key="strategy_initCapital">
+        <![CDATA[
+SELECT DISTINCT
+	b.StrategyID AS strategyID,
+	b.IniCapital AS initCapital
+FROM qicore.capital_list b
+                ]]>
+    </entry>
+
+    <!--得到上架时间-->
+    <entry key="findupTimeById">
+        <![CDATA[
+SELECT
+	a.up_time AS upTime
+FROM  qic_db.strategy_baseinfo a
+where a.st_uuid =?
+                ]]>
+    </entry>
+
+</properties>
+

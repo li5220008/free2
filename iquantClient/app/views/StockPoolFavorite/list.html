@@ -1,0 +1,575 @@
+#{extends 'main.html'/}
+#{set title:'股票池' /}
+
+#{set 'moreStyles'}
+*{这里是股票池的css}*
+<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/global-stockpool.css'}">
+#{/set}
+<body>
+<div class="for_whie" style="background-color:#383838; width:237px; position:absolute; top:0; bottom:0; left:0;">
+</div>
+<script>
+    $(".folder").live("click", function(){
+        var forWhite = $(".for_whie")
+        if(forWhite.width() == 237){
+            forWhite.width(9);
+            var clientHeight = $('body')[0].clientHeight-42;
+            $(".folder").height(clientHeight);
+        }else{
+            forWhite.width(237);
+        }
+
+    });
+
+    $(document).ready(function(){
+        window.resizeHeight(".folder", 42)
+    });
+
+
+</script>
+<!--strategy_nav Begin-->
+<div class="strategy_nav">
+
+    <ul class="nav_func">
+        <li class="nav_search">
+            <form action="@{StockPoolFavorite.list()}" name="keyform">
+                <input type="hidden" name="spp.strategyName" value="${spp.strategyName}">
+                <input type="hidden" name="spp.checkflag" value="${spp.checkflag}">
+                <input type="text" class="key_strategy" value="${spp.content}" placeholder="组合名称/来源" name="spp.content">
+                <input type="submit" class="btn_submit">
+            </form>
+        </li>
+        <li class="more_search" id="dialog-link">高级搜索</li>
+    </ul>
+</div>
+<!--strategy_nav End-->
+
+
+<!--main_wrap Begin-->
+<div class="main_wrap">
+    <div class="sp_left">
+        <!--folder Begin-->
+        <div class="folder" title="折叠菜单">
+            <div class="folder_wrap">
+                <div class="folder_tips_hide">
+                    &nbsp;
+                </div>
+            </div>
+        </div>
+        <!--folder End-->
+
+        <div class="sp_left_wrap" id="spcList">
+            <form action="" method="post" id="combination">
+                <input type="hidden" name="spp.content" value="${spp.content}" id="contentId">
+                <input type="hidden" name="spp.checkflag" value="${spp.checkflag}" id="checkflagId">
+                <h2 class="siderbar_h2" data-code="all" onclick="sortQuery('all')">所有组合</h2>
+                <dl>
+                    <dt onclick="otherSortQuery('hot')">热门推荐</dt>
+                #{list items:spclist, as:'spc'}
+                    <dd>
+                        #{if spc.code.equals("I05")||spc.code.equals("I06") }
+                            <h2 class="small_h2" data-code="${spc.code}" onclick="otherSortQuery('${spc.code}')"  >${spc.name}</h2>
+                        #{/if}
+                        #{else }
+                            <h2 class="small_h2" data-code="${spc.code}"  onclick="assignment('${spc.code}')">${spc.name}</h2>
+                        #{/else}
+                        <ul class="siderbar_list"
+                            #{if spc.code.equals(spp.checkflag)}
+                            style="display: block"
+                            #{/if}
+                                >
+                            #{list items:spc.children, as:'item'}
+                                <li #{if item.code.equals(spp.strategyName) }class="current"#{/if}>
+                                    <a href="#" data-code="${item.code}" onclick="sortQuery('${item.code}')">${item.name}</a></li>
+                            #{/list}
+                        </ul>
+                    </dd>
+                #{/list}
+                </dl>
+            </form>
+        </div>
+
+    </div>
+
+    <!--sp_right Begin-->
+    <div class="sp_right">
+        <div class="sp_right_wrap">
+            <div class="content_title">
+                <!--
+                <div class="control_btn">
+                    <div class="control_btn_left">
+                        左
+                    </div>
+                    <div class="control_btn_right">
+                        右
+                    </div>
+                </div>   -->
+
+                <div class="tab_title">
+                    <div class="tab_title_wrap">
+                        <ul class="tab_li tab_maximum" id="menuTab">
+                            <li class="display">组合浏览</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <ul class="sub_content" id="subContImp">
+                <li class="display">
+                    <!--基本信息 Begin-->
+                    <form action="" method="post" name="orderSort" id='orderSort'>
+                        <input type="hidden" name="spp.content" value="${spp.content}">
+                        <input type="hidden" name="spp.strategyName" value="${spp.strategyName}">
+                        <input type="hidden" name="spp.checkflag" value="${spp.checkflag}">
+                    #{if spp.flag==0}
+                        <input type="hidden" name="spp.flag" value="1">
+                    #{/if}
+                    #{else }
+                        <input type="hidden" name="spp.flag" value="0">
+                    #{/else}
+                        <table width="100%" cellspacing="0" cellpadding="0" border="0" class="tbl_exec">
+                            <tr>
+                                <th width="15%"  style="text-align: left;padding-left: 14px " onclick="order('poolName')">组合名称#{sortTagShow sortName:spp.orderSort, fieldName:'poolName', flag:spp.flag /}</th>
+                                <th width="11%"  style="text-align: left;padding-left: 14px "  onclick="order('source')">来源#{sortTagShow sortName:spp.orderSort, fieldName:'source', flag:spp.flag /}</th>
+                                <th width="10%" onclick="order('annualizedYield')">年化收益率#{sortTagShow sortName:spp.orderSort, fieldName:'annualizedYield', flag:spp.flag /}</th>
+                                <th width="8%" onclick="order('yearJensenRatio')">夏普比率#{sortTagShow sortName:spp.orderSort, fieldName:'yearJensenRatio', flag:spp.flag /}</th>
+                                <th width="10%" onclick="order('starLevel')">用户评级#{sortTagShow sortName:spp.orderSort, fieldName:'starLevel', flag:spp.flag /}</th>
+                                <th width="8%" onclick="order('updateDate')">更新日期#{sortTagShow sortName:spp.orderSort, fieldName:'updateDate', flag:spp.flag /}</th>
+                                <th width="6%" onclick="order('stockNum')"> 股票数#{sortTagShow sortName:spp.orderSort, fieldName:'stockNum', flag:spp.flag /}</th>
+                                <th width="5%" onclick="order('collectCount')">人气#{sortTagShow sortName:spp.orderSort, fieldName:'collectCount', flag:spp.flag /}</th>
+                            #{hasAuth '10'}
+                                <th width="12%">我的收藏&nbsp;&nbsp;</th>
+                                <th width="12%">我要评价&nbsp;&nbsp;</th>
+                            #{/hasAuth}
+                            </tr>
+                        </table>
+                    </form>
+
+                    <div class="tbl_scroll">
+
+                        <table width="100%" cellspacing="0" cellpadding="0" border="0"
+                               class="tbl_common tbl_exec tbl_no_scroll">
+                        #{list items : StockpoolList, as : 'item'}
+
+                            <tr>
+                                <td width="15%"  style="text-align: left;padding-left: 14px " ><a id="#{emVF item.id/}" name="#{emVF item.poolName/}" data-value='0001' class="stable_load" href="#" >#{emVF item.poolName/}</a></td>
+                                <td width="11%"  style="text-align: left;padding-left: 14px " >#{emVF item.source/}</td>
+                                <td width="10%">#{emVFC v:item.annualizedYield * 100, f:'0.00', u:'%',c:true /}</td>
+                                <td width="8%"><span class="blue"><strong>#{emVF v:item.yearJensenRatio/}</strong></span></td>
+                                <td width="10%">
+                                    #{if item.starLevel>4.7}
+                                    <span class="all_star_10"> </span>
+                                #{/if}
+                                    #{if item.starLevel<=4.7 &&item.starLevel>4.2}
+                                        <span class="all_star_9"> </span>
+                                    #{/if}
+                                    #{if item.starLevel<=4.2 &&item.starLevel>3.7}
+                                        <span class="all_star_8"> </span>
+                                    #{/if}
+                                    #{if item.starLevel<=3.7 &&item.starLevel>3.2}
+                                        <span class="all_star_7" > </span>
+                                    #{/if}
+                                    #{if item.starLevel<=3.2 &&item.starLevel>2.7}
+                                        <span class="all_star_6" > </span>
+                                    #{/if}
+                                    #{if item.starLevel<=2.7 &&item.starLevel>2.2}
+                                        <span class="all_star_5"> </span>
+                                    #{/if}
+                                    #{if item.starLevel<=2.2 &&item.starLevel>1.7}
+                                        <span class="all_star_4" > </span>
+                                    #{/if}
+                                    #{if item.starLevel<=1.7 &&item.starLevel>1.2}
+                                        <span class="all_star_3" > </span>
+                                    #{/if}
+                                    #{if item.starLevel<=1.2 &&item.starLevel>0.7}
+                                        <span class="all_star_2"> </span>
+                                    #{/if}
+                                    #{if item.starLevel<=0.7 &&item.starLevel>0}
+                                        <span class="all_star_1"> </span>
+                                    #{/if}</td>
+                                <td width="8%">#{emVF item.updateDate, f:'yyyy-MM-dd'/}</td>
+                                <td width="6%"><strong>#{emVF item.stockNum/}</strong>个</td>
+                                <td class="collect_num" width="5%"><span class="blue"><strong>#{emVF item.collectCount/}</strong></span></td>
+
+                                #{if collectSet.contains(java.lang.Integer.parseInt(item.id))}
+                                    <td width="10%">
+                                            #{hasAuth '10'}<span data-collectid="${item.id}" class="btn_uncollect">&nbsp;已收藏</span>#{/hasAuth}
+                                    </td>#{/if}
+
+                                #{else }
+                                    <td width="10%">
+                                        #{hasAuth '10'}<span data-collectid="${item.id}" class="btn_collect">&nbsp;我要收藏</span>#{/hasAuth}
+                                    </td>#{/else}
+
+                                #{if discussSet.contains(java.lang.Integer.parseInt(item.id))}
+                                #{hasAuth '10'}<td width="12%"><span class="btn_uncomment" data-collectid="${item.id}">&nbsp;已评价</span>#{/hasAuth}</td>
+                                #{/if}
+                                #{else }
+                                #{hasAuth '10'}<td width="12%"><span class="btn_comment" data-collectid="${item.id}">&nbsp;我要评价</span>#{/hasAuth}</td>
+                                #{/else}
+                            </tr>
+
+                        #{/list}
+
+                        </table>
+                    </div>
+                    <!--基本信息 End-->
+                #{if ! advanceSearch}
+                    <!--list分页 Begin -->
+                    <div class="page">
+                        <div class="page_center">
+                            <form action="@{StockPoolFavorite.list(spp)}" class="pageFrom" method="get">
+                                #{paging page:page /}
+                            </form>
+                        </div>
+                    </div>
+                    <!--list分页 End-->
+                #{/if}
+
+                #{if advanceSearch}
+                    <!--高级搜索分页  Begin -->
+                    <div class="page">
+                        <div class="page_center">
+                            <form action="@{StockPoolFavorite.advanceSearch(cnd)}" class="pageFrom" method="get">
+                                #{paging page:page /}
+                            </form>
+                        </div>
+                    </div>
+                    <!--高级搜索分页  End-->
+                #{/if}
+                </li>
+            </ul>
+
+        </div>
+
+    </div>
+    <!--sp_right End-->
+
+
+</div>
+
+<!--main_wrap End-->
+
+<!--高级搜索 Begin-->
+<div class="search_set_wrap" title="搜索设置">
+    <div class="search_list">
+        <h3 class="h3_title" id="searchTitle">我的搜索列表</h3>
+        <ul class="search_ul" id="ut_ul_list"  style="margin-top: 26px;">
+        #{list items:utList, as:'ut'}
+            <li id="ut_${ut.id}">${ut.name}</li>
+        #{/list}
+        </ul>
+        <div class="set_control">
+            <button id="delCndBtn">
+                <img src="@{'/public/images/set_remove.png'}">
+            </button>
+            <button id="addCndBtn">
+                <img src="@{'/public/images/set_add.png'}">
+            </button>
+        </div>
+    </div>
+
+    <div class="search_set">
+        <h3 class="h3_title">搜索条件设置</h3>
+
+        <form id="cndForm" name="cndForm" action="@{StockPoolFavorite.advanceSearch()}">
+            <div class="condition_set">
+                <div class="condition_left">
+                    <h4>推荐机构</h4>
+
+                    <div class="organization_tree">
+                        <!--ligerTree插件html部分 Beigin-->
+                        <div style="width:170px; height:220px; margin-top:10px;  float:left;  overflow:auto;  ">
+                            <ul id="reportOrgTree"></ul>
+                        </div>
+                        <!--ligerTree插件html部分 End-->
+                    </div>
+                    <input type="hidden" id="recommendOrgs" name="cnd.recommendOrgs" value="">
+                </div>
+
+                <div class="condition_right">
+                    <div class="common_set update_time">
+                        <h4>更新时间 </h4>
+                        <!-- #{kvselect keyname:'reportUpdatePeriod', name:'cnd.reportUpdatePeriod', style:'width:80px;', id:'reportUpdatePeriod' /} -->
+                        <div class="dialog_box">
+
+                            <input type="hidden" id="updateDateId" name="cnd.reportUpdatePeriod" autocomplete="off" value="11">
+                            <div class="sel_84_dialog new_sel_d" id="select_update" style="color: rgb(0, 0, 0);">全部</div>
+                            <ul style="display: none;" class="sel_91_option new_sel_option" id="options_update">
+                                <li class="update_-999" data-value="-999">全部</li>
+                                <li class="update_1" data-value="1">最近一日</li>
+                                <li class="update_2" data-value="2">最近一周</li>
+                                <li class="update_3" data-value="3">最近一月</li>
+                                <li class="update_4" data-value="4">最近三月</li>
+                                <li class="update_5" data-value="5">最近半年</li>
+                                <li class="update_6" data-value="6">最近一年</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="common_set user_star">
+                        <h4>用户评级</h4>
+                        <!--模仿下拉框 Begin-->
+                        <div class="select_wrap">
+                            <div class="dialog_box">
+                                <input type="hidden" id="starDown" name="cnd.starDown" autocomplete="off"> *{li的html内容}*
+                                <input type="hidden" id="starDown_dn" autocomplete="off"> *{li的data-name对应的值}*
+
+                                <div class="sel_84_dialog" id="select_starDown">
+                                    <span class="star_0">0</span>
+                                </div>
+
+                                <ul class="sel_91_option sel_six" id="options_starDown">
+                                    <li class="star_0" data-name="0">0</li>
+                                    <li class="star_1" data-name="1">1</li>
+                                    <li class="star_2" data-name="2">2</li>
+                                    <li class="star_3" data-name="3">3</li>
+                                    <li class="star_4" data-name="4">4</li>
+                                    <li class="star_5" data-name="5">5</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!--模仿下拉框 End-->
+                        <span class="sel_float">到</span>
+
+                        <!--模仿下拉框 Begin-->
+                        <div class="select_wrap" style="position: relative; top: -0px; right: 2px;">
+                            <div class="dialog_box">
+                                <input type="hidden" id="starUp" name="cnd.starUp" autocomplete="off">
+                                <input type="hidden" id="starUp_dn" autocomplete="off">
+
+                                <div class="sel_84_dialog" id="select_starUp">
+                                    <span class="star_5">5</span>
+                                </div>
+
+                                <ul class="sel_91_option sel_six" id="options_starUp">
+                                    <li class="star_5" data-name="5">5</li>
+                                    <li class="star_4" data-name="4">4</li>
+                                    <li class="star_3" data-name="3">3</li>
+                                    <li class="star_2" data-name="2">2</li>
+                                    <li class="star_1" data-name="1">1</li>
+                                    <li class="star_0" data-name="0">0</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!--模仿下拉框 End-->
+                    </div>
+
+                    <div class="common_set user_star common_set_sp">
+                        <h4>年化收益率</h4>
+                        <input name="cnd.yearYieldDown" id="yearYieldDown" type="number" step="0.1" value=""
+                               name="points">&nbsp;<b>%</b>
+                        &nbsp;到&nbsp;
+                        <input name="cnd.yearYieldUp" id="yearYieldUp" type="number" step="0.1" value="" name="points">&nbsp;<b>%</b>
+                    </div>
+
+                    <div class="common_set user_star common_set_sp">
+                        <h4>Sharp比率</h4>
+                        <input name="cnd.sharpRateDown" id="sharpRateDown" type="number" step="0.1" value=""
+                               name="points">&nbsp;<b>%</b>
+                        &nbsp;到&nbsp;
+                        <input name="cnd.sharpRateUp" id="sharpRateUp" type="number" step="0.1" value="" name="points">&nbsp;<b>%</b>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+
+
+    </div>
+</div>
+<!--高级搜索 End-->
+
+<!--评价 Begin-->
+<div class="comment_wrap_list"title="我要评价" style="display: none;">
+    <form action="post" id="listForm" >
+        <!--模仿下拉框 Begin-->
+        <div class="select_wrap">
+            <label>
+                评价:
+            </label>
+            <div class="dialog_box">
+                <input type="hidden" name="star" value="5"  id="reportDate"  autocomplete="off">
+                <input type="hidden" id="reportName"  autocomplete="off">
+                <div class="sel_84_dialog" id="select_info_year1">
+                    <span class="star_5">5</span>
+                </div>
+
+                <ul class="sel_91_option" id="options_year1">
+                    <li class="star_5"  data-name="12">5</li>
+                    <li class="star_4" data-name="11">4</li>
+                    <li class="star_3" data-name="10">3</li>
+                    <li class="star_2" data-name="19">2</li>
+                    <li class="star_1" data-name="18">1</li>
+                </ul>
+            </div>
+        </div>
+        <!--模仿下拉框 End-->
+    </form>
+</div>
+<!--评价 End-->
+
+<link href="@{'/public/stylesheets/ui-lightness/jquery-ui-1.9.1.custom.css'}" rel="stylesheet">
+<script src="@{'/public/javascripts/jquery-ui-1.9.1.custom.js'}"></script>
+<script src="@{'/public/javascripts/ligerUI/base.js'}"></script>
+<script src="@{'/public/javascripts/ligerUI/ligerTree.js'}"></script>
+<script src="@{'/public/javascripts/reportOrg.js'}"></script>
+<link rel="stylesheet" type="text/css" href="@{'/public/javascripts/ligerUI/ligerui-tree.css'}">
+
+<script src="@{'/public/javascripts/stockPool.js'}"></script>
+
+<script>
+    $(function () {
+        //绩效指标里的高度跟随 浏览器客户端变化
+        //UI事件-resize事件
+        window.resizeHeight('.sp_left_wrap', 41);//左边栏目自适应高度
+        window.resizeWidth('.sub_content', 270);//内容自适应宽度
+        window.resizeHeight('.tbl_scroll', 190);//内容自适应高度
+        window.spSiderbar(); //股票池侧边栏
+
+    });
+
+    myComment();//我要评价
+    //$(".btn_comment").click();
+
+    //tabMenu("menuTab", "subContImp", "display");//1.0 tab切换调用
+
+
+    //jQ tab切换
+    $(".tab_li li").live('click', function () {
+        var index = $(this).index();
+        //console.log('index', index)
+        $(".tab_li").children("li").removeClass('display').eq(index).addClass('display');
+        $(".sub_content").children("li").removeClass('display').eq(index).addClass('display');
+
+        //$(".sub_content li").find("li").show();
+    });
+
+    Collect();     // 收藏
+    function Collect() {
+        $(".btn_collect,.btn_uncollect").click(function (event) {
+            var className = $(this).attr('class');
+            var element = $(this);
+            var target = event.target;
+            if (className == 'btn_collect') {
+                //添加收藏
+
+                var id = $(this).attr("data-collectid");
+                $.get("/StockPoolCollects/addcollect", {spid:id}, function (data) {
+                    if (data.isSuccess) {
+                        $.qicTips({
+                            target:target,
+                            level:1,
+                            message:'收藏成功'
+                        });
+                        var text = $(event.target).parent().parent().find(".collect_num").find('.blue').find("strong").html();
+                        $(event.target).parent().parent().find(".collect_num").find('.blue').find("strong").html(parseInt(text) + 1)
+                        element.removeClass("btn_collect").toggleClass("btn_uncollect")
+                    } else {
+                        $.qicTips({
+                            target:target,
+                            level:2,
+                            message:'收藏失败'
+                        });
+                    }
+                    //载入成功时回调函数
+                }, "json");
+            }
+            else if (className == 'btn_uncollect') {
+                //取消收藏
+                var element = $(this);
+                var id = $(this).attr("data-collectid");
+                $.get("/StockPoolCollects/delcollect", {spid:id}, function (data) {
+                    if (data.isSuccess) {
+                        $.qicTips({
+                            target: target,
+                            level: 1,
+                            message: '取消成功'
+                        });
+                        var text = $(event.target).parent().parent().find(".collect_num").find('.blue').find("strong").html();
+                        $(event.target).parent().parent().find(".collect_num").find('.blue').find("strong").html(parseInt(text) -1)
+                        element.removeClass("btn_uncollect").toggleClass("btn_collect")
+                    } else {
+                        $.qicTips({
+                            target: target,
+                            level: 2,
+                            message: '取消失败'
+                        });
+                    }
+                    //载入成功时回调函数
+                }, "json");
+            }
+        });
+    }
+
+
+</script>
+
+*{条件管理js}*
+<script type="text/javascript">
+    var utListSize =${utList!=null?utList.size():0};
+
+    var renameCondRoute = #{jsRoute @SearchConditionManage.renameOrNewCond(':id', ":name") /} //改名url
+    var saveCondRoute = #{jsRoute @SearchConditionManage.editStockPoolCond() /}  //保存url. 修改url
+    var delCondRoute = #{jsRoute @SearchConditionManage.delCond(':id') /} //删除url
+    var basicInfoRoute = #{jsRoute @StockPoolBasic.basicInfo(':stockPoolCode') /} ;//baiscInfo页面URL
+    var yanBaoRoute = #{jsRoute @StockPoolBasic.digest() /}; //研报摘要url
+    var saveRoute = #{jsRoute @StockPoolBasic.comment() /}  //basicInfo页面用户评价url
+    var savecommentRoute = #{jsRoute @StockPoolFavorite.comment()/}  //list页面 用户评价url
+    var utMap = {}; //用户策略map
+    #{list items:utList, as:'ut'}
+    utMap['${ut.id}'] = ${ut.content.raw()};
+    #{/list}
+
+    var cndType = 2; //条件的类型. 1.策略, 2.股票池  这个变量不能删除, 有用
+
+    var reportDialogMap = {}; //研报摘要对话框
+    var commentDialogMap = {}; //评论对话框
+    var spid;   //股票池编码
+
+
+</script>
+<script type="text/javascript" src="@{'/public/javascripts/condManage.js'}"></script>
+
+
+
+<script type="text/javascript">
+
+    function sortQuery(code) {
+        if ("all" == code) {
+            var combinationform = $('#combination')[0];
+            $('#contentId').val("");
+            $('#checkflagId').val("")
+            combinationform.action = "@{StockPoolFavorite.list()}";
+            combinationform.submit();
+        } else {
+            var combinationform = $('#combination')[0];
+            combinationform.action = "@{StockPoolFavorite.list()}?spp.strategyName=" + code;
+            combinationform.submit();
+        }
+    }
+
+    function order(con) {
+        var form = $('#orderSort')[0];
+        form.action = "@{StockPoolFavorite.list()}?spp.orderSort=" + con;
+        form.submit();
+    }
+    function assignment(code){
+        $('#checkflagId').val(code);
+    }
+    function otherSortQuery(code){
+        var combinationform = $('#combination')[0];
+        $('#checkflagId').val(code);
+        combinationform.action = "@{StockPoolFavorite.list()}?spp.strategyName=" + code;
+        combinationform.submit();
+    }
+</script>
+
+<!-- basic-->
+
+<script>
+    downBox('select_update', '#options_update', 'updateDateId', 'reportName_3');
+</script>
+
+</body>

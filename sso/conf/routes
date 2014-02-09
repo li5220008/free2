@@ -1,0 +1,27 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                                       Application.index
+
+#登陆获取token, 参数密码是md5加密后的
+GET     /api/login                                                 SSOExportWithoutCheck.login
+
+#登陆获取token, 参数密码是原文
+GET     /api/loginWithoutCryp                                      SSOExportWithoutCheck.loginWithoutCryp
+
+#检查token是否有效
+GET     /api/checkLoginToken                                       SSOExportWithoutCheck.checkLoginToken
+
+#退出
+GET     /api/logout                                                SSOExportWithCheck.loginOut
+
+# Ignore favicon requests
+GET     /favicon.ico                            404
+
+# Map static resources from the /app/public folder to the /public path
+GET     /public/                                staticDir:public
+
+# Catch all
+*       /{controller}/{action}                  {controller}.{action}

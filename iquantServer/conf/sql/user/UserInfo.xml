@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>userinfo  sql</comment>
+
+
+    <entry key="findUserInfoById">
+             <![CDATA[
+                    SELECT
+                       id,
+                       NAME 'name',
+                       account AS account,
+                       pwd 'password',
+                       phone,
+                       email email,
+                       idcard idCard,
+                       sale_dep saleDept,
+                       capital_account capitalAccount,
+                       address,
+                       post postCode
+                    FROM
+                       user_info
+                    WHERE
+                       id=?
+                ]]>
+    </entry>
+    <entry key="findUserByAccount">
+        <![CDATA[
+                    SELECT
+                       id,
+                       NAME 'name',
+                       account AS account,
+                       pwd 'pwd',
+                       phone,
+                       email email,
+                       idcard idCard,
+                       sale_dep saleDept,
+                       capital_account capitalAccount,
+                       address,
+                       post postCode
+                    FROM
+                       user_info
+                    WHERE
+                       account=?
+                ]]>
+    </entry>
+    <entry key="findUserByEmail">
+        <![CDATA[
+                    SELECT
+                       id,
+                       NAME 'name',
+                       account AS account,
+                       pwd 'pwd',
+                       phone,
+                       email email,
+                       idcard idCard,
+                       sale_dep saleDept,
+                       capital_account capitalAccount,
+                       address,
+                       post postCode
+                    FROM
+                       user_info
+                    WHERE
+                       email=?
+                ]]>
+    </entry>
+    <entry key="findUserFunctionInfoById">
+        <![CDATA[
+                    SELECT
+                          distinct fi.id AS id,
+                          fi.name,
+                          fi.pid
+                    FROM
+                          user_role ur
+                    LEFT JOIN
+                          role_function rf
+                    ON
+                          ur.rid=rf.rid
+                    LEFT JOIN
+                          function_info fi
+                    ON
+                          rf.fid=fi.id
+                    WHERE
+                          ur.uid=? and fi.name<>''
+        ]]>
+    </entry>
+    <entry key="findUserRoleInfoById_del">
+        <![CDATA[
+                   SELECT
+                           ri.id, rid,
+                           ur.uid uid
+                    FROM
+                            user_role  ur
+                    LEFT JOIN
+                            role_info ri
+                    ON
+                            ur.rid=ri.id
+                    WHERE
+                            ur.uid=?
+        ]]>
+    </entry>
+    <entry key="findUserRoleInfoById">
+        <![CDATA[
+                    SELECT
+                           ri.name
+                    FROM
+                            user_role  ur
+                    LEFT JOIN
+                            role_info ri
+                    ON
+                            ur.rid=ri.id
+                    WHERE
+                            ur.uid=?
+        ]]>
+    </entry>
+
+    <entry key="updateUserInfo">
+        <![CDATA[
+                      UPDATE
+                                 user_info
+                      SET        name=?,
+                                 account=?,
+                                 pwd=?,
+                                 phone=?,
+                                 email=?,
+                                 idcard=?,
+                                 sale_dep=?,
+                                 address=?,
+                                 post=?,
+                                 capital_account=?
+                     WHERE
+                                 id=?
+        ]]>
+    </entry>
+    <entry key="updateUserInfoWithoutPwd">
+        <![CDATA[
+                      UPDATE
+                                 user_info
+                      SET        name=?,
+                                 account=?,
+                                 phone=?,
+                                 email=?,
+                                 idcard=?,
+                                 sale_dep=?,
+                                 address=?,
+                                 post=?,
+                                 capital_account=?
+                     WHERE
+                                 id=?
+        ]]>
+    </entry>
+    <entry key="addUserBatch">
+        <![CDATA[
+                      INSERT IGNORE INTO
+                               user_info(
+                                 name,
+                                 account,
+                                 pwd,
+                                 phone,
+                                 email,
+                                 idcard,
+                                 sale_dep,
+                                 address,
+                                 post,
+                                 capital_account,
+                                 sdate,
+                                 edate,
+                                 status,
+                                 apply_date
+                               )VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())
+
+
+        ]]>
+    </entry>
+    <entry key="findUserByAccountExcludeSelf">
+        <![CDATA[
+                    SELECT
+                       id,
+                       NAME 'name',
+                       account AS account,
+                       pwd 'password',
+                       phone,
+                       email email,
+                       idcard idCard,
+                       sale_dep saleDept,
+                       capital_account capitalAccount,
+                       address,
+                       post postCode
+                    FROM
+                       user_info
+                    WHERE
+                       account=? and account<>?
+                ]]>
+    </entry>
+    <entry key="findUserByEmailExcludeSelf">
+        <![CDATA[
+                    SELECT
+                       id,
+                       NAME 'name',
+                       account AS account,
+                       pwd 'password',
+                       phone,
+                       email email,
+                       idcard idCard,
+                       sale_dep saleDept,
+                       capital_account capitalAccount,
+                       address,
+                       post postCode
+                    FROM
+                       user_info
+                    WHERE
+                       email=? and email<>?
+                ]]>
+    </entry>
+
+    <!--新建用户 -->
+    <entry key="adduser">
+        <![CDATA[
+                INSERT INTO qic_db.`user_info` (
+                  NAME,
+                  account,
+                  pwd,
+                  phone,
+                  email,
+                  idcard,
+                  sale_dep,
+                  capital_account,
+                  address,
+                  post,
+                  sdate,
+                  edate,
+                  status
+                )
+                VALUES
+                  (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+                ]]>
+    </entry>
+
+    <!--删除用户 -->
+    <entry key="delUser">
+        <![CDATA[
+           UPDATE qic_db.`user_info` a SET a.`status` = ? WHERE a.`id` = ?
+                ]]>
+    </entry>
+
+    <!--用户延期 -->
+    <entry key="delayUser">
+        <![CDATA[
+           UPDATE qic_db.`user_info` a SET a.`edate`= ?  WHERE a.`id` = ?
+                ]]>
+    </entry>
+
+
+
+    <!--获取用户的功能点id-->
+    <entry key="getUserFunctionIds">
+        <![CDATA[
+SELECT DISTINCT
+    fi.id AS id,
+    fi.pid AS fpid
+FROM
+    user_role ur
+    LEFT JOIN role_function rf
+        ON ur.rid = rf.rid
+    LEFT JOIN function_info fi
+        ON rf.fid = fi.id
+WHERE ur.uid = ?
+    AND fi.name <> ''
+    ]]>
+    </entry>
+
+    <!--获取用户功能点. 加上产品id的限制-->
+    <entry key="fetchUserFunctionInfoWithProduct">
+        <![CDATA[
+SELECT DISTINCT
+	fi.id AS id,
+	fi.pid AS pid,
+    fi.name AS 'name',
+    fi.code AS 'code',
+    fi.action AS 'action'
+FROM
+    user_role ur
+    LEFT JOIN role_function rf
+        ON ur.rid = rf.rid
+    LEFT JOIN function_info fi
+        ON rf.fid = fi.id
+    LEFT JOIN sys_product_info pro
+		ON fi.product_id = pro.id
+WHERE
+	ur.uid = ?
+	AND pro.id = ?
+                ]]>
+    </entry>
+
+    <!--按帐号查找用户信息-->
+    <entry key="findUserInfoByAccount">
+        <![CDATA[
+    SELECT
+        user_uuid as uuid,
+        check_sum as checkSum,
+        id,
+        `name`,
+        account,
+        pwd,
+        phone,
+        email,
+        idcard,
+        capital_account AS capitalAccount,
+        address,
+        post,
+        sdate,
+        edate,
+        apply_date AS applyDate,
+        `status`,
+        utype,
+        utime,
+        max_login as maxLogin
+    FROM user_info
+    WHERE account = ? and status <> -100
+    limit 1
+                ]]>
+    </entry>
+
+    <!--按id查找-->
+    <entry key="findUserInfoById">
+        <![CDATA[
+SELECT
+    id, `name`, account, pwd, phone, email, idcard, capital_account AS capitalAccount, address, post,
+    sdate, edate, apply_date AS applyDate, `status`, utype, utime, max_login as maxLogin
+FROM user_info
+WHERE id = ?
+limit 1
+                ]]>
+    </entry>
+
+    <entry key="findUserRole">
+        <![CDATA[
+                    SELECT
+                           ri.id,
+                           rid,
+                           ri.name as name,
+                           ur.uid uid
+                    FROM
+                            user_role  ur
+                    LEFT JOIN
+                            role_info ri
+                    ON
+                            ur.rid=ri.id
+                    WHERE
+                            ur.uid=?
+        ]]>
+    </entry>
+    <!-- 查找角色权限-->
+    <entry key="findFunctionInfoByRoleId">
+        <![CDATA[
+
+                    SELECT
+                          fi.id AS id,
+                          fi.name,
+                          fi.pid,
+                          fi.pid fpid
+                    FROM
+                          role_function rf
+
+                    LEFT JOIN
+                          function_info fi
+                    ON
+                          rf.fid=fi.id
+                    WHERE
+                          rf.rid=?
+        ]]>
+
+    </entry>
+
+    <!-- 查找角色权限-->
+    <entry key="updateUserPwd">
+        <![CDATA[
+                UPDATE
+                    user_info
+                SET
+                    pwd = ?
+                WHERE
+                    id = ?;
+        ]]>
+
+    </entry>
+
+
+
+
+    <!--查询用户的产品列表-->
+    <entry key="deleteRuntimeStrategyByIds">
+        <![CDATA[
+            delete from
+              qstrategy
+            where StrategyID
+             in(#ids#)
+       ]]>
+    </entry>
+
+    <!--删除用户的产品策略关联ID列表-->
+    <entry key="deleteUserStrategy">
+        <![CDATA[
+            UPDATE
+              strategy_baseinfo
+            SET
+              status=-100
+            where stup_uid=?
+       ]]>
+    </entry>
+
+    <!--软删除用户-->
+    <entry key="softDeleteUser">
+        <![CDATA[
+       UPDATE qic_db.`user_info` a
+       SET
+         a.status = -100,
+         a.account =?,
+         a.email = ?
+         WHERE a.id =?
+
+       ]]>
+    </entry>
+
+
+    <!--根据用户ID更新用户状态-->
+    <entry key="updateUserStatusById">
+        <![CDATA[
+     UPDATE qic_db.`user_info` a SET a.`status` = ? WHERE a.`id` =?
+        ]]>
+    </entry>
+    <!--根据用户ID更新用户到期时间-->
+    <entry key="updateUserEdateById">
+        <![CDATA[
+       UPDATE qic_db.`user_info` a SET a.`edate`= ?  WHERE a.`id`=?
+        ]]>
+    </entry>
+
+    <!--查询用户总数-->
+    <entry key="getUserSum">
+        <![CDATA[
+       SELECT COUNT(*) FROM user_info
+        ]]>
+    </entry>
+
+    <!--根据用户ID得到用户数据权限信息-->
+    <entry key="findUserDataInfoByUid">
+        <![CDATA[
+       SELECT
+          d.code as logiccode,
+          u.content as content
+     FROM
+          user_qdb_data u
+     INNER JOIN qdb_data_permission d
+     ON
+        u.did = d.id
+     WHERE
+        u.uid = ?
+        ]]>
+    </entry>
+</properties>

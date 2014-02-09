@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>stockpool  sql</comment>
+<!--上传策略-->
+<entry key="insertStrategy">
+    <![CDATA[
+            INSERT INTO strategy_baseinfo(
+                st_uuid,
+                name,
+                trade_type,
+                trade_variety,
+                provider,
+                provider_desp,
+                desp,
+                status,
+                stup_uid,
+                upload_time,
+                lookback_stime,
+                lookback_etime,
+                enginetype_id,
+                customer_lookback_stime,
+                customer_lookback_etime
+            )VALUES(
+                ?,?,?,?,?,?,?,?,?,NOW(),?,?,?,?,?
+            )
+        ]]>
+</entry>
+
+    <!--查询策略-->
+  <entry key="findStrategyByName">
+        <![CDATA[
+            SELECT
+                id id,
+                name sname,
+                desp
+            FROM
+                strategy_baseinfo
+            WHERE
+                name=? and status<>-100
+        ]]>
+    </entry>
+
+    <!--根据策略ID查询策略-->
+    <entry key="findStrategyById">
+        <![CDATA[
+            SELECT
+                id,
+                st_uuid as stUuid,
+                name,
+                desp,
+                trade_type as tradeType,
+                trade_variety as tradeVariety,
+                up_time as upTime,
+                down_time as downTime,
+                provider,
+                provider_desp as providerDesp,
+                lookback_stime as lookbackStime,
+                lookback_etime as lookbackEtime,
+                status,
+                discuss_total as discussTotal,
+                discuss_count as discussCount,
+                collect_count as collectCount,
+                order_count as orderCount,
+                enginetype_id as enginetypeId
+            FROM
+                strategy_baseinfo
+            WHERE
+                id=?
+        ]]>
+    </entry>
+
+    <!--根据策略ID查询策略-->
+    <entry key="findStrategysByIds">
+        <![CDATA[
+            SELECT
+                id id,
+                st_uuid as stUuid,
+                name,
+                desp,
+                trade_type as stype,
+                trade_variety as tradeVariety,
+                up_time as upTime,
+                down_time as downTime,
+                provider,
+                provider_desp as providerDesp,
+                lookback_stime as lookbackStime,
+                lookback_etime as lookbackEtime,
+                status,
+                discuss_total as discussTotal,
+                discuss_count as discussCount,
+                collect_count as collectCount,
+                order_count as orderCount,
+                enginetype_id enginetypeId
+            FROM
+                strategy_baseinfo
+            WHERE
+                1=1
+        ]]>
+    </entry>
+
+    <!--查询策略-->
+    <entry key="findStrategyByUUID">
+        <![CDATA[
+            SELECT
+                id id,
+                name sname,
+                desp,
+                status
+            FROM
+                strategy_baseinfo
+            WHERE
+                st_uuid=?
+        ]]>
+    </entry>
+
+    <entry key="findQiaStrategyByStrategyIds">
+        <![CDATA[
+                    SELECT
+                          spq.strategy_id strategyId,
+                          spq.type,
+                          spq.sharp_ratio sharpRatio,
+                          spq.volatility,
+                          spq.beta,
+                          spq.average_simple_rate_of_return averageSimpleRateOfReturn,
+                          spq.calmar_ratio,
+                          spq.conditional_sharp_ratio,
+                          spq.excess_return_on_var,
+                          spq.highter_partial_moments,
+                          spq.jensen_ratio,
+                          spq. kappa3,
+                          spq.conditional_var,
+                          spq.lower_partial_moments,
+                          spq.maximum_drawdown,
+                          spq.modified_sharp_ratio,
+                          spq.mvar,
+                          spq.omega,
+                          spq.sortino_ratio,
+                          spq.treynor_ratio,
+                          spq.upside_potential_ratio,
+                          spq.var,
+                          spq.skewness,
+                          spq.kurtosis,
+                          spq.corr_with_market,
+                          spq.hit_rate hitRate,
+                          spq.cumsum_simple_return,
+                          spq.update_time
+                    FROM
+                          strategy_performance_qia spq
+                    WHERE
+                          spq.strategy_id IN(#stids#)
+                    AND NOT EXISTS
+                          (SELECT
+                                   1
+                           FROM
+                                strategy_performance_qia spq2
+                           WHERE
+                                spq.strategy_id=spq2.strategy_id AND spq.id<spq2.id
+                          )
+
+                ]]>
+    </entry>
+
+    <!--策略持仓-->
+    <entry key="StrategyPosition">
+        <![CDATA[
+            SELECT
+              b.`UpdateTime` AS updatetime,
+              b.`Side` AS side,
+              b.`SecurityID` AS securityid,
+              b.`SecurityExchange` AS securityexchange,
+              b.`PositionQty` AS positionqty,
+              b.`Symbol` AS symbol
+            FROM
+              qicore.`position_list` b
+            WHERE b.`StrategyID` = ?
+              AND b.`UpdateTime` >= DATE_ADD(
+                (SELECT
+                  MAX(UpdateTime)
+                FROM
+                  qicore.position_list
+                WHERE StrategyID = ?),
+                INTERVAL - 0 DAY
+              )
+            ORDER BY b.`UpdateTime` DESC
+        ]]>
+    </entry>
+
+    <!--QIA 策略持仓 -->
+    <entry key="qiaPosition">
+        <![CDATA[
+        SELECT
+          b.`update_time` AS updatetime,
+          a.`name` AS NAME,
+          b.`security_id` AS securityid,
+          b.`security_exchange` AS securityexchange,
+          b.`positions` AS positions,
+          a.`trade_variety` AS trade_variety
+        FROM
+          strategy_baseinfo a
+          INNER JOIN strategy_position b
+            ON a.`id` = b.`strategy_id`
+        WHERE a.`id` = ?
+          AND b.`update_time` >= DATE_ADD(
+            (SELECT
+              MAX(update_time)
+            FROM
+              strategy_position
+            WHERE strategy_id = ?),
+            INTERVAL - 0 DAY
+          )
+          AND b.`positions` != 0
+        ORDER BY b.`update_time` DESC
+
+    ]]>
+    </entry>
+
+    <!--绩效指标 -->
+    <entry key="Indicator">
+        <![CDATA[
+        SELECT
+                  sb.`id`,
+                  sb.`st_uuid`,
+                  shl.retained_profits AS retainedProfits,
+                  shl.yield AS yield,
+                  shl.yield_of_month AS yieldOfMonth,
+                  shl.yield_of_month_standard_deviation AS yieldOfMonthStandardDeviation,
+                  shl.overall_profitability AS overallProfitability,
+                  shl.overall_deficit AS overallDeficit,
+                  shl.trade_days AS tradeDays,
+                  shl.max_short_position_Time AS mAXShortPositionTime,
+                  shl.trade_count AS tradeCount,
+                  shl.long_position_trade_count AS longPositionTradeCount,
+                  shl.short_position_trade_count AS shortPositionTradeCount,
+                  shl.profit_count AS profitCount,
+                  shl.deficit_count AS deficitCount,
+                  shl.position_close_Count AS positionCloseCount,
+                  shl.max_sequential_profit_count AS mAXSequentialProfitCount,
+                  shl.max_sequential_deficit_count AS mAXSequentialDeficitCount,
+                  shl.profit_ratio AS profitRatio,
+                  shl.canhsied_ratio AS canhsiedRatio,
+                  shl.max_single_profit AS mAXSingleProfit,
+                  shl.max_single_deficit AS mAXSingleDeficit,
+                  shl.max_single_profit_ratio AS mAXSingleProfitRatio,
+                  shl.max_single_deficit_ratio AS mAXSingleDeficitRatio,
+                  shl.max_sequential_deficit_capital AS mAXSequentialDeficitCapital,
+                  shl.sum_of_commission AS sumOfCommission,
+                  shl.gross_profit AS grossProfit,
+                  shl.profit_loss_ratio AS profitLossRatio,
+                  shl.avg_profit_of_month AS avgProfitOfMonth,
+                  shl.yield_of_year AS yieldOfYear,
+                  shl.sharpe_index AS sharpeIndex,
+                  shl.floating_profit_and_loss AS floatingProfitAndLoss,
+                  shl.moving_cost AS movingCost
+            FROM
+              qic_db.`strategy_baseinfo` sb
+              LEFT JOIN qic_db.`strategy_performance_qicore` shl
+                ON sb.id = shl.`strategy_id`
+            WHERE sb.`id` = ?
+              AND shl.`type` = ?
+            ORDER BY shl.`update_time` DESC
+            LIMIT 1
+         ]]>
+    </entry>
+
+    <!--QIA 绩效数据 -->
+    <entry key="qiaIndicatorSql">
+        <![CDATA[
+                   SELECT
+                              qia.`sharp_ratio` AS sharpRatio,
+                              qia.`volatility` AS volatility,
+                              qia.`beta` AS beta,
+                              qia.`average_simple_rate_of_return` AS averageSimpleRateOfReturn,
+                              qia.`calmar_ratio` AS calmarRatio,
+                              qia.`conditional_sharp_ratio` AS conditionalSharpRatio,
+                              qia.`excess_return_on_var` AS excessReturnOnVar,
+                              qia.`highter_partial_moments` AS highterPartialMoments,
+                              qia.`jensen_ratio` AS jensenRatio,
+                              qia.`kappa3` AS kappa3,
+                              qia.`conditional_var` AS conditionalVar,
+                              qia.`lower_partial_moments` AS lowerPartialMoments,
+                              qia.`maximum_drawdown` AS maximumDrawdown,
+                              qia.`modified_sharp_ratio` AS modifiedSharpRatio,
+                              qia.`mvar` AS mvar,
+                              qia.`omega` AS omega,
+                              qia.`sortino_ratio` AS sortinoRatio,
+                              qia.`treynor_ratio` AS treynorRatio,
+                              qia.`upside_potential_ratio` AS upsidePotentialRatio,
+                              qia.`var` AS var,
+                              qia.`skewness` AS skewness,
+                              qia.`kurtosis` AS kurtosis,
+                              qia.`corr_with_market` AS corrWithMarket,
+                              qia.`hit_rate` AS hitRate,
+                              qia.`cumsum_simple_return` AS cumsumSimpleReturn,
+                              qia.`update_time` AS updateTime,
+                              qia.`strategy_id`
+                        FROM
+                          strategy_performance_qia qia
+                        WHERE qia.`strategy_id` = ?
+                          AND qia.`type` = ?
+                        ORDER BY qia.`update_time` DESC
+                        LIMIT 1
+
+    ]]>
+    </entry>
+
+    <!--委托详情-->
+    <entry key="AuthorizeRecord">
+        <![CDATA[
+        SELECT
+          b.`SendingTime` AS sendingtime,
+          b.`Side` AS side,
+          b.`SecurityID` AS securityid,
+          b.`OrderQty` AS orderqty,
+          b.`Price` AS price,
+          b.`Account` AS account,
+          b.`OrderSNID` AS ordersnid,
+          b.`UpdateTime`,
+          b.`PositionEffect` AS positionEffect
+        FROM
+          qicore.`order_list` b
+        WHERE b.`ClOrdLinkID` = ?
+          AND b.`UpdateTime` > ?
+        ORDER BY b.`SendingTime` DESC
+
+        ]]>
+    </entry>
+
+    <!--成交记录-->
+    <entry key="ExecutionRecord">
+        <![CDATA[
+        SELECT
+          b.`TransactTime` AS sendingtime,
+          b.`Side` AS side,
+          b.`SecurityID` AS securityid,
+          b.`LastQty` AS lastpx,
+          b.`LastPx` AS avgpx,
+          b.`CumQty` AS cumqty,
+          b.`Account` AS account
+        FROM
+          qicore.`execution_report_list` b
+        WHERE b.`ClOrdLinkID` = ?
+            AND b.`UpdateTime` > ?
+        ORDER BY b.`TransactTime` DESC
+
+         ]]>
+    </entry>
+
+    <!--策略走势图展示(日线)-->
+    <entry key="pictrue_sql_for_day">
+        <![CDATA[
+          SELECT
+          a.yield as yield,
+          a.update_time as updatedate,
+          b.name as sname
+        FROM
+          strategy_yield a
+          inner join
+          qic_db.strategy_baseinfo b
+         ON a.Strategy_id = b.id
+        WHERE a.strategy_id = ?
+          AND a.update_time >= DATE_FORMAT(?, '%Y-%m-%d')
+          AND a.update_time <= DATE_FORMAT(?, '%Y-%m-%d')
+          AND a.yield_type='1'
+        ORDER BY a.update_time
+        ]]>
+    </entry>
+
+    <!--根据策略ID 拿到回测区间最小/最大updatedate-->
+    <entry key="queryHistoryUpdateDate">
+        <![CDATA[
+    SELECT
+      MIN(update_time) AS minDate,
+      MAX(update_time) AS maxDate
+    FROM
+      qic_db.strategy_yield
+    WHERE strategy_id = ?
+    AND run_type = '1'
+    AND yield_type=1
+        ]]>
+    </entry>
+
+    <!--根据策略ID 拿到实时模拟区间最小updatedate-->
+    <entry key="queryRealTimeMinUpdateDate">
+        <![CDATA[
+      SELECT
+        MIN(update_time) AS minDate,
+        MAX(update_time) AS maxDate
+      FROM
+        qic_db.strategy_yield
+      WHERE strategy_id = ?
+        AND run_type = '2'
+        AND yield_type=1
+]]>
+    </entry>
+
+
+
+    <!--策略走势图展示(周线)-->
+    <entry key="pictrue_sql_for_week">
+        <![CDATA[
+SELECT
+  *
+FROM
+  (SELECT DISTINCT
+    IF(
+      DAYOFWEEK (a.update_time) = '6',
+      a.update_time,
+      NULL
+    ) AS updatedate,
+    IF(
+      DAYOFWEEK (a.update_time) = '6',
+      a.yield,
+      NULL
+    ) AS yield ,
+    b. name as sname
+  FROM
+    `strategy_yield` a
+     inner join
+   qic_db.strategy_baseinfo b
+      ON a.Strategy_id = b.id
+  WHERE a.strategy_id = ?
+  AND a.update_time>=?
+  AND a.update_time<=?
+  AND a.yield_type='1'
+  ORDER BY a.update_time ) f
+]]>
+    </entry>
+
+
+
+
+
+    <!--根据策略ID 拿到最近三个月最大和最小的收益率-->
+    <entry key="max_and_min_yield_sql">
+        <![CDATA[
+  SELECT
+	MIN(yield) as minYield,
+	MAX(yield) as maxYield
+    FROM
+        strategy_yield
+    WHERE
+        strategy_id = ?
+        AND update_time >= ?
+]]>
+    </entry>
+
+    <!--根据策略ID 拿到区间时间范围内最大和最小的收益率-->
+    <entry key="max_and_min_yield_interval_sql">
+        <![CDATA[
+  SELECT
+	MIN(yield) as minYield,
+	MAX(yield) as maxYield
+    FROM
+        strategy_yield
+    WHERE
+        strategy_id = ?
+        AND update_time >= ?
+        AND update_time <= ?
+        AND yield_type = 1
+]]>
+    </entry>
+
+    <!--根据策略ID 拿到区间时间范围内最大和最小的收益率-->
+    <entry key="queryMaxAndMinYieldForWeek">
+        <![CDATA[
+  SELECT
+    MIN(yield) as minYield,
+	MAX(yield) as maxYield
+FROM
+  (SELECT DISTINCT
+    IF(
+      DAYOFWEEK (a.update_time) = '6',
+      a.yield,
+      NULL
+    ) AS yield
+  FROM
+    `strategy_yield` a
+  WHERE a.strategy_id = ?
+  AND a.update_time>=?
+  AND a.update_time<=?
+  AND yield_type = 1
+  ORDER BY a.update_time ) f
+]]>
+    </entry>
+
+    <!--根据策略ID 拿到区间时间范围内最大和最小的收益率-->
+    <entry key="queryUpTime">
+        <![CDATA[
+  SELECT
+   up_time as upTime
+FROM
+  strategy_baseinfo
+  WHERE id = ?
+]]>
+    </entry>
+
+    <!--上传策略后同步数据到qic的qstragy表中,上架的时候上传到sqm库中-->
+    <entry key="syncStrategyToQsm">
+        <![CDATA[
+            INSERT INTO   qstrategy(
+                             StrategyID,
+                             StrategyFunctionName,
+                             FilePath,
+                             AgentIP,
+                             StrategyName
+                     )
+                        VALUES(?,?,?,?,?)
+                ]]>
+    </entry>
+
+    <entry key="syncStrategyToQicQsm">
+        <![CDATA[
+            INSERT INTO   qstrategy(
+                             StrategyID,
+                             StrategyName,
+                             FilePath,
+                             AgentIP
+                     )
+                        VALUES(?,?,?,?)
+                ]]>
+    </entry>
+    <entry key="queryFilePath">
+        <![CDATA[
+            select
+                    filePath filePath,
+                    StrategyName strategyName,
+                    AgentIP agentIp,
+                    StrategyID strategyId
+            FROM
+                qstrategy where StrategyID=?
+        ]]>
+    </entry>
+    <entry key="deleteProductFromQsm">
+        <![CDATA[
+           delete from qstrategy where StrategyID=?
+        ]]>
+    </entry>
+
+    <entry key="addStrategyAccountTemplate">
+        <![CDATA[
+           insert into strategy_account_template(
+             strategy_id,
+             account_order,
+             account_type,
+             create_uid,
+             status,
+             ctime
+           ) values(:strategyId,:accountOrder,:accountType,:createUid,:status,NOW())
+        ]]>
+    </entry>
+
+    <!--增加策略原始配制的交易标的 -->
+    <entry key="addStrategySecurityOrigunalInfo">
+        <![CDATA[
+           insert into strategy_security_original(
+             strategy_id,
+             symbol,
+             market,
+             system_plate_id,
+             type,
+             max_position,
+             ctime
+           ) values(:strategyId,:symbol,:market,:systemPlateId,:type,:maxPosition,NOW())
+        ]]>
+    </entry>
+    <!-- 根据服务器id查找对应策略 -->
+    <entry key="fetchCountStrategyByServiceId">
+        <![CDATA[
+          SELECT
+              COUNT(*)
+            FROM
+              strategy_baseinfo a
+            WHERE a.back_test_sid =?
+              AND STATUS IN (2,3)
+        ]]>
+    </entry>
+</properties>

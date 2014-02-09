@@ -1,0 +1,91 @@
+#{if enginetypeId==1}
+<table width="100%" border="0" class="tbl_exec" cellspacing="0" cellpadding="0">
+    <tr>
+        <th width="31%">代码</th>
+        *{<th width="15%">名称</th>}*
+        <th width="31%">方向</th>
+        <th width="31%">持仓量</th>
+        *{<th width="11%">品种</th>}*
+        *{<th width="12%">交易所</th>}*
+        <th class="for_til_width"><span class="for_til_width">&nbsp;</span></th>
+    </tr>
+</table>
+
+
+<div class="tbl_scoll tbl_for_scroll holdPosition_target_scroll" style="">
+    <table width="100%" border="0" class="tbl_common tbl_exec tbl_no_scroll holdPosition_append_scroll"
+           cellspacing="0"
+           cellpadding="0">
+        #{list items : strategyPositionDtoList, as : 'item'}
+            <tr>
+                <td width="31%">#{emVF v :item.securityid /}</td>
+                <td width="31%">#{emVF v : item.getSide()/}</td>
+                <td width="33%">#{emVF v : item.positionqty/}</td>
+                *{<td width="12%">#{emVF v : item.securityexchange/}</td>}*
+                <td >&nbsp;</td>
+            </tr>
+        #{/list}
+    </table>
+</div>
+#{/if}
+#{elseif enginetypeId==2}
+
+<table width="100%" border="0" class="tbl_exec" cellspacing="0" cellpadding="0">
+    <tr>
+        <th width="24%">代码</th>
+        <th width="24%">方向</th>
+        <th width="24%">持仓比例</th>
+        <th width="24%">交易所</th>
+        <th class="for_til_width"><span class="for_til_width">&nbsp;</span></th>
+    </tr>
+</table>
+
+
+<div class="tbl_scoll tbl_for_scroll holdPosition_target_scroll" style="">
+    <table width="100%" border="0" class="tbl_common tbl_exec tbl_no_scroll holdPosition_append_scroll"  cellspacing="0"
+           cellpadding="0">
+
+        #{list items : strategyPositionDtoList, as : 'item'}
+            <tr>
+                <td width="24%">#{emVF v :item.securityid /}</td>
+                <td width="24%">
+                    #{if item.isStock().equals("1")}
+                        买
+                    #{/if}
+                    #{elseif item.isStock().equals("2")}
+                        #{if item.positions>0}
+                            多
+                        #{/if}#{else }
+                        空
+                    #{/else}
+                    #{/elseif}
+                    #{else }
+                        买
+                    #{/else}
+                </td>
+                <td width="24%"><strong>#{emVF v : item.positions/}</strong></td>
+                <td width="27%">
+                    #{if "1".equals(item.securityexchange)}上交所#{/if}
+                    #{elseif "2".equals(item.securityexchange)}深交所#{/elseif}
+                    #{elseif "3".equals(item.securityexchange)}港交所#{/elseif}
+                    #{elseif "4".equals(item.securityexchange)}中金所#{/elseif}
+                    #{elseif "5".equals(item.securityexchange)}大连期货#{/elseif}
+                    #{elseif "6".equals(item.securityexchange)}郑州期货#{/elseif}
+                </td>
+                <td >&nbsp;</td>
+            </tr>
+        #{/list}
+    </table>
+</div>
+#{/elseif}
+
+<script>
+    $(document).ready(function () {
+        scrollObj3 =  new ScrollPage({complete:"", getUrl:getLoadUrl, scrollTarget:".holdPosition_target_scroll", appendTarget:".holdPosition_append_scroll", pageNo:2});
+    });
+
+    function getLoadUrl() {
+        var url = "@{StrategyInfos.moreHoldPosition(id,enginetypeId)}";
+        return url;
+    }
+</script>

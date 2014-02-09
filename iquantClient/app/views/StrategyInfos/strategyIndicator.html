@@ -1,0 +1,281 @@
+<table width="100%" class="tbl_perfomance tbl_jindex" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+    <th width="10%">绩效指标</th>
+    <th width="10%">实时</th>
+    <th width="">历史</th>
+    </tr>
+#{if enginetypeId ==1}
+    <tr>
+        <td>年化收益率</td>
+        <td>#{emVFC v : indicator==null || indicator.yieldOfYear==null ?null:indicator.yieldOfYear * 100, f : '#,##0.00', u : '%',c:true,s:false,s:false/}</td>
+        <td>#{emVFC v : indicatorhis==null || indicatorhis.yieldOfYear==null ?null:indicatorhis.yieldOfYear * 100, f : '#,##0.00', u : '%',c:true,s:false/}</td>
+    </tr>
+    <tr>
+        <td>Sharp</td>
+        <td>#{emVFC v : indicator==null?null:indicator.sharpeIndex, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : indicatorhis==null?null:indicatorhis.sharpeIndex, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>胜率</td>
+        <td>#{emVFC v : indicator==null?null:indicator.profitRatio, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : indicatorhis==null?null:indicatorhis.profitRatio, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td width="34%">收益率</td>
+        <td width="30%">#{emVFC v : indicator==null || indicator.yield==null ?null:indicator.yield*100, f : '#,##0.00',u:'%',c:true,s:false/}</td>
+        <td width="36%">#{emVFC v : indicatorhis==null || indicatorhis.yield==null ?null:indicatorhis.yield*100, f : '#,##0.00',u:'%',c:true,s:false/}</td>
+    </tr>
+    <tr>
+        <td>月化收益率</td>
+        <td>#{emVFC v : indicator==null || indicator.yieldOfMonth==null ?null:indicator.yieldOfMonth * 100, f : '#,##0.00', u : '%',c:true,s:false/}</td>
+        <td>#{emVFC v : indicatorhis==null || indicatorhis.yieldOfMonth==null ?null:indicatorhis.yieldOfMonth * 100, f : '#,##0.00', u : '%',c:true,s:false/}</td>
+    </tr>
+    <tr>
+        <td>月度收益标准差</td>
+        <td>#{emVFC v : indicator==null?null:indicator.yieldOfMonthStandardDeviation, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : indicatorhis==null?null:indicatorhis.yieldOfMonthStandardDeviation, f : '#,##0.00',s:false/}</td>
+    </tr>
+    *{<tr>
+                    <td>总盈利</td>
+                    <td>#{emVFC v : indicator.overallProfitability, f : '#,##0.00',s:false/}</td>
+                    <td>#{emVFC v : indicatorhis.overallProfitability, f : '#,##0.00',s:false/}</td>
+                </tr>
+                <tr>
+                    <td>总亏损</td>
+                    <td>#{emVFC v : indicator.overallDeficit, f : '#,##0.00',s:false/}</td>
+                    <td>#{emVFC v : indicatorhis.overallDeficit, f : '#,##0.00',s:false/}</td>
+                </tr>}*
+    <tr>
+        <td>总交易天数</td>
+        <td>#{emVFC v : indicator==null?null:indicator.tradeDays ,s:false/}</td>
+        <td>#{emVFC v : indicatorhis==null?null:indicatorhis.tradeDays ,s:false/}</td>
+    </tr>
+    <tr>
+        <td>最大空仓时间</td>
+        <td>#{emVFC v : indicator==null?null:indicator.mAXShortPositionTime,s:false/}</td>
+        <td>#{emVFC v : indicatorhis==null?null:indicatorhis.mAXShortPositionTime,s:false/}</td>
+    </tr>
+    <tr>
+        <td>交易次数</td>
+        <td>#{emVFC v : indicator==null?null:indicator.tradeCount,s:false/}</td>
+        <td>#{emVFC v : indicatorhis==null?null:indicatorhis.tradeCount,s:false/}</td>
+    </tr>
+    <tr>
+        <td>多头交易次数</td>
+        <td>#{emVFC v : indicator==null?null:indicator.longPositionTradeCount,s:false/}</td>
+        <td>#{emVFC v : indicatorhis==null?null:indicatorhis.longPositionTradeCount,s:false/}</td>
+    </tr>
+    <tr>
+        <td>空头交易次数</td>
+        <td>#{emVFC v : indicator==null?null:indicator.shortPositionTradeCount,s:false/}</td>
+        <td>#{emVFC v : indicatorhis==null?null:indicatorhis.shortPositionTradeCount,s:false/}</td>
+    </tr>
+    <tr>
+        <td>盈利次数</td>
+        <td>#{emVFC v : indicator==null?null:indicator.profitCount,s:false/}</td>
+        <td>#{emVFC v : indicatorhis==null?null:indicatorhis.profitCount,s:false/}</td>
+    </tr>
+    <tr>
+        <td>亏损次数</td>
+        <td>#{emVFC v : indicator==null?null:indicator.deficitCount,s:false/}</td>
+        <td>#{emVFC v : indicatorhis==null?null:indicatorhis.deficitCount,s:false/}</td>
+    </tr>
+    <tr>
+        <td>持平次数</td>
+        <td>#{emVFC v : indicator==null?null:indicator.positionCloseCount,s:false/}</td>
+        <td>#{emVFC v : indicatorhis==null?null:indicatorhis.positionCloseCount,s:false/}</td>
+    </tr>
+    <tr>
+        <td>最大连续盈利次数</td>
+        <td>#{emVFC v : indicator==null?null:indicator.mAXSequentialProfitCount,s:false/}</td>
+        <td>#{emVFC v : indicatorhis==null?null:indicatorhis.mAXSequentialProfitCount,s:false/}</td>
+    </tr>
+    <tr>
+        <td>最大连续亏损次数</td>
+        <td>#{emVFC v : indicator==null?null:indicator.mAXSequentialDeficitCount,s:false/}</td>
+        <td>#{emVFC v : indicatorhis==null?null:indicatorhis.mAXSequentialDeficitCount,s:false/}</td>
+    </tr>
+
+    <tr>
+        <td>总盈利/总亏损（盈亏比）</td>
+        <td>#{emVFC v : indicator==null?null:indicator.canhsiedRatio, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : indicatorhis==null?null:indicatorhis.canhsiedRatio, f : '#,##0.00',s:false/}</td>
+    </tr>
+    *{<tr>
+                    <td>单次最大盈利</td>
+                    <td>#{emVFC v : indicator.mAXSingleProfit, f : '#,##0.00',s:false/}</td>
+                    <td>#{emVFC v : indicatorhis.mAXSingleProfit, f : '#,##0.00',s:false/}</td>
+                </tr>
+                <tr>
+                    <td>单次最大亏损</td>
+                    <td>#{emVFC v : indicator.mAXSingleDeficit, f : '#,##0.00',s:false/}</td>
+                    <td>#{emVFC v : indicatorhis.mAXSingleDeficit, f : '#,##0.00',s:false/}</td>
+                </tr>}*
+    <tr>
+        <td>最大盈利/总盈利</td>
+        <td>#{emVFC v : indicator==null?null:indicator.mAXSingleProfitRatio, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : indicatorhis==null?null:indicatorhis.mAXSingleProfitRatio, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>最大亏损/总亏损</td>
+        <td>#{emVFC v : indicator==null?null:indicator.mAXSingleDeficitRatio, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : indicatorhis==null?null:indicatorhis.mAXSingleDeficitRatio, f : '#,##0.00',s:false/}</td>
+    </tr>
+    *{<tr>
+                    <td>最大连续亏损额</td>
+                    <td>#{emVFC v : indicator==null?null:indicator.mAXSequentialDeficitCapital, f : '#,##0.00',s:false/}</td>
+                    <td>#{emVFC v : indicatorhis==null?null:indicatorhis.mAXSequentialDeficitCapital, f : '#,##0.00',s:false/}</td>
+                </tr>}*
+    *{<tr>
+                    <td>手续费合计</td>
+                    <td>#{emVFC v : indicator==null?null:indicator.sumOfCommission, f : '#,##0.00',s:false/}</td>
+                    <td>#{emVFC v : indicatorhis==null?null:indicatorhis.sumOfCommission, f : '#,##0.00',s:false/}</td>
+                </tr>
+                <tr>
+                    <td>毛利润</td>
+                    <td>#{emVFC v : indicator==null?null:indicator.grossProfit, f : '#,##0.00',s:false/}</td>
+                    <td>#{emVFC v : indicatorhis==null?null:indicatorhis.grossProfit, f : '#,##0.00',s:false/}</td>
+                </tr>}*
+    <tr>
+        <td>净利润/单次最大亏损</td>
+        <td>#{emVFC v : indicator==null?null:indicator.profitLossRatio, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : indicatorhis==null?null:indicatorhis.profitLossRatio, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>月度平均盈利</td>
+        <td>#{emVFC v : indicator==null?null:indicator.yieldOfMonth, f : '#,##0.00',c:true,s:false/}</td>
+        <td>#{emVFC v : indicatorhis==null?null:indicatorhis.yieldOfMonth, f : '#,##0.00',c:true,s:false/}</td>
+    </tr>
+    *{<tr>
+                    <td>浮动盈亏</td>
+                    <td>#{emVFC v : indicator==null?null:indicator.floatingProfitAndLoss, f : '#,##0.00',s:false/}</td>
+                    <td>#{emVFC v : indicatorhis==null?null:indicatorhis.floatingProfitAndLoss, f : '#,##0.00',s:false/}</td>
+                </tr>}*
+    *{<tr>
+                    <td>滑价成本</td>
+                    <td>#{emVF v : indicator.movingCost, f : '#,##0.00',s:false/}</td>
+                </tr>}*
+#{/if}
+#{elseif enginetypeId ==2}
+    <tr>
+        <td width="34%">年化收益率</td>
+        <td width="30%">#{emVFC v : qiaIndicatorDto==null || qiaIndicatorDto.averageSimpleRateOfReturn==null ?null:qiaIndicatorDto.averageSimpleRateOfReturn*100,u: '%', f : '#,##0.00',c:true,s:false/}</td>
+        <td width="36%">#{emVFC v : qiaIndicatorDtohis==null || qiaIndicatorDtohis.averageSimpleRateOfReturn==null ?null:qiaIndicatorDtohis.averageSimpleRateOfReturn*100,u: '%', f : '#,##0.00',c:true,s:false/}</td>
+    </tr>
+    <tr>
+        <td>sharp</td>
+        <td>#{emVFC v : qiaIndicatorDto==null?null:qiaIndicatorDto.sharpRatio, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null?null:qiaIndicatorDtohis.sharpRatio, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>胜率</td>
+        <td>#{emVFC v : qiaIndicatorDto==null || qiaIndicatorDto.hitRate==null ?null:qiaIndicatorDto.hitRate*100,u: '%', f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null || qiaIndicatorDtohis.hitRate==null ?null:qiaIndicatorDtohis.hitRate*100,u: '%', f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>超额收益率</td>
+        <td>#{emVFC v : qiaIndicatorDto==null || qiaIndicatorDto.excessReturnOnVar==null ?null:qiaIndicatorDto.excessReturnOnVar,u: '%', f : '#,##0.00',c:true,s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null || qiaIndicatorDtohis.excessReturnOnVar==null ?null:qiaIndicatorDtohis.excessReturnOnVar,u: '%', f : '#,##0.00',c:true,s:false/}</td>
+    </tr>
+    <tr>
+        <td>波动率</td>
+        <td>#{emVFC v : qiaIndicatorDto==null?null:qiaIndicatorDto.volatility, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null?null:qiaIndicatorDtohis.volatility, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>beta值</td>
+        <td>#{emVFC v : qiaIndicatorDto==null?null:qiaIndicatorDto.beta, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null?null:qiaIndicatorDtohis.beta, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>Jensen</td>
+        <td>#{emVFC v : qiaIndicatorDto==null?null:qiaIndicatorDto.jensenRatio, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null?null:qiaIndicatorDtohis.jensenRatio, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>Treynor</td>
+        <td>#{emVFC v : qiaIndicatorDto==null?null:qiaIndicatorDto.treynorRatio, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null?null:qiaIndicatorDtohis.treynorRatio, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>最大回撤</td>
+        <td>#{emVFC v : qiaIndicatorDto==null?null:qiaIndicatorDto.maximumDrawdown, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null?null:qiaIndicatorDtohis.maximumDrawdown, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>Calmar</td>
+        <td>#{emVFC v : qiaIndicatorDto==null?null:qiaIndicatorDto.calmarRatio, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null?null:qiaIndicatorDtohis.calmarRatio, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>CSR</td>
+        <td>#{emVFC v : qiaIndicatorDto==null?null:qiaIndicatorDto.conditionalSharpRatio, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null?null:qiaIndicatorDtohis.conditionalSharpRatio, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>HPM</td>
+        <td>#{emVFC v : qiaIndicatorDto==null?null:qiaIndicatorDto.highterPartialMoments, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null?null:qiaIndicatorDtohis.highterPartialMoments, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>Kappa3</td>
+        <td>#{emVFC v : qiaIndicatorDto==null?null:qiaIndicatorDto.kappa3, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null?null:qiaIndicatorDtohis.kappa3, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>CVaR</td>
+        <td>#{emVFC v : qiaIndicatorDto==null?null:qiaIndicatorDto.conditionalVar, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null?null:qiaIndicatorDtohis.conditionalVar, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>LPM</td>
+        <td>#{emVFC v : qiaIndicatorDto==null?null:qiaIndicatorDto.lowerPartialMoments, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null?null:qiaIndicatorDtohis.lowerPartialMoments, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>MSR</td>
+        <td>#{emVFC v : qiaIndicatorDto==null?null:qiaIndicatorDto.modifiedSharpRatio, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null?null:qiaIndicatorDtohis.modifiedSharpRatio, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>MVaR</td>
+        <td>#{emVFC v : qiaIndicatorDto==null?null:qiaIndicatorDto.mvar, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null?null:qiaIndicatorDtohis.mvar, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>Omega</td>
+        <td>#{emVFC v : qiaIndicatorDto==null?null:qiaIndicatorDto.omega, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null?null:qiaIndicatorDtohis.omega, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>Sortino</td>
+        <td>#{emVFC v : qiaIndicatorDto==null?null:qiaIndicatorDto.sortinoRatio, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null?null:qiaIndicatorDtohis.sortinoRatio, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>上行空间</td>
+        <td>#{emVFC v : qiaIndicatorDto==null?null:qiaIndicatorDto.upsidePotentialRatio, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null?null:qiaIndicatorDtohis.upsidePotentialRatio, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>VaR</td>
+        <td>#{emVFC v : qiaIndicatorDto==null?null:qiaIndicatorDto.var, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null?null:qiaIndicatorDtohis.var, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>偏度</td>
+        <td>#{emVFC v : qiaIndicatorDto==null?null:qiaIndicatorDto.skewness, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null?null:qiaIndicatorDtohis.skewness, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>峰度</td>
+        <td>#{emVFC v : qiaIndicatorDto==null?null:qiaIndicatorDto.kurtosis, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null?null:qiaIndicatorDtohis.kurtosis, f : '#,##0.00',s:false/}</td>
+    </tr>
+    <tr>
+        <td>市场相关度</td>
+        <td>#{emVFC v : qiaIndicatorDto==null?null:qiaIndicatorDto.corrWithMarket, f : '#,##0.00',s:false/}</td>
+        <td>#{emVFC v : qiaIndicatorDtohis==null?null:qiaIndicatorDtohis.corrWithMarket, f : '#,##0.00',s:false/}</td>
+    </tr>
+#{/elseif}
+</table>

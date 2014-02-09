@@ -1,0 +1,120 @@
+
+<dl class="user_comment">
+    <div id="commentContent"></div>
+#{list items:discussesList,as : 'disc'}
+
+    <dd>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td width="10%" rowspan="2" align="right"><strong
+                        class="dark">#{emVF v :disc.userName /}：</strong></td>
+                <td width="80%">
+                    #{if disc.star==5}
+                        <span class="star_b1" style="width:90px;"></span>
+                    #{/if}
+
+                    #{elseif disc.star==4}
+                        <span class="star_b1" style="width:70px;"></span>
+                    #{/elseif}
+                    #{elseif disc.star==3}
+                        <span class="star_b1" style="width:52px;"></span>
+                    #{/elseif}
+                    #{elseif disc.star==2}
+                        <span class="star_b1" style="width:34px;"></span>
+                    #{/elseif}
+                    #{else}
+                        <span class="star_b1" style="width:16px;"></span>
+                    #{/else}
+
+                </td>
+                <td width="10%" rowspan="2"><p
+                        class="dark">#{emVF v :disc.disTime,f : 'yy-MM-dd' /}</p></td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="comment_text">#{emVF v :disc.content /}</div>
+                </td>
+            </tr>
+        </table>
+    </dd>
+#{/list}
+    <input type="hidden" id="u_showloading" value="true"/>
+</dl>
+
+
+*{//保存用户评价}*
+<script type="text/javascript">
+
+    $("#subComment").live('click',function() {
+        var $form = $("#cndForm");
+        var comTextarea = $('#comTextarea').val();
+        if(comTextarea==""||comTextarea==null){
+            $.qicTips({
+                target: '.submit',
+                level: 2,
+                message: '内容为空'
+            });
+            return;
+        }
+
+        var saveRoute = #{jsRoute @StrategyDetail.userDiscuss() /}  //保存url
+        var boole = ${discussesBoolean};
+        if(boole==1){
+            $.qicTips({
+                target: '.submit',
+                level: 2,
+                message: '重复评论'
+            });
+            return;
+        }else{
+            $.qicTips({
+                target: '.submit',
+                level: 1,
+                message: '提交成功'
+            });
+            $.ajax({
+                url:saveRoute.url(),
+                type:'post',
+                dataType:"json",
+                data:$form.serialize(),
+                success:function (data) {
+                    if (data.op) {
+                        var mm;
+                        if(data.star==5){
+                            mm="<span class='star_b1' style='width:90px;'></span>";
+                        }else if(data.star==4){
+                            mm="<span class='star_b1' style='width:70px;'></span>";
+                        }else if(data.star==3){
+                            mm=" <span class='star_b1' style='width:52px;'></span>"
+                        }else if(data.star==2){
+                            mm=" <span class='star_b1' style='width:34px;'></span>";
+                        }else{
+                            mm=" <span class='star_b1' style='width:16px;'></span>"
+                        }
+
+                        var docum ="<dd>"+
+                                "<table width='100%' border='0' cellspacing='0' cellpadding='0'>"+
+                                "<tr>"+
+                                "<td width='10%' rowspan='2' align='right'><strong "+
+                                " class='dark'>"+data.dname+"：</strong></td> <td width='80%'>"+
+                                mm+
+                                " </td><td width='10%' rowspan='2'><p"+
+                                "  class='dark'>"+data.time+"</p></td>"+
+                                " </tr>"+
+                                " <tr>"+
+                                " <td>"+
+                                " <div class='comment_text'>"+data.content+"</div>"+
+                                " </td>"+
+                                " </tr>"+
+                                " </table>"+
+                                "</dd>";
+                        $(commentContent).append(docum);
+                        $('.my_comment').css('display',"none")
+                    }
+                }
+            });
+
+        }
+        $(".comment_pop").dialog("close")
+    });
+    </script>

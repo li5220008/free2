@@ -1,0 +1,56 @@
+﻿#{extends 'main.html'/}
+#{set title:'登陆页面' /}
+
+<body>
+<style type="text/css">
+    .error{
+        color: red;
+    }
+</style>
+#{ifErrors}
+<p class="error">
+    ${errors[0]}
+</p>
+#{/ifErrors}
+    #{form @UserCt.login(), method:'post', onsubmit:'return loginOnSubmit()'}
+    <table>
+        <tr>
+            <td colspan="2">用户名:yy1user1 密码:123</td>
+        </tr>
+        <tr>
+            <td>帐号</td>
+            <td><input type="text" name="name" id="name" value="${params.name}"></td>
+        </tr>
+        <tr>
+            <td>密码</td>
+            <td><input type="password" name="pwd" id="pwd"></td>
+        </tr>
+        <tr>
+            <td>mac地址(必须,很重要)</td>
+            <td><input type="text" name="macAddr" id="macAddr"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input id="loginsubmit" type="submit" value="提交"></td>
+        </tr>
+    </table>
+    #{/form}
+
+<table>
+    <tr>
+        <td>
+            <a href="@{LookPwd.list()}">找回密码</a> <br/>
+            *{<a href="@{Users.register()}">用户注册</a>}*
+        </td>
+    </tr>
+</table>
+
+<script>
+    function loginOnSubmit(){
+        if($.trim( $("#macAddr").val() ) == ""){
+            alert("mac地址必须");
+            return false;
+        }
+    }
+</script>
+</body>

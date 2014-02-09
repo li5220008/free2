@@ -1,0 +1,363 @@
+h1. 股票池类
+
+h3. 股票池列表展示
+
+||项||说明||
+| url | /stockpoolCt/fetchStockPoolList |
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|keyword|String|是|用户输入的关键字|
+|strategyName|String|否|策略代号，具体参见需求文档|
+|orderType|String|是|需要排序的字段|
+|pageNo|int|否|当前页|
+
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:[
+         {
+          stockPoolCode:1,
+          id:1,
+          poolName:mocotest,
+          source:chinaGTA,
+          annualizedYield:3.231,
+          yearJensenRatio:2.256,
+          starLevel:3.5,
+          updateDate:'2013-04-25 11:08:48',
+          stockNum:5,
+          collectCount:2,
+          orgId:000
+          }
+        ],
+  rowTotal:20,
+  pageNo:2,
+  pageSize:10
+}
+
+h3. 用户已收藏股票池列表展示
+
+||项||说明||
+| url | /userstockpoolManageCt/fetchCollectedStockPoolList |
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|keyword|String|是|用户输入的关键字|
+|strategyName|String|否|策略代号，具体参见需求文档|
+|orderType|String|是|需要排序的字段|
+|pageNo|int|否|当前页|
+|uid|long|否|用户ID|
+
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:[
+         {
+          stockPoolCode:1,
+          id:1,
+          poolName:mocotest,
+          source:chinaGTA,
+          annualizedYield:3.231,
+          yearJensenRatio:2.256,
+          starLevel:3.5,
+          updateDate:'2013-04-25 11:08:48',
+          stockNum:5,
+          collectCount:2,
+          orgId:000
+          }
+        ],
+  rowTotal:20,
+  pageNo:2,
+  pageSize:10
+}
+
+h3. 根据股票池高级搜索条件，检索股票池信息
+
+||项||说明||
+| url | /userstockpoolManageCt/advanceSearch |
+| http Method | -- |
+
+*参数说明*
+post方式提交下面json数据，通过body传参
+
+bc. {
+recommendOrgs:'A,B,C,D',//推荐机构
+reportUpdatePeriod:21,//研报更新周期
+starDown:1.23,//用户评级 小值
+starUp:5.21,//用户评级 大值
+yearYieldDown:1.41,//年化收益率 小值
+yearYieldUp:5.31,//年化收益率 大值
+sharpRateDown:5.5,//sharp比率 小值
+sharpRateUp:7.6//sharp比率 大值
+}
+
+get方式提交下表字段
+|| 参数名||类型||是否可选||说明||
+|pageNo|int|否|当前页|
+|uid|long|否|用户ID|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:[
+         {
+          stockPoolCode:1,
+          id:1,
+          poolName:mocotest,
+          source:chinaGTA,
+          annualizedYield:3.231,
+          yearJensenRatio:2.256,
+          starLevel:3.5,
+          updateDate:'2013-04-25 11:08:48',
+          stockNum:5,
+          collectCount:2,
+          orgId:000
+          }
+        ],
+   rowTotal:20,
+   pageNo:2,
+   pageSize:10
+}
+
+h3. 根据股票池高级搜索条件，检索用户已收藏的股票池信息
+
+||项||说明||
+| url | /stockpoolCt/advanceSearchCollectInfo |
+| http Method | -- |
+
+*参数说明*
+post方式提交下面json数据，通过body传参
+
+bc. {
+recommendOrgs:'A,B,C,D',//推荐机构
+reportUpdatePeriod:21,//研报更新周期
+starDown:1.23,//用户评级 小值
+starUp:5.21,//用户评级 大值
+yearYieldDown:1.41,//年化收益率 小值
+yearYieldUp:5.31,//年化收益率 大值
+sharpRateDown:5.5,//sharp比率 小值
+sharpRateUp:7.6//sharp比率 大值
+}
+
+get方式提交下表字段
+|| 参数名||类型||是否可选||说明||
+|pageNo|int|否|当前页|
+|uid|long|否|用户ID|
+
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:[
+         {
+          stockPoolCode:1,
+          id:1,
+          poolName:mocotest,
+          source:chinaGTA,
+          annualizedYield:3.231,
+          yearJensenRatio:2.256,
+          starLevel:3.5,
+          updateDate:'2013-04-25 11:08:48',
+          stockNum:5,
+          collectCount:2,
+          orgId:000
+          }
+        ],
+  rowTotal:20,
+  pageNo:2,
+  pageSize:10
+}
+
+h3. 用户已收藏股票池ID列表
+
+||项||说明||
+| url | /userstockpoolManageCt/fetchCollectIdList |
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|ids|String|否|股票池id，格式为ids="1,2,3,4"|
+|uid|String|否|用户id|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:[1,2,3]//该用户收藏的股票池ID
+}
+
+
+h3. 用户已评价股票池ID列表
+
+||项||说明||
+| url | /userstockpoolManageCt/fetchCommentList |
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|uid|String|否|用户id|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:[1,2,3]//该用户收藏的股票池ID
+}
+
+h3. 股票池保存评论
+
+||项||说明||
+| url | /stockpoolCt/addComment |
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|star|float|是|❤级|
+|uid|long|否|用户ID|
+|spid|long|是|股票池ID|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:true
+}
+
+h3. 判断股票池是否评论
+
+||项||说明||
+| url | /stockpoolCt/hasComment|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|spid|long|是|股票池ID|
+|uid|long|否|用户ID|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:true
+}
+
+h3. 股票池是否收藏
+
+||项||说明||
+| url | /stockpoolCt/hasCollected|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|spid|long|是|股票池ID|
+|uid|long|否|用户ID|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:true
+}
+
+h3. 股票池基本信息展示
+
+||项||说明||
+| url | /stockpoolCt/fetchStockpoolInfo|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|stockPoolCode|String|否|股票池编号|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:{
+        stockPoolCode:1,//股票池编号
+        stockPoolName:testName,//股票池名称
+        stockNum:10,//组合股票数
+        updateFrequency:fast, //更新频率
+        strategy:someStates,//股票策略（组合说明）
+        annualizedYield:xxx,//组合收益
+        filestoragePath:xxx,//附件下载
+        summary:xxx, //研报摘要
+        institutionName:xxx, //组合来源
+        starNum:xxx //组合评级
+  }
+}
+
+h3. 添加股票池收藏
+
+||项||说明||
+| url | /userstockpoolManageCt/addCollections|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|uid|long|否|用户ID|
+|spid|long|否|股票池ID|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:true
+}
+
+
+h3. 取消股票池收藏
+
+||项||说明||
+| url | /userstockpoolManageCt/delCollections|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+|uid|long|否|用户ID|
+|spid|long|否|股票池ID|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+    status:0,
+    data:true
+}
+
+h3. 股票池组合列表信息展示
+
+||项||说明||
+| url | /stockpoolCt/fetchCombinInfo|
+| http Method | get |
+
+*参数说明*
+|| 参数名||类型||是否可选||说明||
+| stockpoolcode|String|否|股票池代码|
+
+*返回结果说明*
+操作成功,返回json格式
+
+bc. {
+  status:0,
+  data:{scode:1,name:stockpoolName}
+}

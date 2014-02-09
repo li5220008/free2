@@ -1,0 +1,634 @@
+#{extends 'main.html'/}
+#{set title:'策略上传'/}
+<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/global-strategysuper.css'}">
+<link rel="stylesheet" type="text/css" href="@{'public/stylesheets/qic-dialog.css'}">
+<script src="/public/javascripts/qic-dialog.js"></script>
+<script src = "@{'/public/javascripts/WdatePicker.js'}"></script>
+
+<style>
+.main_wrap{ width:100%; margin:15px;}
+.page{ padding: 0px 0 10px; top:15px;}
+.str_sup_select{height:30px;}
+.append_two{height:30px;}
+.a_datepicker{ background:url(@{'/public/images/admin/a_w_datepicker.png'}) no-repeat right center #fff;; border:1px solid #bbbaba; height:23px; line-height:23px; text-indent:3px; cursor:pointer; width:140px;}
+div.new_sel_d{ margin-top: 5px;}
+.stru_research, .mt_current{ margin-top: 4px;}
+.pop_blue .sel_84_dialog, .infor_dialog .sel_84_dialog, .strategy_name_inpt, .txtarea_stra{ background-color: #c2c2c2;}
+</style>
+<body class="strategy_body">
+
+
+<!--strategy_nav Begin-->
+<div class="strategy_nav">
+    <form action="@{UserStrategyManage.myStrategyList() }" id="queryForm" method="get" class="selectfun">
+    <div class="stra_options">
+        <div class="str_sup_select">
+
+            <div class="dialog_box">
+                <input type="hidden" name="orderType" id="map_orderType" value="${ map.orderType }">
+                <input type="hidden" name="orderCol" id="map_orderCol" value="1">
+                <input type="hidden" name="status" id="reportDate_2" autocomplete="off" value="${ map.status}">
+                <input type="hidden" id="reportName_2" autocomplete="off" value="2011">
+                <div class="sel_84_dialog new_sel_d" id="select_info_year1_2">
+                    #{if map.status.equals('-1')}状态#{/if}
+                    #{if map.status.equals('-2')}审核中#{/if}
+                    #{if map.status.equals('4')}已上架#{/if}
+                    #{if map.status.equals('5')}已下架#{/if}
+                    #{if map.status.equals('-100')}审核未通过#{/if}
+                </div>
+                <ul style="display: none;" class="sel_91_option new_sel_option" id="options_year1_2">
+                    <li data-value="-1">全部</li>
+                    <li data-value="-2">审核中</li>
+                    <li data-value="-100">审核未通过</li>
+                    <li data-value="4">已上架</li>
+                    <li data-value="5">已下架</li>
+
+                </ul>
+            </div>
+
+  <!--          <div class="append_two"  style=" position:relative; left:115px; top:-27px;">
+                <div class="dialog_box">
+
+                    <input type="hidden" id="ttypeValue" autocomplete="off" name="tradeType" value="${map.tradeType}">
+                    <input type="hidden" id="ttypeName" autocomplete="off" value="2011">
+                    <div class="sel_84_dialog new_sel_d" id="ttype" style="color: rgb(0, 0, 0);">
+                    #{if map.tradeType.equals('1')}选股型#{/if}
+                    #{elseif map.tradeType.equals('2')}择时型#{/elseif}
+                    #{elseif map.tradeType.equals('3')}交易型#{/elseif}
+                    #{elseif map.tradeType.equals('4')}其他#{/elseif}
+                    #{else }策略类型#{/else}
+                    </div>
+                    <ul style="display: none;" class="sel_91_option new_sel_option" id="options_ttype">
+                        <li  data-value="0">全部</li>
+                        <li  data-value="1">选股型</li>
+                        <li  data-value="2">择时型</li>
+                        <li  data-value="3">交易型</li>
+                        <li  data-value="4">其他</li>
+                    </ul>
+                </div>
+
+                <div class="dialog_box" style=" position:relative; left:115px; top:-27px;">
+
+                    <input type="hidden" id="tvarietyValue" autocomplete="off" name="tradeVariety" value="${map.tradeVariety}">
+                    <input type="hidden" id="tvarietyName" autocomplete="off" value="2011">
+                    <div class="sel_84_dialog new_sel_d" id="tvariety" style="color: rgb(0, 0, 0);">
+                    #{if map.tradeVariety.equals('1')}股票#{/if}
+                    #{elseif map.tradeVariety.equals('2')}期货#{/elseif}
+                    #{elseif map.tradeVariety.equals('3')}混合#{/elseif}
+                    #{else }交易品种#{/else}
+                    </div>
+                    <ul style="display: none;" class="sel_91_option new_sel_option" id="options_tvariety">
+                        <li  data-value="0">全部</li>
+                        <li  data-value="1">股票</li>
+                        <li  data-value="2">期货</li>
+                        <li  data-value="3">混合</li>
+                    </ul>
+                </div>
+
+                <div class="dialog_box" style=" position:relative; left:235px; top:-54px;">
+
+                    <input type="hidden" id="languageValue" autocomplete="off" name = "strategyLanguage" value="${map.strategyLanguage}">
+                    <input type="hidden" id="languageName" autocomplete="off" value="2011">
+                    <div class="sel_84_dialog new_sel_d" id="strategyLanguage" style="color: rgb(0, 0, 0);">
+                    #{if map.strategyLanguage.equals('1')}QICore#{/if}
+                    #{elseif map.strategyLanguage.equals('2')}QIA#{/elseif}
+                    #{else}策略平台#{/else}
+                    </div>
+                    <ul style="display: none;" class="sel_91_option new_sel_option" id="options_strategyLanguage">
+                        <li data-value="0">全部</li>
+                        <li data-value="1">QICore</li>
+                        <li data-value="2">QIA</li>
+                    </ul>
+                </div>
+
+            </div>
+
+-->
+        </div>
+        <div style="margin: 6px 0 0 18px" class="str_sup_number">
+            我已上传的策略
+        </div>
+    </div>
+
+    <ul class="manage_top_menu upload_btn">
+        <li class="nav_search stru_research">
+            <input type="text" name="keyword" value="${map.keyword}" placeholder="策略名称/策略师" class="key_strategy">
+            <input type="submit" class="btn_submit">
+        </li>
+    #{hasAuth '7'}  <li class="mt_current">上传策略</li> #{/hasAuth}
+    </ul>
+     </form>
+</div>
+<!--strategy_nav End-->
+
+<!--main_wrap Begin-->
+<div class="main_wrap strategy_main">
+
+
+    <!--sp_right Begin-->
+    <div class="sp_right_wrap">
+        <div class="content_title">
+
+
+            <div class="tab_title">
+                <table style="margin-top: 48px" width="100%" class=" tbl_exec" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <th style="cursor: pointer"  onclick="doSort('4')"  width="10%"><span>上传时间 ${map.orderCol .equals('4') ? map.orderType.equals('0')?"↑":"↓":""}</span></th>
+                        <th style="cursor: pointer"  onclick="doSort('1')"  width="10%">策略名称 ${map.orderCol .equals('1') ? map.orderType.equals('0')?"↑":"↓":""}</th>
+                        <th style="cursor: pointer"  onclick="doSort('2')" width="10%">策略师 ${map.orderCol .equals('2') ? map.orderType.equals('0')?"↑":"↓":""}</th>
+                        <th style="cursor: pointer"  onclick="doSort('3')" width="10%">策略状态 ${map.orderCol .equals('3') ? map.orderType.equals('0')?"↑":"↓":""}</th>
+                        <th style="cursor: pointer"  onclick="doSort('5')" width="10%">审核通过时间 ${map.orderCol .equals('5') ? map.orderType.equals('0')?"↑":"↓":""}</th>
+                        <th style="cursor: pointer" onclick="doSort('6')" width="8%">上架时间 ${map.orderCol .equals('6') ? map.orderType.equals('0')?"↑":"↓":""}</th>
+                        <th style="cursor: pointer"  onclick="doSort('11')" width="6%">交易品种 ${map.orderCol .equals('11') ? map.orderType.equals('0')?"↑":"↓":""}</th>
+                        <th style="cursor: pointer" onclick="doSort('7')" width="8%">策略类型 ${map.orderCol .equals('7') ? map.orderType.equals('0')?"↑":"↓":""}</th>
+                        <th style="cursor: pointer"  onclick="doSort('12')" width="6%">策略平台 ${map.orderCol .equals('12') ? map.orderType.equals('0')?"↑":"↓":""}</th>
+                        <th style="cursor: pointer"  onclick="doSort('10')" width="6%">收藏总人数 ${map.orderCol .equals('10') ? map.orderType.equals('0')?"↑":"↓":""}</th>
+                        <th style="cursor: pointer"  onclick="doSort('9')" width="8%">当前订阅 ${map.orderCol .equals('9') ? map.orderType.equals('0')?"↑":"↓":""}</th>
+                        <th style="cursor: pointer" onclick="doSort('8')" width="8%"> 累计订阅 ${map.orderCol .equals('8') ? map.orderType.equals('0')?"↑":"↓":""}</th>
+                    </tr>
+
+                </table>
+
+                <div class="tbl_scoll tbl_strupload">
+                    <table width="100%" class="tbl_common tbl_exec" border="0" cellspacing="0" cellpadding="0">
+                     #{list items : strategyBaseDtos, as : 'item'}
+                        <tr>
+                            <td  width="10%">#{emVF item.uploadTime, f:'yyyy-MM-dd' /}</td>
+                            <td  width="10%">#{emVF item.sname /}</td>
+                            <td  width="10%">#{emVF item.provider /}</td>
+                            <td  width="10%">
+                                #{if item.status==4 || item.status == 7}已上架#{/if}
+                                #{elseif item.status==5}已下架#{/elseif}
+                                #{elseif item.status==-100}审核未通过#{/elseif}
+                                #{else}审核中#{/else}
+                            </td>
+
+
+                            <td  width="10%">
+                                #{if item.status==4 || item.status==5  || item.status == 7}
+                                   #{emVF item.passTime, f:'yyyy-MM-dd' /}
+                                #{/if}
+                                #{else}
+                                   --
+                                #{/else}
+                            </td>
+
+                            <td  width="8%">#{emVF item.upTime, f:'yyyy-MM-dd' /}</td>
+                            <td  width="6%">
+                                #{if item.tradeVariety ==1  }股票#{/if}
+                                #{elseif item.tradeVariety ==2  }期货#{/elseif}
+                                #{elseif item.tradeVariety ==3  }混合#{/elseif}
+                                #{else }--#{/else}
+                            </td>
+                            <td  width="8%">
+                                #{if item.stype ==1  }选股型#{/if}
+                                #{if item.stype ==2  }择时型#{/if}
+                                #{if item.stype ==3  }交易型#{/if}
+                                #{if item.stype ==4  }其他#{/if}
+                            </td>
+                            <td  width="6%">
+                                #{if item.enginetypeId==1}QICORE#{/if}
+                                #{elseif item.enginetypeId==2}QIA#{/elseif}
+                                #{else }--#{/else}
+                            </td>
+                            <td  width="6%">#{emVF item.collectCount /}</td>
+
+                            <td  width="8%">#{emVF item.validOrderCount /}</td>
+                            <td  width="8%">#{emVF item.orderCount /}</td>
+
+
+                        </tr>
+                     #{/list}
+                    </table>
+                </div>
+                <!--分页 Begin-->
+                <div class="page">
+                    <div class="page_center">
+                        <form action="@{UserStrategyManage.myStrategyList(map) }" class="pageFrom" method="post">
+                        #{paging page:page /}
+                        </form>
+                    </div>
+                </div>
+                <!--分页 End-->
+
+            </div>
+
+        </div>
+
+
+
+
+    </div>
+    <!--sp_right End-->
+
+</div>
+<!--main_wrap End-->
+
+
+<script>
+    (function(){
+		window.resizeWidth(".tab_title", 30)
+        window.resizeHeight(".tbl_strupload", 145);
+        downBox('select_info_year1_2', '#options_year1_2', 'reportDate_2', 'reportName_2');
+    })();
+</script>
+
+<!--策略上传 Begin-->
+<div class="strategy_upload_box" title="上传策略">
+    <form id="uploadStategyForm"  method="post" class="form_datum_modify">
+    <div class="upload_box">
+        <input name="hadUploadFile" type="hidden" value="0" id="hadUploadFile">
+        <input name="files" id="files" type="hidden" value="" >
+        <input name="strategyDto.enginetypeId" id="enginetypeId" type="hidden" value="-1" >
+        <img id="loading" src="@{'/public/images/loading_upload.gif'}" style="display:none;">
+        <!--
+
+        &nbsp;&nbsp;<input type="file" id="strategyFile" class="set_user_i"  name="attachment" ><span  onclick="javscript:uploadStrategy()" id="strategy_upload"  class="strategy_upload">上传策略</span>
+        -->
+        <div class="upload_file">
+        <div class="set_user_i" style="">
+                 <span class="qic_file_val" ></span>
+        </div>
+        <div class="btn btn_success fileinput_button">
+
+            <i class="icon_plus icon_white"></i>
+            <span>上传策略</span>
+            <input type="file" id="strategyFile" name="attachment" class="qic_file" title="仅限(.zip .excel)">
+
+        </div>
+        <script>
+            bindFileUpload();
+            function bindFileUpload(){
+                $(".qic_file").bind("change", function(){
+                    var value = $(this).val();
+                    $(".qic_file_val").html(value.substring(12))
+                    //alert($(this).val());
+                    // alert($(".qic_file_val").html());
+                    if(!$("#strategyFile").val() || $("#strategyFile").val() == '' ){
+                        return;
+                    }
+                    uploadStrategy();
+                })
+            }
+        </script>
+       </div>
+
+        <div class="stategy_information">
+            <h3 class="h3_title">
+                策略信息
+            </h3>
+            <div class="strategy_common strategy_name">
+                <label>策略上传状态<span class="red">&nbsp;</span></label>
+                <span id="uploadStatus"><font color="red">未上传</font></span>
+                <input name="strategyDto.lookbackStime" type="hidden" value="" autocomplete="off" id="strategyDto_lookbackStime">
+                <input name="strategyDto.lookbackEtime" type="hidden" value="" autocomplete="off" id="strategyDto_lookbackEtime">
+            </div>
+            <div class="strategy_common strategy_name">
+                <label>策略名称<span class="red">*</span>：</label>
+                <input type="text"  name="strategyDto.sname" id="strategyDto_sname"  class="strategy_name_inpt">
+            </div>
+
+            <div class="strategy_common strategy_variety">
+
+                <div class="dialog_box infor_dialog">
+                    <div></div>
+                    <label class="for_tn">策略类型<span class="red">*</span></label>
+                    <input type="hidden" name="strategyDto.stype" value="3" autocomplete="off" id="reportDate_8">
+                    <input type="hidden" autocomplete="off" id="reportName_8">
+                    <div id="select_info_year1_8" class="sel_84_dialog  for_infor">交易型</div>
+                    <ul id="options_year1_8" class="sel_91_option  for_infor" style="display: none;">
+                        <li data-value="1">选股型</li>
+                        <li data-value="3">交易型</li>
+                        <li data-value="2">择时型</li>
+                        <li data-value="4">其它</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="strategy_common strategy_from">
+                <div class="dialog_box infor_dialog">
+                    <div></div>
+                    <label class="for_tn">交易品种<span class="red">*</span></label>
+                    <input type="hidden" name="strategyDto.tradeVariety" value="2" autocomplete="off" id="reportDate_9">
+                    <input type="hidden" autocomplete="off" id="reportName_9">
+                    <div id="select_info_year1_9" class="sel_84_dialog  for_infor">期货</div>
+                    <ul id="options_year1_9" class="sel_91_option  for_infor" style="display: none;">
+                        <li data-value="1">股票</li>
+                        <li data-value="2">期货</li>
+                        <li data-value="3">混合</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="strategy_common strategy_e">
+                <label>回测开始时间：</label>
+                    <input name="strategyDto.customerLookbackStartTime" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',readOnly:true,maxDate: '#F{$dp.$D(\'strategyDto_backtest_endTime\')||\'%y-%M-%d\'}'  })" id="strategyDto_backtest_startTime" type="text" class="strategy_name_inpt a_datepicker">
+            </div>
+            <div class="strategy_common strategy_e">
+                <label>回测结束时间：</label>
+                <input name="strategyDto.customerLookbackEndTime" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',readOnly:true, minDate: '#F{$dp.$D(\'strategyDto_backtest_startTime\')}',maxDate: '%y-%M-%d'  })" id="strategyDto_backtest_endTime" type="text" class="strategy_name_inpt a_datepicker">
+            </div>
+            <div class="strategy_common strategy_e">
+                <label>策略师姓名<span class="red">*</span>：</label>
+                    <input type="text" name="strategyDto.provider"  id="strategyDto_provider" class="strategy_name_inpt ">
+            </div>
+            <div class="strategy_common strategy_ec">
+                <label>策略简介（140字）<span class="red">*</span></label>
+                <div>
+                    <textarea style="resize:none" name="strategyDto.desp" id="strategyDto_desp" class="txtarea_stra" cols="" rows=""></textarea>
+                </div>
+            </div>
+            <div class="strategy_common strategy_e">
+                <label>策略师简介（80字）<span class="red">*</span></label>
+                <div>
+                    <textarea style="resize:none" name="strategyDto.providerDesp" id="strategyDto_providerDesp" class="txtarea_stra" cols="" rows=""></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="dialog_box stra_upload_btn">
+            <input type="button"  id="cancleUploadBtn" onclick="javascript:cancleUpload()"  class="common_blue common_cancle" value="取消">
+            <input type="submit"  class="common_blue" value="确定">
+        </div>
+
+
+    </div>
+     </form>
+</div>
+<link href="@{'/public/stylesheets/ui-lightness/jquery-ui-1.9.1.custom.css'}" rel="stylesheet">
+<script src="@{'/public/javascripts/jquery-ui-1.9.1.custom.js'}"></script>
+<script src="@{'/public/javascripts/ajaxfileupload.js'}"></script>
+<link href="@{'/public/stylesheets/ajaxfileupload.css'}" type="text/css" rel="stylesheet">
+<script src="/public/javascripts/jquery.validate.js"></script>
+<script>
+    #{if curLoginUser}
+    var curLoginName = '${curLoginUser.name}';
+    #{/if}
+    function cancleUpload(){
+        $("#uploadStategyForm").get(0).reset();
+        $("#hadUploadFile").val(0);//标识未上传策略文件
+        $("#uploadStatus").html("<font color='red'>未上传</font>");
+        $(".qic_file_val").html("");
+        $(".strategy_upload_box").dialog(
+                "close"
+        );
+        $("#uploadStategyForm").get(0).reset();
+        return;
+
+    }
+    $(document).ready(function(){
+
+        $("#uploadStategyForm").validate({
+            submitHandler:function(form){
+                if($("#hadUploadFile").val() == 0){
+                    new QicDialog({
+                        message : "你还没有上传策略包，请上传策略包"
+                    }).warn();
+                    return;
+                }
+                //1. get form data
+                var url = #{jsRoute @UserStrategyManage.addStrategy()/};
+                var newStrategyData = $("#uploadStategyForm").serializeArray();
+                $.ajax({
+                    url:url.url(),
+                    data:newStrategyData,
+                    dataType:"json",
+                    type:"post",
+                    success:function(data){
+                        if(data.success){
+                            new QicDialog({
+                                message : data.message,
+                                confirm : function(){
+                                    window.location.reload();
+                                }
+                            }).alert();
+                        }else{
+                            new QicDialog({
+                                message : data.message
+                            }).error();
+                        }
+                    } ,
+                    error:function(data){
+                        new QicDialog({
+                            message : "添加策略失败!请检查网络是否正常"
+                        }).error();
+                    }
+                });
+                return false;
+
+            },
+            rules: {
+                "strategyDto.provider": {
+                    required:true,
+                    maxlength: 10
+                },
+                "strategyDto.sname":{
+                    required:true,
+                    maxlength: 16,
+                    remote:{
+                        url:'/UserStrategyManage/findStrategyByName',
+                        type:"post",
+                        datatype:"json",
+                        data:{
+                            sname:function(){ return $("#strategyDto_sname").val()}
+                        }
+                    }
+                },
+                "strategyDto.providerDesp": {
+                    required: true,
+                    maxlength: 80
+                },
+                "strategyDto.desp": {
+                    required: true,
+                    maxlength: 140
+                },
+                "strategyDto.customerLookbackStartTime": {
+                    required: true
+                },
+                "strategyDto.customerLookbackEndTime": {
+                    required: true
+                }
+            },
+            messages:{
+                "strategyDto.provider":{
+                    required: "<font color=red>请输入姓名</font>",
+                    maxlength:"<font color=red>策略师名不能超过10个字符</font>"
+                },
+                "strategyDto.sname":{
+                    required:"<font color=red>请输入策略名</font>",
+                    maxlength:"<font color=red>策略名不能超过16个字符</font>",
+                    remote:"<font color=red>策略名已存在</font>"
+                },
+                "strategyDto.providerDesp": {
+                    required: "<br><font color=red>请输入策略师简介</font>",
+                    maxlength:"<br><font color=red>信息最长80个字符</font>"
+                },
+                "strategyDto.desp":{
+                    required:"<br><font color=red>请输入策略简介</font>",
+                    maxlength:"<br><font color=red>信息最长140个字符</font>"
+                },
+                "strategyDto.customerLookbackStartTime":{
+                    required:"<br><font color=red>请输入回测开始时间</font>",
+                    maxlength:"<br><font color=red>信息最长50个字符</font>"
+                },
+                "strategyDto.customerLookbackEndTime":{
+                    required:"<br><font color=red>请输入回测结束时间</font>",
+                    maxlength:"<br><font color=red>信息最长50个字符</font>"
+                }
+            }
+        });
+
+    });
+    $(".mt_current").click(function(){
+        $("#uploadStategyForm").get(0).reset();
+        $("#hadUploadFile").val(0);//标识未上传策略文件
+        $("#uploadStatus").html("<font color='red'>未上传</font>");
+        $(".qic_file_val").html("");
+        $(".strategy_upload_box").dialog({
+            autoOpen: true,
+            width: 450,
+            modal: true,
+            resizable: false,
+            draggable: true
+        });
+        $("#strategyDto_provider").val(curLoginName);
+        removeVlidTip();
+    });
+    //$(".mt_current").click();
+
+    (function(){
+        downBox('select_info_year1_8', '#options_year1_8', 'reportDate_8', 'reportName_8');
+        downBox('select_info_year1_9', '#options_year1_9', 'reportDate_9', 'reportName_9');
+
+        downBox('strategyLanguage', '#options_strategyLanguage', 'languageValue', 'languageName');
+        downBox('ttype', '#options_ttype', 'ttypeValue', 'ttypeName');
+        downBox('tvariety', '#options_tvariety', 'tvarietyValue', 'tvarietyName');
+    })();
+    function removeVlidTip(){
+
+        $("label").each(function(){
+            if($(this).attr("generated")) {
+                $(this).remove();
+
+            }
+        });
+        // $(".new_user_tips").css("display","none");
+    }
+    function doSort(num){
+        var curOrderType = $("#map_orderType").val();
+        $("#map_orderType").val(1-curOrderType);
+        $("#map_orderCol").val(num);
+        $("#queryForm").submit();
+    }
+    function uploadStrategy(){
+
+        var url = #{jsRoute @UploadFiles.uploadStrage()/};
+        if(!$("#strategyFile").val() || $("#strategyFile").val() == '' ){
+            new QicDialog({
+                message : "请选择要上传的策略文件"
+            }).warn();
+            return;
+        }
+        var isFileUpload = true;
+        $("#loading")
+                .ajaxStart(function(){
+                    if(isFileUpload){
+                       $(this).show();
+                       isFileUpload = false;
+                     }
+                })
+                .ajaxComplete(function(){
+                    $(this).hide();
+                });
+      $.ajaxFileUpload
+                (
+                        {
+                            url: url.url(),
+                            secureuri:false,
+                            fileElementId:'strategyFile',
+                            dataType: 'json',
+                            success: function (data, status)
+                            {
+                                if(data.success == true){//填充表单
+                                    if(data.fileNotFound){
+                                        new QicDialog({
+                                            message : "上传文件有误"
+                                        }).error();
+                                        return;
+                                    }
+                                    if(data.fileExist){
+                                        new QicDialog({
+                                            message : "策略已存在，不能重复上传"
+                                        }).error();
+                                        return;
+                                    }
+                                    if(data.fileErr){
+                                        new QicDialog({
+                                            message :data.errMessage ? data.errMessage :"策略文件内容有误"
+                                        }).error();
+                                        return;
+                                    }
+                                    //填充表单
+                                    $("#strategyDto_sname").val(data.StrategyName);
+                                    if(data.Author && data.Author!=''){
+                                      $("#strategyDto_provider").val(data.Author);
+                                    }
+                                   // $("#strategyDto_providerDesp").val(data.Instruction);
+                                    $("#hadUploadFile").val(1);//标识已上传策略文件
+                                    var files = "";
+                                    for(var i = 0;i<data.files.length;i++){
+                                        files+=(data.files[i]+",");
+                                    }
+                                    $("#files").val(files)
+                                    $("#enginetypeId").val(data.enginetypeId);
+                                    if(data.enginetypeId == 1){
+                                        $("#strategyDto_lookbackStime").val(data.BackTestStartDate);
+                                        $("#strategyDto_lookbackEtime").val(data.BackTestEndtDate);
+                                        $("#strategyDto_backtest_startTime").val(data.BackTestStartDate);
+                                        $("#strategyDto_backtest_endTime").val(data.BackTestEndtDate);
+                                    }else{
+                                        $("#strategyDto_lookbackStime").val("");
+                                        $("#strategyDto_lookbackEtime").val("");
+                                        $("#strategyDto_backtest_startTime").val("");
+                                        $("#strategyDto_backtest_endTime").val("");
+                                        $("#strategyDto_provider").val(curLoginName);
+                                    }
+                                    $("#uploadStatus").html("<font color='green'>已上传:"+$(".qic_file_val").text() +"</font>");
+
+
+                                }else{
+                                    new QicDialog({
+                                        message : "上传出错"
+                                    }).error();
+                                }
+                                bindFileUpload();
+                            },
+                            error: function (data, status, e)
+                            {
+                                new QicDialog({
+                                    message : "上传出错"
+                                }).error();
+                                bindFileUpload();
+                            }
+                        }
+                )
+        bindFileUpload();
+        return false;
+    }
+    $("#options_year1_2 li").live("click", function(){
+        var a = $("#reportDate_2").val();
+        $("#queryForm").submit();
+    });
+    $("#options_ttype li").live("click", function(){
+        $("#queryForm").submit();
+    });
+    $("#options_tvariety li").live("click", function(){
+        $("#queryForm").submit();
+    });
+    $("#options_strategyLanguage li").live("click", function(){
+        $("#queryForm").submit();
+    });
+</script>
+
+<!--策略上传 End-->
+
+</body>

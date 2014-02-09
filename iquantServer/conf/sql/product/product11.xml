@@ -1,0 +1,801 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!--用于1.1版本的交易设置的sql-->
+<properties>
+
+    <!-- 往产品主表里增加一条记录 -->
+    <entry key="addProductInfoMainTable">
+        <![CDATA[
+        INSERT INTO product_info
+            (`name`, `uuid`, create_uid, ctime)
+        VALUES (:name, :uuid, :userId, :ctime)
+                ]]>
+    </entry>
+
+    <!-- 往风控证券表增加一条记录 -->
+    <entry key="addRiskSecurity">
+        <![CDATA[
+        insert into risk_control_secrity
+            (product_id, symbol, market, create_uid, ctime)
+        values (:productId, :symbol, :market, :userId, :ctime)
+                ]]>
+    </entry>
+
+    <!-- 往产品策略关联表增加一条记录 -->
+    <entry key="addProductStrategy">
+        <![CDATA[
+        insert into product_strategy
+            (product_id, strategy_id, funds_proportion, create_uid, ctime)
+        values (:productId, :strategyId, :fundsProportion, :userId, :ctime)
+        ]]>
+    </entry>
+
+    <!-- 往产品策略帐号关联表增加一条记录 -->
+    <entry key="addProductStrategyTradeAccount">
+        <![CDATA[
+        insert into product_strategy_trade_account
+            (product_strategy_id, trade_account_id, account_order, create_uid, ctime)
+        values (:productStrategyId, :accountId, :accountOrder, :userId, :ctime)
+        ]]>
+    </entry>
+    <!-- 往产品策略帐号关联表增加一条记录 -->
+    <entry key="queryIfUsed">
+        <![CDATA[
+        SELECT
+            COUNT(*)
+          FROM
+            product_strategy_trade_account
+          WHERE STATUS = 1
+            AND trade_account_id = ?
+
+        ]]>
+    </entry>
+
+    <!-- 往产品策略证券关联表增加一条记录 -->
+    <entry key="addProductStrategySecurity">
+        <![CDATA[
+        insert into product_strategy_security
+            (product_strategy_id, symbol, market, max_position, create_uid, ctime)
+        values (:productStrategyId, :symbol, :market, :maxPosition, :userId, :ctime)
+        ]]>
+    </entry>
+
+    <!-- 往产品策略板块信息表 增加一条记录 -->
+    <entry key="addProductStrategyPlate">
+        <![CDATA[
+        insert into product_strategy_plate
+            (product_strategy_id, name, max_position, system_plate_id, trace_system_plate, create_uid, ctime)
+        values (:productStrategyId, :name, :maxPosition, :systemPlateId, :traceSystemPlate, :userId, :ctime)
+        ]]>
+    </entry>
+
+    <!--往产品策略板块对应的成份股(product_strategy_plate_security)增加一条记录  -->
+    <entry key="addProductStrategyPlateSecurity">
+        <![CDATA[
+        insert into product_strategy_plate_security
+            (plate_id, symbol, market)
+        values (:plateId, :symbol, :market)
+        ]]>
+    </entry>
+
+    <!-- 往产品策略板块屏蔽股票表(product_strategy_plate_shield_secuirty)增加一条记录 -->
+    <entry key="addProductStrategyPlateShieldSecuirty">
+        <![CDATA[
+        insert into product_strategy_plate_shield_secuirty
+            (plate_id, symbol, market, shield_date)
+        values (:plateId, :symbol, :market, CURDATE())
+        ]]>
+    </entry>
+
+    <!--检查产品名称是否重复-->
+    <entry key="productHasSameName">
+        <![CDATA[
+        SELECT COUNT(*) FROM product_info WHERE create_uid = ? AND NAME = ? AND STATUS > 0
+                ]]>
+    </entry>
+
+    <!-- 修改产品名称 -->
+    <entry key="renameProduct">
+        <![CDATA[
+        update product_info set name = :name where id = :id and create_uid = :userId
+        ]]>
+    </entry>
+
+    <!-- 按系统板块id查找相就的成分股信息 -->
+    <entry key="fetchSystemPlateSecurityInfo">
+        <![CDATA[
+        SELECT DISTINCT a.SYMBOL AS symbol, a.EXCHANGECODE AS market
+        FROM gta_data.plate_stockchangelatest a
+        WHERE a.PLATEID LIKE ? AND updatestate <> 2
+                ]]>
+    </entry>
+
+    <!-- 返回自定义板块的成分股 -->
+    <entry key="fetchCustPlateSecurityInfo">
+        <![CDATA[
+        select distinct a.symbol as symbol, a.market as market
+        from product_strategy_plate_security a where a.plate_id = ?
+        ]]>
+    </entry>
+
+    <!-- 返回板块屏蔽的股票 -->
+    <entry key="fetchPlateShieldSecurityInfo">
+    <![CDATA[
+        select distinct a.symbol as symbol, a.market as market
+        from product_strategy_plate_shield_secuirty a
+        where a.plate_id = ?
+                and a.shield_date =  DATE_FORMAT(NOW(), "%Y-%m-%d") /*这里取的是数据库服务器的日期*/
+        ]]>
+    </entry>
+
+    <!-- 返回自定义板块的成分股的最大持仓量 -->
+    <entry key="fetchPlateMaxPosition">
+        <![CDATA[
+        select
+            max_position as maxPosition
+        from
+            product_strategy_plate
+        where
+            id = ? and max_position is not null
+        ]]>
+    </entry>
+
+    <!-- 返回策略原始标的. 只包含证券 和 主力/连续合约 的 -->
+    <entry key="fetchStrategySecurityOnly">
+        <![CDATA[
+        SELECT distinct a.symbol AS symbol, a.market AS market, a.max_position AS maxPosition
+        FROM strategy_security_original a
+        WHERE a.strategy_id = ?
+                AND a.type in (0,1, 3 )
+                ]]>
+    </entry>
+
+    <!-- 返回策略原始标的. 只包含板块的 -->
+    <entry key="fetchStrategyPlateOnly">
+        <![CDATA[
+        SELECT distinct a.symbol AS `name`, /*把symbol看成板块名称*/
+        	a.system_plate_id AS systemPlateId, /*板块id*/
+        	a.max_position AS maxPosition
+        FROM strategy_security_original a
+        WHERE a.strategy_id = ? AND a.type = 2
+                ]]>
+    </entry>
+
+    <!--软删除产品关联的策略关联关系-->
+    <entry key="deleteProductStrategyByPid">
+        <![CDATA[
+    update product_strategy set `status`=-100  WHERE product_id =:productId and create_uid = :userId
+                ]]>
+    </entry>
+
+    <!--软删除产品策略关联关系 2013-11-08-->
+    <entry key="deleteProductStrategyById">
+        <![CDATA[
+    update product_strategy set `status`=-100  WHERE id =:id and create_uid = :userId
+                ]]>
+    </entry>
+
+    <!--软删除产品-->
+    <entry key="deleteProduct">
+        <![CDATA[
+        update product_info set `status` = -100 where id =:productId and create_uid = :userId
+       ]]>
+    </entry>
+
+    <!--删除产品风控证券-->
+    <entry key="deleteProductRiskStocks">
+        <![CDATA[
+        delete from  risk_control_secrity where  product_id =:productId and create_uid = :userId
+       ]]>
+    </entry>
+    <!--删除产品策略证券代码-->
+    <entry key="deleteProductStrategySecurity">
+        <![CDATA[
+        delete from  product_strategy_security where  product_strategy_id =:productStrategyId and create_uid = :userId
+       ]]>
+    </entry>
+
+    <!--软删除产品与资金帐号关联关系-->
+    <entry key="deleteProductStrategyAccount">
+        <![CDATA[
+        update product_strategy_trade_account set `status`=-100 where product_strategy_id =:productStrategyId and create_uid = :userId
+       ]]>
+    </entry>
+
+
+    <entry key="updateTradeAccountUsed">
+        <![CDATA[
+        update trade_account set used =:used where id =:accountId
+       ]]>
+    </entry>
+
+
+    <entry key="findProductStrategyUsedAccounts">
+        <![CDATA[
+        select distinct trade_account_id from product_strategy_trade_account where product_strategy_id in(#ids#)
+       ]]>
+    </entry>
+
+    <!--产品策略关联的id-->
+    <entry key="findProductStrategyIds">
+        <![CDATA[
+           select distinct id from product_strategy WHERE product_id =:productId
+       ]]>
+    </entry>
+    <!--产品策略板块id-->
+    <entry key="findProductStrategyPlatesIds">
+        <![CDATA[
+            select distinct id from product_strategy_plate where product_strategy_id in(#ids#)
+       ]]>
+    </entry>
+
+    <!--删除产品策略板块下的成份股-->
+    <entry key="deleteProductStrategyCustPlateStocks">
+        <![CDATA[
+            delete from product_strategy_plate_security where plate_id =:plateId
+       ]]>
+    </entry>
+
+    <!--删除产品策略板块下的屏蔽的成份股-->
+    <entry key="deleteProductStrategyShieldScurity">
+        <![CDATA[
+            delete from product_strategy_plate_shield_secuirty where plate_id =:plateId
+       ]]>
+    </entry>
+
+    <!--删除产品策略板块-->
+    <entry key="deleteProductStrategyPlates">
+        <![CDATA[
+            delete from product_strategy_plate where id=:id and create_uid = :userId
+       ]]>
+    </entry>
+
+    <!--判断是否有同名的帐号-->
+    <entry key="tradeAccountSameNameCount11">
+        <![CDATA[
+            select
+                count(*)
+            from
+                trade_account
+            where
+                create_uid = ?
+            and
+                name = ?
+            and
+                STATUS > 0
+                ]]>
+    </entry>
+
+    <!--判断是否有同名的帐号-->
+    <entry key="tradeAccountSameAccount11">
+        <![CDATA[
+            select
+                count(*)
+            from
+                trade_account
+            where
+                account = ?
+            and
+                STATUS > 0
+            and
+                type = ?
+                ]]>
+    </entry>
+
+    <!--返回用户的资金帐号列表-->
+     <entry key="fetchTradeAccountListByUid">
+<![CDATA[
+/*已使用的*/
+SELECT distinct
+    a.id AS id, a.`name` AS 'name', a.password AS password, a.client_id  AS clientId,
+    a.target_comp_id AS targetCompId, a.hedge_type AS hedgeType, a.`type`, a.account,
+    '1' AS used
+FROM trade_account a WHERE a.create_uid = :uid AND a.status = 1 AND a.id IN (
+  SELECT trade_account_id FROM product_strategy_trade_account WHERE create_uid = :uid AND STATUS = 1
+)
+
+union
+
+/*没有使用的*/
+SELECT distinct
+    a.id AS id, a.`name` AS 'name', a.password AS password, a.client_id  AS clientId,
+    a.target_comp_id AS targetCompId, a.hedge_type AS hedgeType, a.`type`, a.account,
+    '0' AS used
+FROM trade_account a WHERE a.create_uid = :uid AND a.status = 1 AND a.id NOT IN (
+    SELECT trade_account_id FROM product_strategy_trade_account WHERE create_uid = :uid AND STATUS = 1
+)
+]]>
+    </entry>
+
+    <!--根据账户ID返回该资金帐号信息-->
+    <entry key="fetchTradeAccountByAccountId">
+        <![CDATA[
+            SELECT distinct
+                a.id AS id,
+                a.`name` AS 'name',
+                a.`account` AS account,
+                a.password AS password ,
+                a.type AS type,
+                a.client_id  AS clientId,
+                a.target_comp_id AS targetCompId,
+                a.hedge_type AS hedgeType
+            FROM trade_account a
+            WHERE a.id = ?
+            AND a.create_uid = ?
+            AND a.status = 1
+                ]]>
+    </entry>
+
+    <!--增加一个资金帐号-->
+    <entry key="addTradeAccount11">
+        <![CDATA[
+            INSERT INTO
+                trade_account
+                (`name`, account, `password`, `type`, create_uid, ctime, `client_id`, target_comp_id, hedge_type,used)
+            VALUES
+                (:name, :account, :password, :type, :userId, :ctime, :clientId, :targetCompId, :hedgeType,0)
+                ]]>
+    </entry>
+
+    <!--软删除一个资金帐号-->
+    <entry key="softDelTradeAccount11">
+        <![CDATA[
+             update
+                trade_account
+             set
+                status = -100
+
+             WHERE
+                id = ?
+             AND
+                create_uid = ?
+             AND
+                used = 0
+                ]]>
+    </entry>
+
+    <!--软删除一个资金帐号(与表 “product_strategy_trade_account”的关联关系)-->
+    <entry key="softDelTradeAccountRelationShip">
+        <![CDATA[
+             update
+                product_strategy_trade_account
+             set
+                `status` = -100
+             WHERE
+                trade_account_id = ?
+                ]]>
+    </entry>
+
+    <!--修改一个资金帐号-->
+    <entry key="updateTradeAccount11">
+        <![CDATA[
+            UPDATE trade_account
+            SET
+            #{if account.name}
+                `name` = :name
+            #{/if}
+            #{if account.account}
+                ,account = :account
+            #{/if}
+            #{if account.password}
+                ,`password` = :password
+            #{/if}
+            #{if account.type != null}
+                ,`type` = :type
+            #{/if}
+            #{if account.clientId}
+                ,client_id = :clientId
+            #{/if}
+            #{if account.hedgeType != null}
+                ,hedge_type = :hedgeType
+            #{/if}
+            #{if account.targetCompId}
+                ,target_comp_id = :targetCompId
+            #{/if}
+
+            WHERE id = :id AND create_uid = :userId;
+                ]]>
+    </entry>
+
+    <!--根据用户ID 查询该用户上传的已上架策略-->
+    <entry key="fetchStrategyByUserId">
+        <![CDATA[
+             SELECT distinct
+              a.id AS id,
+              a.name AS name,
+              a.trade_variety AS tradeVariety  /*交易品种: 1. 股票 2. 期货 3. 混合 */
+            FROM
+              strategy_baseinfo a
+            WHERE a.stup_uid = ?
+              AND a.status = 4
+        ]]>
+    </entry>
+
+    <!--根据策略ID 查询该策略的账户信息-->
+    <entry key="fetchAccountTemplateByStrategyId">
+        <![CDATA[
+             SELECT distinct
+              account_order as accountOrder,
+              account_type as accountType
+            FROM
+              strategy_account_template
+            WHERE strategy_id = ?
+            AND status = 1
+        ]]>
+    </entry>
+
+
+    <!--查询系统当前已使用的全部交易帐号的信息-->
+    <entry key="fetchAllInUsedTradeAccount">
+        <![CDATA[
+             SELECT distinct
+              id,
+              name,
+              account,
+              password,
+              type,
+              client_id as clientId,
+              target_comp_id as targetCompId,
+              hedge_type as hedgeType,
+              ifnull(init_capital, 0.0) as initCapital
+            FROM
+              trade_account
+            WHERE status =1 and  id in (
+              SELECT trade_account_id FROM qic_db.product_strategy_trade_account WHERE STATUS = 1
+            )
+        ]]>
+    </entry>
+
+    <!-- 更新交易帐号的初始资金 -->
+    <entry key="updateTradeAccountInitCapital">
+    <![CDATA[
+update trade_account a set a.init_capital = :initCapital where a.id = :id
+        ]]>
+    </entry>
+
+    <!--根据用户ID 查询用户产品列表-->
+    <entry key="findUserProducts">
+        <![CDATA[
+             SELECT distinct
+              id,
+              name,
+              ctime
+            FROM
+              product_info
+            WHERE create_uid =:uid and status=1
+        ]]>
+    </entry>
+
+    <!--产品策略列表-->
+    <entry key="findProductStrategy">
+        <![CDATA[
+             SELECT distinct
+              ps.id,
+              ps.strategy_id strategyId,
+              sb.name name
+            FROM
+              product_strategy ps
+            inner join
+              strategy_baseinfo sb
+            on
+               sb.id=ps.strategy_id
+            WHERE product_id =:productId and ps.status=1
+        ]]>
+    </entry>
+
+    <!--产品策略账号列表-->
+    <entry key="findProductStrategyAccount">
+        <![CDATA[
+             SELECT distinct
+              psta.trade_account_id accountId,
+              ra.name name,
+              ra.type,
+              ra.account,
+              psta.account_order accountOrder
+            FROM
+              product_strategy_trade_account psta
+            inner join
+              trade_account ra
+            on
+               ra.id=psta.trade_account_id
+            WHERE psta.product_strategy_id =:productStrategyId and psta.status = 1 and ra.status = 1
+        ]]>
+    </entry>
+
+    <!--根据产品ID查询策略信息-->
+    <entry key="queryStrategyByProductId">
+        <![CDATA[
+            SELECT distinct
+              b.`id`, /*关联id*/
+              a.id as strategyId,/*策略id*/
+              a.name,/*策略名*/
+              a.trade_variety as tradeVariety,/*交易品种*/
+              b.`funds_proportion` as fundsProportion/*资金使用比例*/
+            FROM
+              strategy_baseinfo a
+              LEFT JOIN product_strategy b
+                ON b.`strategy_id` = a.`id`
+            WHERE b.`product_id` = :productId
+            AND  b.create_uid = :userId
+            AND  b.status =1
+        ]]>
+    </entry>
+
+    <!--根据产品ID查询产品名称-->
+    <entry key="queryProductNameById">
+        <![CDATA[
+            SELECT
+              name
+            FROM
+              product_info
+            WHERE id = :productId
+            and create_uid = :userId
+        ]]>
+    </entry>
+
+    <!--根据产品ID查询风控证券信息-->
+    <entry key="queryRiskControlSecrities">
+        <![CDATA[
+            SELECT distinct
+              a.`symbol` as symbol,
+              a.`market` as market
+            FROM
+              risk_control_secrity a
+            WHERE a.`product_id`= :productId
+            and create_uid = :userId
+        ]]>
+    </entry>
+
+    <!--根据策略ID 产品ID查询交易账户-->
+    <entry key="queryTradeAccount">
+        <![CDATA[
+            SELECT distinct
+              a.`id` as accountId,
+              a.`account` as account,
+              a.`name` as name,
+              a.`type` as type,
+              b.`account_order` as accountOrder
+            FROM
+              trade_account a
+            INNER JOIN
+                product_strategy_trade_account b
+            ON
+                a.id = b.`trade_account_id`
+            INNER JOIN
+                product_strategy c
+            ON
+                b.`product_strategy_id` = c.id
+            WHERE
+                c.`strategy_id` = :strategyId
+             AND
+                c.`product_id` = :productId
+             AND
+                c.status = 1
+             AND
+                a.status = 1
+             AND
+                b.status=1
+        ]]>
+    </entry>
+
+    <!--根据产品ID、策略ID查询策略的单个证券集合-->
+    <entry key="fetchSecuritiesById">
+        <![CDATA[
+            SELECT distinct
+                a.symbol AS symbol,
+                a.market AS market,
+                a.max_position AS maxPosition
+            FROM
+                 product_strategy_security a
+            INNER JOIN
+                 product_strategy b
+            ON
+                 a.product_strategy_id = b.id
+            WHERE b.product_id = :productId
+             AND b.strategy_id = :strategyId
+             and a.symbol is not null
+             and a.market is not null
+             and a.max_position is not null
+        ]]>
+    </entry>
+
+    <!--根据产品ID、策略ID查询策略的板块信息-->
+    <entry key="fetchPlatesById">
+        <![CDATA[
+           SELECT distinct
+                a.id as plateId,
+                a.name AS name,
+                a.max_position AS maxPosition, /*最大持仓量*/
+                a.system_plate_id AS systemPlateId, /*系统板块id, -1表示是自定义板块*/
+                a.trace_system_plate AS traceSystemPlate /*是否跟踪系统板块.0不跟踪, 1跟踪*/
+            FROM
+                 product_strategy_plate a
+            INNER JOIN
+                 product_strategy b
+            ON
+                 a.product_strategy_id = b.id
+            WHERE b.product_id = :productId
+              AND b.strategy_id = :strategyId
+        ]]>
+    </entry>
+
+    <!--根据策略实例ID查询策略的资金使用比例-->
+    <entry key="queryfundsProportionById">
+        <![CDATA[
+          SELECT
+                a.`funds_proportion` AS fundsProportion
+            FROM
+                `product_strategy` a
+            WHERE
+                a.`id`= :productStrategyId
+            AND
+                a.status = 1
+        ]]>
+    </entry>
+
+    <!--根据策略实例ID查询策略绑定的账号信息-->
+    <entry key="queryTradeAccountById">
+        <![CDATA[
+          SELECT DISTINCT
+                a.`name` AS name,
+                a.`account` AS account,
+                a.`password` AS password,
+                a.`type` AS type,
+                a.`client_id` AS clientId,
+                a.`target_comp_id` AS targetCompId,
+                a.`hedge_type` AS hedgeType,
+                ifnull(a.`init_capital`, 0.0)  as initCapital,
+                b.`account_order` AS accountOrder
+            FROM
+                product_strategy_trade_account b
+            INNER JOIN
+                 trade_account a
+            ON
+                a.`id` = b.`trade_account_id`
+            INNER JOIN
+                product_strategy c
+            ON
+                c.`id` = b.`product_strategy_id`
+            WHERE
+                c.`id` = :productStrategyId
+            AND
+                c.status = 1
+            AND
+                a.status = 1
+            and
+                b.status = 1
+        ]]>
+    </entry>
+
+    <!--根据策略实例ID查询单个证券列表-->
+    <entry key="fetchProductStrategySecurity">
+        <![CDATA[
+          SELECT distinct
+                a.`symbol` AS symbol,
+                a.`market` AS market,
+                a.`max_position` AS maxPosition
+            FROM
+                 product_strategy_security a
+            WHERE
+                a.`product_strategy_id` = :productStrategyId
+                and a.symbol is not null
+                and a.market is not null
+                and a.max_position is not null
+        ]]>
+    </entry>
+
+
+    <!--根据策略实例ID查询对应板块ID-->
+    <entry key="fetchPlatesIdByProductStrategyId">
+        <![CDATA[
+          SELECT distinct
+                a.id AS plateId, a.system_plate_id as systemPlateId
+            FROM
+                 product_strategy_plate a
+            WHERE
+                a.`product_strategy_id` = :productStrategyId
+
+        ]]>
+    </entry>
+
+    <!-- 按产品策略id获取 风控证券 + 当日已屏蔽的成分股 -->
+    <entry key="fetchRiskSecAddShieldSecByProductStrategyId">
+    <![CDATA[
+        SELECT DISTINCT
+            CONCAT(a.symbol, ',', a.market) AS codeMarket
+        FROM
+            risk_control_secrity a
+            INNER JOIN product_strategy b
+                ON a.product_id = b.product_id
+        WHERE b.id = :productStrategyId
+            AND b.status = 1
+            AND a.symbol IS NOT NULL
+            AND a.market IS NOT NULL
+
+        UNION
+
+        SELECT DISTINCT
+            CONCAT(a.symbol, ',', a.market) AS codeMarket
+        FROM
+            product_strategy_plate_shield_secuirty a
+            INNER JOIN product_strategy_plate b
+                ON a.plate_id = b.id
+        WHERE a.shield_date = DATE_FORMAT(NOW(), "%Y-%m-%d") /*这里取的是数据库服务器的日期*/
+            AND b.product_strategy_id = :productStrategyId
+            AND a.symbol IS NOT NULL
+            AND a.market IS NOT NULL
+        ]]>
+    </entry>
+
+    <!--返回当日主力连续合约全部选项-->
+    <entry key="fetchAllMainContractAndContinuingContract">
+        <![CDATA[
+        SELECT DISTINCT b.exchangecode AS exchangeCode,  b.UNDERLYINGASSETSCODE AS underlyingAssetsCode, b.CONTINUESIGN AS CODE
+        FROM pub_continuingcontract b
+        WHERE b.TRADINGDATE= (SELECT MAX(TRADINGDATE) FROM pub_continuingcontract) /*连续合约*/
+
+        UNION
+
+        SELECT DISTINCT a.EXCHANGECODE AS exchangeCode, a.UNDERLYINGASSETSCODE AS underlyingAssetsCode, a.MODEID AS CODE
+        FROM pub_maincontract a
+        WHERE a.NEXTTRADINGDATE = (SELECT MAX(NEXTTRADINGDATE) FROM pub_maincontract)
+        ]]>
+    </entry>
+
+    <!-- 返回当日主力连续合约所对应的具体证券 -->
+    <entry key="fetchAllMainContractAndContinuingContractRealSymbol">
+    <![CDATA[
+        SELECT distinct CONCAT(b.EXCHANGECODE, b.UNDERLYINGASSETSCODE, b.CONTINUESIGN) AS comcode /*组合码*/, b.SYMBOL /*真实证券代码*/
+        FROM pub_continuingcontract b
+        WHERE b.TRADINGDATE = (select max(TRADINGDATE) from pub_continuingcontract)
+
+        UNION
+
+        SELECT distinct CONCAT(a.EXCHANGECODE, a.UNDERLYINGASSETSCODE, a.MODEID) AS comcode, a.SYMBOL
+        FROM pub_maincontract a
+        WHERE a.NEXTTRADINGDATE = (select max(NEXTTRADINGDATE) from pub_maincontract)
+        ]]>
+    </entry>
+
+    <!--返回用户的所有产品ID-->
+    <entry key="fetchProductIdByUid">
+        <![CDATA[
+          SELECT
+             a.id
+          FROM
+             product_info a
+          WHERE
+             a.create_uid = :userId
+          AND a.status = 1
+        ]]>
+    </entry>
+
+    <!--查询所有运行实利id以及其所用到的账号-->
+    <entry key="fetchAllRuntimeStrategyAcconts">
+        <![CDATA[
+          SELECT distinct
+             product_strategy_id productStrategyId,
+             ta.account account,
+             ifnull(ta.init_capital, 0.0) as initCapital
+          FROM
+             product_strategy_trade_account ps
+          inner join
+            trade_account ta
+          on
+            ta.id=ps.trade_account_id
+          WHERE
+             ps.status=1 and ta.status=1
+          order by ps.product_strategy_id desc
+        ]]>
+    </entry>
+
+    <!-- 往产品策略关联表增加一条记录 -->
+    <entry key="updateProductStrategy">
+        <![CDATA[
+        update product_strategy
+            set funds_proportion=:fundsProportion where id=:id and create_uid=:userId
+        ]]>
+    </entry>
+
+
+</properties>

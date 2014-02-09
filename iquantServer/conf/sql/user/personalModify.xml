@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>个人信息修改</comment>
+
+    <entry key="findUserInfoDtoById">
+        <![CDATA[
+            SELECT
+              a.`account` AS account,
+              a.`name` AS 'name',
+              a.`email` AS email,
+              a.`phone` AS phone,
+              a.`address`AS address,
+              a.`pwd` AS 'password'
+            FROM
+              qic_db.`user_info` a
+            WHERE id = ?
+                ]]>
+    </entry>
+    <entry key="updateUserInfoById">
+        <![CDATA[
+               UPDATE
+            qic_db.`user_info`
+            SET
+              NAME = ?,
+              email = ?,
+              phone = ?,
+              address = ?,
+              pwd = ?
+            WHERE id = ?
+                ]]>
+    </entry>
+    <entry key="checkEmail">
+        <![CDATA[
+            SELECT
+              a.`account` AS account,
+              a.`name` AS 'name',
+              a.`email` AS email,
+              a.`phone` AS phone,
+              a.`address` AS address,
+              a.`pwd` AS 'password'
+            FROM
+              qic_db.`user_info` a
+            WHERE a.`email` = ? and a.`email` <> ?
+                ]]>
+    </entry>
+
+
+</properties>

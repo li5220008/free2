@@ -1,0 +1,270 @@
+
+
+<li class="display" id="showtab_${stockPoolBasicInfo.stockPoolCode}" entityid="${stockPoolBasicInfo.stockPoolCode}">
+    <!--基本信息 Begin-->
+
+    <div class="stable_info">
+
+        <div class="stable_txt">
+            <h3 class="stable_h3">
+            #{emVF stockPoolBasicInfo.stockPoolName/}
+
+            </h3>
+            <h3 class="common_til_h3">
+             <span class="my_comment my_comment_img">
+                *{<span class="add_collect">&nbsp;</span>}*
+                #{if iscollect == true}
+                    #{hasAuth '10'}<span data-collectid="${stockPoolCode}" class="add_collect btn_uncollect"></span>#{/hasAuth}
+                #{/if}
+                #{else }
+                   #{hasAuth '10'}<span data-collectid="${stockPoolCode}" class="add_collect"></span>#{/hasAuth}
+                #{/else}
+                    #{hasAuth '10'}
+                    #{if is_comment > 0}
+                        <img class="for_img" src="@{'/public/images/un_comment.png'}">
+                    #{/if}
+                    #{else }
+                        <img class="stable_comment"  src="@{'/public/images/my_comment.png'}">
+                    #{/else}
+                    #{/hasAuth}
+
+
+            </span>
+                <div class="attachment_research">
+                *{<a href="#{emVF stockPoolBasicInfo.filestoragePath  /}" target="_blank"> <img src="@{'/public/images/attachment.png'}"></a>
+                            &nbsp;&nbsp;}*
+                    <a style="cursor:pointer;"> <img src="@{'/public/images/research.png'}" id="mytext3" entityid="${stockPoolBasicInfo.stockPoolCode}"> </a>
+                *{onclick="showdiv(this.id,getobj('list').value)" }*
+                    <div class="research_report" title="策略对比">
+
+                    </div>
+                    <input type="hidden" value="#{emVF stockPoolBasicInfo.summary/}" id="list">
+                </div>
+            </h3>
+
+            <table width="100%" class="tbl_union" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td width="7%" align="left"> 组合收益：</td>
+                #{if stockPoolBasicInfo.annualizedYield==null }
+                    <td width="14%">0.00%</td>
+                #{/if}
+                #{else }
+                    <td width="14%">#{emVF stockPoolBasicInfo.annualizedYield*100 ,f:'##0.00', u:'%' /}</td>
+                #{/else}
+                    <td width="20%">组合评级：
+                    #{if stockPoolBasicInfo.starNum>4.7}
+                        <span class="all_star_10"> </span>
+                    #{/if}
+                    #{elseif stockPoolBasicInfo.starNum<=4.7 &&stockPoolBasicInfo.starNum>4.2}
+                        <span class="all_star_9"> </span>
+                    #{/elseif}
+                    #{elseif stockPoolBasicInfo.starNum<=4.2 &&stockPoolBasicInfo.starNum>3.7}
+                        <span class="all_star_8"> </span>
+                    #{/elseif}
+                    #{elseif stockPoolBasicInfo.starNum<=3.7 &&stockPoolBasicInfo.starNum>3.2}
+                        <span class="all_star_7"> </span>
+                    #{/elseif}
+                    #{elseif stockPoolBasicInfo.starNum<=3.2 &&stockPoolBasicInfo.starNum>2.7}
+                        <span class="all_star_6"> </span>
+                    #{/elseif}
+                    #{elseif stockPoolBasicInfo.starNum<=2.7 &&stockPoolBasicInfo.starNum>2.2}
+                        <span class="all_star_5"> </span>
+                    #{/elseif}
+                    #{elseif stockPoolBasicInfo.starNum<=2.2 &&stockPoolBasicInfo.starNum>1.7}
+                        <span class="all_star_4"> </span>
+                    #{/elseif}
+                    #{elseif stockPoolBasicInfo.starNum<=1.7 &&stockPoolBasicInfo.starNum>1.2}
+                        <span class="all_star_3"> </span>
+                    #{/elseif}
+                    #{elseif stockPoolBasicInfo.starNum<=1.2 &&stockPoolBasicInfo.starNum>0.7}
+                        <span class="all_star_2"> </span>
+                    #{/elseif}
+                    #{elseif stockPoolBasicInfo.starNum<=0.7 &&stockPoolBasicInfo.starNum>0}
+                        <span class="all_star_1"> </span>
+                    #{/elseif}
+                    </td>
+                    <td width="58%">选出股票：#{emVF stockPoolBasicInfo.stockNum  /}</td>
+                </tr>
+                <tr>
+                    <td align="left">组合来源：</td>
+                    <td colspan="3">#{emVF stockPoolBasicInfo.institutionName  /} </td>
+                </tr>
+                <tr>
+                    <td align="left">更新频率：</td>
+                    <td colspan="3">#{emVF stockPoolBasicInfo.updateFrequency  /} </td>
+                </tr>
+                <tr>
+                    <td align="left" valign="top">组合说明：</td>
+                    <td colspan="3">#{emVF stockPoolBasicInfo.strategy  /} </td>
+                </tr>
+
+            </table>
+        </div>
+
+    </div>
+
+    <table width="100%" cellspacing="0" cellpadding="0" border="0" class="tbl_exec tbl_stable">
+        <tr>
+            <th width="7%">代码</th>
+            <th width="7%">名称</th>
+            <th width="8%">最新</th>
+            <th width="9%">涨跌</th>
+            <th width="9%">涨幅%</th>
+            <th width="9%">成交量</th>
+            <th width="9%">成交额</th>
+            <th width="9%">买入/卖出价</th>
+            <th width="15%">买入/卖出量</th>
+            <th width="9%">昨收/今开</th>
+            <th width="9%">最高/最低</th>
+           *{ <th width="9%">交换码</th>
+            <th width="9%">简称</th>}*
+
+        </tr>
+    </table>
+
+
+
+
+    <div class="tbl_scroll tbl_scroll_2">
+
+        <table  id="combindata_${stockPoolBasicInfo.stockPoolCode}" width="100%" cellspacing="0" cellpadding="0" border="0" class="tbl_common tbl_exec tbl_no_scroll">
+
+
+        #{list items : stockPoolCombineInfoDtoList, as : 'item'}
+            <tr>
+                <td width="7%"><a href="javascript:jumpToQuote('#{emVF v : item.scode/}');">#{emVFC v : item.scode/}</a></td>
+                <td width="7%">#{emVF v : item.shortName /}</td>
+                <td width="8%">#{emVF v : item.current ,f:"0.00"/}</td>
+                <td width="9%">#{emVF v : item.change,f:"0.00"/}</td>
+                <td width="9%">#{emVF v : item.changeRate,f:"0.00"/}</td>
+                <td width="9%">#{emVF v : item.volume,f:"0.00"/}</td>
+                <td width="9%">#{emVF v : item.amount,f:"0.00"/}</td>
+                <td width="9%">#{emVF v : item.buyprice,f:"0.00"/}/#{emVF v : item.sellprice,f:"0.00"/}</td>
+                <td width="15%">#{emVF v : item.buynum,f:"0.00"/}/#{emVF v : item.sellnum,f:"0.00"/}</td>
+                <td width="9%">#{emVF v : item.prvclose,f:"0.00"/}/#{emVF v : item.open,f:"0.00"/}</td>
+                <td width="9%">#{emVF v : item.high,f:"0.00"/}/#{emVF v : item.low,f:"0.00"/}</td>
+                <input type="hidden" value="#{emVF v : item.exchangeCode/}"/>
+            </tr>
+        #{/list}
+
+
+        </table>
+
+    </div>
+
+    <!--基本信息 End-->
+
+    <!--对单个股票池的评价 Begin-->
+    <div class="comment_wrap"  title="我要评价" style="display: none;">
+        <form action="post" id="spForm${stockPoolBasicInfo.stockPoolCode}">
+            <h3 class="stable_title">
+            #{emVF stockPoolBasicInfo.stockPoolName/}
+            </h3>
+            <input type="hidden" name="spid" value="${stockPoolBasicInfo.stockPoolCode}">
+
+            <!--模仿下拉框 Begin-->
+            <div class="select_wrap">
+                <label>
+                    评价:
+                </label>
+                <div class="dialog_box">
+                    <input type="hidden" name="star" value="5"  id="reportDate_${stockPoolBasicInfo.stockPoolCode}"  autocomplete="off">
+                    <input type="hidden" id="reportName_${stockPoolBasicInfo.stockPoolCode}"  autocomplete="off">
+                    <div class="sel_84_dialog" id="select_star_${stockPoolBasicInfo.stockPoolCode}">
+                        <span class="star_5">5</span>
+                    </div>
+
+                    <ul class="sel_91_option" id="options_star_${stockPoolBasicInfo.stockPoolCode}">
+                        <li class="star_5"  data-name="12">5</li>
+                        <li class="star_4" data-name="11">4</li>
+                        <li class="star_3" data-name="10">3</li>
+                        <li class="star_2" data-name="19">2</li>
+                        <li class="star_1" data-name="18">1</li>
+                    </ul>
+                </div>
+            </div>
+            <!--模仿下拉框 End-->
+        </form>
+    </div>
+    <!--评价 End-->
+*{//保存用户评价}*
+    <input type="hidden" id="comment" value="${is_comment}">
+    <input type="hidden" id="stockPoolCode" value="${stockPoolBasicInfo.stockPoolCode}">
+*{ <script type="text/javascript">
+        alert($("#comment").val());
+        alert($("#stockPoolCode").val()) ;
+
+    </script>}*
+
+</li>
+
+
+<script>
+    // window.resizeHeight('.tbl_scoll_${stockPoolBasicInfo.stockPoolCode}', 400);
+
+    Collect();     // 收藏
+    function Collect() {
+        $(".add_collect,.btn_uncollect").click(function (event) {
+            var className = $(this).attr('class');
+            var element = $(this);
+            var target = event.target;
+            if (className == 'add_collect') {
+                //添加收藏
+
+                var id = $(this).attr("data-collectid");
+                $.get("/StockPoolCollects/addcollect", {spid:id}, function (data) {
+                    if (data.isSuccess) {
+                        $.qicTips({
+                            target:target,
+                            level:1,
+                            message:'收藏成功'
+                        });
+                        element.removeClass("add_collect").toggleClass("add_collect btn_uncollect")
+                    } else {
+                        $.qicTips({
+                            target:target,
+                            level:2,
+                            message:'收藏失败'
+                        });
+                    }
+                    //载入成功时回调函数
+                }, "json");
+            }
+            else if (className == 'add_collect btn_uncollect') {
+                //取消收藏
+                var element = $(this);
+                var id = $(this).attr("data-collectid");
+                $.get("/StockPoolCollects/delcollect", {spid:id}, function (data) {
+                    if (data.isSuccess) {
+                        $.qicTips({
+                            target: target,
+                            level: 1,
+                            message: '取消成功'
+                        });
+                        var text = $(event.target).parent().parent().find(".collect_num").find('.blue').html();
+                        $(event.target).parent().parent().find(".collect_num").find('.blue').html(parseInt(text) -1)
+                        element.removeClass("add_collect btn_uncollect").toggleClass("add_collect")
+                    } else {
+                        $.qicTips({
+                            target: target,
+                            level: 2,
+                            message: '取消失败'
+                        });
+                    }
+                    //载入成功时回调函数
+                }, "json");
+            }
+        });
+    }
+
+    function jumpToQuote(code) {
+        if (code.substr(0, 1) == "6") {
+            qicScriptContext.jumpToQuoteChart(1, code);
+        } else {
+            qicScriptContext.jumpToQuoteChart(2, code);
+        }
+    }
+</script>
+
+
+

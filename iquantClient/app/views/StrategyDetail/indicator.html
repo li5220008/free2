@@ -1,0 +1,106 @@
+<h2 class="bar_title">
+    绩效指标
+    <a href="javascript:" id="changeIndicatorBox"  class="perf_index" ><span id="changeIndicator">#{if type==1}实时模拟#{/if}#{else }历史回测#{/else}</span> </a>
+</h2>
+
+<div class="right_2_wrap">
+
+    <table width="100%" class="tbl_perfomance" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td  width="46%">年化收益率</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.averageSimpleRateOfReturn, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">夏普比率</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.sharpRatio, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">胜率</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.hitRate, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">超额收益率</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.excessReturnOnVar, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">波动率</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.volatility, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">beta值</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.beta, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">Jensen</td>
+            <td width="54%">#{emVFC v : qiaIndicatorDto.jensenRatio, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">Treynor</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.treynorRatio, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">最大回撤</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.maximumDrawdown, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">Calmar</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.calmarRatio, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">CSR</td>
+            <td width="54%">#{emVFC v : qiaIndicatorDto.conditionalSharpRatio, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">HPM</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.highterPartialMoments, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">Kappa3</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.kappa3, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">CVaR</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.conditionalVar, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">LPM</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.lowerPartialMoments, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">MSR</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.modifiedSharpRatio, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">MVaR</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.mvar, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">Omega</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.omega, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">Sortino</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.sortinoRatio, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">上行空间</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.upsidePotentialRatio, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">VaR</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.var, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">偏度</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.skewness, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">峰度</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.kurtosis, f : '#,##0.00',c:true/}</td>
+        </tr>
+        <tr>
+            <td  width="46%">市场相关度</td>
+            <td width="54%">#{emVF v : qiaIndicatorDto.corrWithMarket, f : '#,##0.00',c:true/}</td>
+        </tr>
+    </table>
+</div>

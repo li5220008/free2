@@ -1,0 +1,212 @@
+#{extends 'main.html' /}
+#{set title:'消息通知' /}
+
+#{set 'moreStyles'}
+<link rel="stylesheet" type="text/css" href="@{'/public/stylesheets/admin-config-log.css'}">
+#{/set}
+
+
+<body>
+
+
+<!--strategy_nav Begin-->
+<div class="strategy_nav">
+    <div class="tmap_til">
+        <div class="tmap_til_left">
+            &nbsp;
+        </div>
+        <div class="tmap_til_middle">
+            消息通知&nbsp;&nbsp;
+        </div>
+        <div class="tmap_til_right">
+            &nbsp;
+        </div>
+
+
+    </div>
+</div>
+<!--strategy_nav End-->
+
+<!--main_wrap Begin-->
+<div class="main_wrap">
+
+
+    <!--sp_right Begin-->
+    <div class="sp_right_wrap">
+        <div class="content_title">
+            <div class="tab_title">
+                <form action="@{MessagesInfos.msgList()}" method="get"  id='dueSort'>
+                <table width="100%" class=" tbl_exec" border="0" cellspacing="0" cellpadding="0">
+                    #{if orderFlag==0}
+                        <input type="hidden" name="orderFlag" value="1">
+                    #{/if}
+                    #{else }
+                        <input type="hidden" name="orderFlag" value="0">
+                    #{/else}
+
+                    <tr>
+                        <th width="10%"><img src="/public/images/check_uncheck.png" class="check_uncheck"></th>
+                        <th width="75%" align="left">主题</th>
+                        <th width="15%" onclick="orderdus()">时间#{if orderFlag==0}↓#{/if}#{else }↑#{/else}</th>
+                    </tr>
+
+                </table>
+                </form>
+                <div class="tbl_scoll log_tbl">
+                    <table width="100%" class="tbl_common tbl_exec" border="0" cellspacing="0" cellpadding="0">
+                        #{list items:userMsgList,as : 'item'}
+                        <tr>
+                            #{if item.status == 1}
+                            <td width="10%"><input type="checkbox" name="" value="${item.id}"></td>
+                            <td width="75%" align="left"><a href="#" class="message_cont" style="font-weight:bold;" param_id="${item.id}" param_value="${item.msg}">${item.title}</a></td>
+                            <td width="15%">#{emVF v: item.msgTime,f: 'yyyy-MM-dd'/}</td>
+                            #{/if}
+                            #{else }
+                                <td width="10%"><input type="checkbox" name="" value="${item.id}"></td>
+                                <td width="75%" align="left"><a href="#" class="message_cont"  param_id="${item.id}" param_value="${item.msg}">${item.title}</a></td>
+                                <td width="15%">#{emVF v: item.msgTime,f: 'yyyy-MM-dd'/}</td>
+                            #{/else}
+                        </tr>
+                        #{/list}
+                    </table>
+                </div>
+                <!--分页 Begin-->
+                <div class="page">
+                    <div class="page_center">
+                        <form action="@{MessagesInfos.msgList()}" class="pageFrom" method="get">
+                        #{paging page:page /}
+                        </form>
+                    </div>
+                </div>
+                <!--分页 End-->
+                <div class="control_active">
+                    <div class="control_active_wrap">
+                        <span class="remove_user">删除</span>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+    </div>
+    <!--sp_right End-->
+
+</div>
+<!--main_wrap End-->
+
+<link href="/public/stylesheets/ui-lightness/jquery-ui-1.9.1.custom.css" rel="stylesheet">
+<script src="/public/javascripts/jquery-ui-1.9.1.custom.js"></script>
+<div class="message_cont_box" title="消息内容" style="display: none;">
+    <div class="msg_log_line" >
+    </div>
+</div>
+
+<script>
+    function orderdus(con){
+        var form =$('#dueSort')[0];
+        form.submit();
+    }
+</script>
+<script>
+    (function () {
+        window.resizeHeight('.str_notice', 220);
+        window.resizeWidth('.tab_title', 31);
+        window.resizeHeight('.tbl_scoll', 185);
+
+        $(".check_uncheck").toggle(function () {
+            //check() uncheck()方法 是自定义jQ对象方法
+            //选中项
+            var checked = $(this).closest(".content_title").find('.tbl_common input[type="checkbox"]').check();
+        }, function () {
+            $(this).closest(".content_title").find('.tbl_common input[type="checkbox"]').uncheck();
+        });
+         $(".message_cont").each(function(){
+             $(".message_cont").click
+         })
+        $(".message_cont").click(function () {
+            var event = $(this);
+            event.attr("style", "");
+            var msg_id = event.attr("param_id");
+            $(".msg_log_line").html( "尊敬的用户您好:"+"<br>"+event.attr("param_value"));
+            $(".message_cont_box").dialog({
+                width:400,
+                height:'auto',
+                resizable:false,
+                modal:true
+            });
+            $.ajax({
+                url:"/MessagesInfos/updateMsgStatus",
+                dataType:'json',
+                data:{"msgId":msg_id},
+                type:"post"
+            })
+        });
+    })();
+
+    function getCheckBoxValue(){
+        var my_arry = [];
+        $("input[type=checkbox]").each(function(){
+            if(this.checked){
+                my_arry.push($(this).val());
+            }
+        })
+        return my_arry;
+    }
+    $(".remove_user").click(function(event){
+        if(getCheckBoxValue().length == 0 ){
+            $.qicTips({
+                target:'.remove_user',
+                level:2,
+                message:"请选择消息"
+            });
+            return;
+        }
+
+        new QicDialog({
+            message:"确认删除？",
+            title:"",
+            confirmName:"",
+            cancelName:"",
+            confirm:function(){
+                $.ajax({
+                    url:"/MessagesInfos/delMsg",
+                    dataType:'json',
+                    data:{"ids":getCheckBoxValue()},
+                    type:"post",
+                    success:function(data){
+                        if(data.success){
+                            $.qicTips({
+                                target:event.target,
+                                level:1,
+                                message: data.message
+                            });
+                            setTimeout(function(){
+                                window.location.reload();
+                            },400);
+
+                        }
+                    },
+                    error:function(data){
+                        if(!data.success){
+                            $.qicTips({
+                                target:'body',
+                                level:2,
+                                message:"出错了....."
+                            });
+                        }
+
+                    }
+                });
+            }
+        }).confirm();
+
+    });
+
+
+</script>
+
+</body>
+

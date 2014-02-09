@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>userinfo  sql</comment>
+
+
+    <entry key="findUserTemplate">
+             <![CDATA[
+                    SELECT
+                       id id,
+                       uid uid,
+                       type  type,
+                       name name,
+                       content content
+                    FROM
+                       user_template
+                    WHERE
+                       uid=:uid and type=:type
+                ]]>
+    </entry>
+
+    <entry key="findTemplateByType">
+        <![CDATA[
+                    SELECT
+                       id id,
+                       uid uid,
+                       type  type,
+                       name name,
+                       content content
+                    FROM
+                       user_template
+                    WHERE
+                       uid=:uid and type=:type and name=:name
+                ]]>
+    </entry>
+
+    <entry key="findTemplateById">
+        <![CDATA[
+                    SELECT
+                       id id,
+                       uid uid,
+                       type  type,
+                       name name,
+                       content content
+                    FROM
+                       user_template
+                    WHERE
+                       id=:id
+                ]]>
+    </entry>
+
+
+    <entry key="addTemplate">
+        <![CDATA[
+                    INSERT INTO user_template(
+                       uid,
+                       type,
+                       name,
+                       content
+                    ) VALUES(
+                       :uid,
+                       :type,
+                       :name,
+                       :content
+                    )
+
+                ]]>
+    </entry>
+
+
+    <entry key="deleteTemplateById">
+        <![CDATA[
+                    DELETE FROM
+                       user_template
+                    WHERE
+                       id=:id
+                ]]>
+    </entry>
+
+    <entry key="updateUserTemplate">
+        <![CDATA[
+                    update
+                       user_template
+                    set
+                       name=:name,
+                       content=:content
+                    WHERE
+                       id=:id
+                ]]>
+    </entry>
+
+    <entry key="renameUserTemplate">
+        <![CDATA[
+                    update
+                       user_template
+                    set
+                       name=:name
+                    WHERE
+                       id=:id
+                ]]>
+    </entry>
+
+</properties>

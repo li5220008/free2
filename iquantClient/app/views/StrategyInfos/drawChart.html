@@ -1,0 +1,115 @@
+
+
+<!--highcharts 绘图begin-->
+<script>
+    var interval = 1;//控制X轴坐标间隔
+    var days = 4;
+    //------------------------日线图 绘图所需数据-------------------------//
+    var daymaxDate =${dayDataRTM[0]};//最大的实时模拟日期
+    var dayminDate =${dayDataHTM[1]};//最小的历史回测日期
+    //最大收益率
+    var daymaxYield = parseFloat(${dayDataHTM[2]}) > parseFloat(${dayDataRTM[2]}) ? parseFloat(${dayDataHTM[2]}) : parseFloat(${dayDataRTM[2]});
+    var daystrategysHTM =${dayDataHTM[3]};//历史回测数据组装在这里
+    var daystrategysRTM =${dayDataRTM[3]};//实时模拟数据组装在这里
+    var day_pre_Yield;//收益率平均值
+    if (parseFloat(${dayDataHTM[2]}) > parseFloat(${dayDataRTM[2]})) {
+        day_pre_Yield = parseFloat(${dayDataHTM[4]});
+    } else {
+        day_pre_Yield = parseFloat(${dayDataRTM[4]});
+    }
+    var daymaxYieldH = ${dayDataHTM[2]};//历史回测最大收益率
+    var daymaxYieldR = ${dayDataRTM[2]};//实时模拟最大收益率
+    var day_pre_YieldH = ${dayDataHTM[4]};//历史回测收益率平均值
+    var day_pre_YieldR = ${dayDataRTM[4]};//实时模拟收益率平均值
+    var daymaxDateR = ${dayDataRTM[0]};//实时模拟最大日期
+    var daymaxDateH = ${dayDataHTM[0]};//历史回测最大日期
+    var dayminDateR = ${dayDataRTM[1]};//实时模拟最小日期
+    var dayminDateH = ${dayDataHTM[1]};//历史回测最小日期
+
+    //------------------周线图数据 请对照上面日线数据---------//
+    var weekmaxDate =${weekDataRTM[0]};
+    var weekminDate =${weekDataHTM[1]};
+    var weekmaxYield = parseFloat(${weekDataHTM[2]}) > parseFloat(${weekDataRTM[2]}) ? parseFloat(${weekDataHTM[2]}) : parseFloat(${weekDataRTM[2]});
+    var weekstrategysHTM =${weekDataHTM[3]};
+    var weekstrategysRTM =${weekDataRTM[3]};
+    var week_pre_Yield;
+    if (parseFloat(${weekDataHTM[2]}) > parseFloat(${weekDataRTM[2]})) {
+        week_pre_Yield = parseFloat(${weekDataHTM[4]});
+    } else {
+        week_pre_Yield = parseFloat(${weekDataRTM[4]});
+    }
+    var weekmaxYieldH = ${weekDataHTM[2]};
+    var weekmaxYieldR = ${weekDataRTM[2]};
+    var week_pre_YieldH = ${weekDataHTM[4]};
+    var week_pre_YieldR = ${weekDataRTM[4]};
+    var weekmaxDateR = ${weekDataRTM[0]};
+    var weekmaxDateH = ${weekDataHTM[0]};
+    var weekminDateR = ${weekDataRTM[1]};
+    var weekminDateH = ${weekDataHTM[1]};
+</script>
+<!--highcharts绘图 end-->
+<script src="@{'/public/javascripts/StrategyDetail/strategyDetails.js'}" type="text/javascript" charset="utf-8"></script>
+<div class="append_item">
+</div>
+
+<div class="t_w_img">
+    <!--日线-->
+    <div class="dw_pic" id="day_trategy_container"></div>
+    <!--周线-->
+    <div class="dw_pic" id="week_trategy_container"></div>
+
+    <div class="day_week">
+        <div class="day_line dw_curren" id="day">
+            日线
+        </div>
+        <div class="week_line" id="week">
+            周线
+        </div>
+    </div>
+</div>
+<!-- 改变 日线 周线样式-->
+<script type="text/javascript">
+    $(document).ready(function () {
+        <!-- 页面加载时 加载绘图数据-->
+        interval = parseInt((daymaxDate - dayminDate) / days);
+        if(interval < 24*3600*1000){
+            interval = 24*3600*1000;
+        }
+        dailyChart.xAxis[0].update({
+            min:dayminDate,
+            max:daymaxDate,
+            tickInterval:interval
+        });
+        dailyChart.series[0].setData(daystrategysHTM.data);
+        dailyChart.series[1].setData(daystrategysRTM.data);
+
+        weeklyChart.xAxis[0].update({
+            min:weekminDate,
+            max:weekmaxDate,
+            tickInterval:interval
+        })
+        weeklyChart.series[0].setData(weekstrategysHTM.data);
+        weeklyChart.series[1].setData(weekstrategysRTM.data);
+
+        dailyChart.setSize(710,400);
+        weeklyChart.setSize(710,400);
+        //切换日线/周线
+        $("#day").click(function () {
+            $("#week_trategy_container").hide();
+            $("#day_trategy_container").show();
+            $("#day").addClass("day_line dw_curren");
+            $("#week").removeClass("day_line dw_curren");
+            $("#week").addClass("week_line");
+//                  weeklyChart.setSize(aWidth, aHeight);
+        });
+        $("#week").click(function () {
+            $("#day_trategy_container").hide();
+            $("#week_trategy_container").show();
+            $("#week").addClass("day_line dw_curren");
+            $("#day").removeClass("day_line dw_curren");
+            $("#day").addClass("week_line");
+        });
+
+    });
+    $("#week_trategy_container").hide();
+</script>

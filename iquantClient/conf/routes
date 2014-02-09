@@ -1,0 +1,23 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                                       Application.index
+
+POST    /searchconditionmanage/saveStrategySearchCond       SearchConditionManage.saveStrategySearchCond
+POST    /searchconditionmanage/saveStockPoolSearchCond      SearchConditionManage.saveStockPoolSearchCond
+POST    /searchconditionmanage/editCond                     SearchConditionManage.editStrategyCond
+POST    /searchconditionmanage/renameCond                   SearchConditionManage.renameOrNewCond
+POST    /searchconditionmanage/delCond                      SearchConditionManage.delCond
+POST    /searchconditionmanage/delCond                      SearchConditionManage.delCond
+
+
+# Ignore favicon requests
+GET     /favicon.ico                            404
+
+# Map static resources from the /app/public folder to the /public path
+GET     /public/                                staticDir:public
+
+# Catch all
+*       /{controller}/{action}                  {controller}.{action}

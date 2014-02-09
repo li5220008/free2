@@ -1,0 +1,114 @@
+#{if enginetypeId==1}
+    #{list items : strategyPositionDtoList, as : 'item'}
+    <tr>
+        <td width="17%">
+
+                <div*{ style="cursor: pointer"}*>
+                    <a *{href="javascript:jumpToQuote('#{emVF v : item.securityid/}');"}* style="text-decoration: none">#{emVF v :item.securityid /}</a>
+                </div>
+
+        </td>
+        *{<td width="15%">
+            #{if item.trade_variety == 1}
+                <div class="popup_two">
+                    #{emVF v : item.symbol/}
+                    <div class="pop_link">
+                        <div class="popup_kline"><a
+                                href="javascript:jumpToQuote('#{emVF v : item.securityid/}');">K线</a></div>
+                        <div class="popup_f10"><a href="javascript:qicScriptContext.jumpToF10('#{emVF v : item.securityid/}');">F10</a></div>
+                    </div>
+                </div>
+            #{/if}
+            #{else}
+                <div style="cursor: pointer">
+                    <a href="javascript:jumpToQuote('#{emVF v : item.securityid/}');" style="text-decoration: none">#{emVF v : item.symbol/}</a>
+                </div>
+            #{/else}
+        </td>}*
+        <td width="17%">#{emVF v : item.getSide()/}</td>
+        <td width="17%">#{emVF v : item.positionqty/}</td>
+        *{<td width="12%">#{emVF v : item.securityexchange/}</td>}*
+        <td width="17%">--</td>
+        <td width="16%">--</td>
+        <td width="16%">--</td>
+    </tr>
+    #{/list}
+#{/if}
+#{elseif enginetypeId==2}
+    #{list items : strategyPositionDtoList, as : 'item'}
+    <tr>
+        <td width="17%">
+            #{if item.isStock().equals("1")}
+                <div class="popup_two">
+                    <div class="get_value">#{emVF v :item.securityid /}</div>
+                    *{<div class="pop_link">
+                        <div class="popup_kline"><a
+                                href="javascript:jumpToQuote('#{emVF v : item.securityid/}');">K线</a></div>
+                        <div class="popup_f10"><a href="javascript:qicScriptContext.jumpToF10('#{emVF v : item.securityid/}');">F10</a></div>
+                    </div>}*
+                </div>
+            #{/if}
+            #{elseif item.isStock().equals("2")}
+                <div *{style="cursor: pointer"}*>
+                    <a *{href="javascript:jumpToQuote('#{emVF v : item.securityid/}');"}* style="text-decoration: none">#{emVF v :item.securityid /}</a>
+                </div>
+            #{/elseif}
+        *{  #{emVF v :item.securityid/}}*
+
+        </td>
+        *{<td width="13%">
+            #{if item.trade_variety == 1}
+                <div class="popup_two">
+                    #{emVF v : item.name/}
+                    <div class="pop_link">
+                        <div class="popup_kline"><a
+                                href="javascript:jumpToQuote('#{emVF v : item.securityid/}');">K线</a></div>
+                        <div class="popup_f10"><a href="javascript:qicScriptContext.JumpToF10('#{emVF v : item.securityid/}');">F10</a></div>
+                    </div>
+                </div>
+            #{/if}
+            #{else}
+                <div style="cursor: pointer">
+                    <a href="javascript:jumpToQuote('#{emVF v : item.securityid/}');" style="text-decoration: none">#{emVF v : item.name/}</a>
+                </div>
+            #{/else}
+        </td>}*
+        <td width="17%">
+            #{if item.isStock().equals("1")}
+                买
+            #{/if}
+            #{elseif item.isStock().equals("2")}
+                #{if item.positions>0}
+                    多
+                #{/if}#{else }
+                    空
+            #{/else}
+            #{/elseif}
+        </td>
+        <td width="17%"><strong>#{emVF v : item.positions/}</strong></td>
+        *{<td width="12%"> #{if item.trade_variety == 1}股票#{/if}
+            #{elseif item.trade_variety == 2}期货#{/elseif}
+            #{else}混合#{/else}</td>}*
+        *{<td width="14%">
+            #{if "1".equals(item.securityexchange)}上交所#{/if}
+            #{elseif "2".equals(item.securityexchange)}深交所#{/elseif}
+            #{elseif "3".equals(item.securityexchange)}港交所#{/elseif}
+            #{elseif "4".equals(item.securityexchange)}中金所#{/elseif}
+            #{elseif "5".equals(item.securityexchange)}大连期货#{/elseif}
+            #{elseif "6".equals(item.securityexchange)}郑州期货#{/elseif}
+        </td>}*
+        <td width="17%">
+           --
+        </td>
+        <td width="16%">
+           --
+        </td>
+        <td width="16%">
+           --
+        </td>
+        <input type="hidden" value="${item.securityexchange}"/>
+    </tr>
+    #{/list}
+#{/elseif}
+
+

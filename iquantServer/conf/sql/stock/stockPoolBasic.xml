@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment> 策略对比表格展示sql</comment>
+
+    <!--根据股票池编码查询 组合股票数，更新频率，组合策略，组合收益-->
+    <entry key="stock_pool_basic_info">
+        <![CDATA[
+  SELECT
+  a.StockNum AS stockNum,
+  a.UpdateFrequency as updateFrequency,
+  a.Strategy as strategy,
+  a.StockPoolCode as stockPoolCode,
+  a.StockPoolName as stockPoolName,
+  b.AnnualizedYield as annualizedYield
+FROM
+  qic_db.stp_stockpool a
+  left JOIN qic_db.stockpool_ext b
+    ON a.StockPoolCode = b.StockPoolCode
+WHERE a.StockPoolCode = ?
+]]>
+    </entry>
+
+
+
+    <!--查询最近一期的附件下载地址，研报摘要，组合来源，-->
+    <entry key="stock_pool_download_summary">
+        <![CDATA[
+  SELECT
+    a.FilestoragePath as filestoragePath,
+    a.Summary as summary,
+    c.InstitutionName as institutionName
+  FROM
+    qic_db.rep_reportinfo a
+    LEFT JOIN qic_db.rep_institution c
+      ON a.reportID = c.reportID
+  WHERE a.reportID =
+    (SELECT
+      b.ReportID
+    FROM
+      qic_db.stp_sample b
+    WHERE b.StockPoolCode = ?
+    ORDER BY b.AdjustDate DESC
+    LIMIT 0, 1)
+]]>
+    </entry>
+
+
+    <!--查询股票池组合评级，-->
+    <entry key="stock_pool_starNum">
+        <![CDATA[
+ SELECT
+      (discuss_total / discuss_count) AS starNum
+    FROM
+      qic_db.stock_pool_ext
+    WHERE spid = ?
+]]>
+    </entry>
+
+    <!--插入股票池评论-->
+    <entry key="insert_stock_pool_comment">
+        <![CDATA[
+INSERT INTO qic_db.stock_pool_ext (
+  spid,
+  discuss_total,
+  discuss_count
+)
+VALUES
+  (?, ?, ?)
+]]>
+    </entry>
+
+    <!--查询股票池组合评级，-->
+    <entry key="update_stock_pool_comment1">
+        <![CDATA[
+UPDATE
+    qic_db.stock_pool_ext
+  SET
+    discuss_total = discuss_total + ?,
+    discuss_count = discuss_count + ?
+  WHERE spid = ?
+]]>
+    </entry>
+
+    <!--查询股票池组合评级，-->
+    <entry key="insert_user_comment">
+        <![CDATA[
+ INSERT INTO qic_db.user_stock_pool_discuss (uid, spid, star)
+    VALUES
+      (?, ?, ?)
+]]>
+    </entry>
+
+    <!--查询股票池组合评级，-->
+    <entry key="is_user_comment">
+        <![CDATA[
+  SELECT
+      id
+    FROM
+      qic_db.user_stock_pool_discuss
+    WHERE uid = ?
+      AND spid = ?
+]]>
+    </entry>
+
+    <!--查询股票池组合评级，-->
+    <entry key="is_stock_pool_comment">
+        <![CDATA[
+  SELECT
+        id
+      FROM
+        qic_db.stock_pool_ext
+      WHERE spid = ?
+]]>
+    </entry>
+
+    <!--股票池列表1，-->
+    <entry key="stockPoolList1">
+        <![CDATA[
+            SELECT DISTINCT
+              a.`SECURITYID`,
+              a.`SYMBOL` AS scode,
+              b.`EXCHANGECODE` AS exchangeCode,
+              b.`SHORTNAME` AS shortName
+            FROM
+              qic_db.`stp_sample` a
+              INNER JOIN qic_db.`stk_stockinfo` b
+                ON a.`SECURITYID` = b.`SECURITYID`
+            WHERE a.`STOCKPOOLCODE` =  ?
+]]>
+    </entry>
+
+    <!--股票池列表2，最后一次调整状态是调出-->
+    <entry key="stockPoolList2">
+        <![CDATA[
+            SELECT DISTINCT
+              (a.`SECURITYID`),
+              a.`SYMBOL` AS scode
+            FROM
+              stp_sample a
+            WHERE a.STOCKPOOLCODE = ?
+              AND NOT EXISTS
+              (SELECT
+                *
+              FROM
+                stp_sample b
+              WHERE b.SECURITYID = a.SECURITYID
+                AND b.ADJUSTDATE > a.ADJUSTDATE
+                AND a.STOCKPOOLCODE = b.STOCKPOOLCODE)
+              AND a.`ADJUSTTYPECODE` = 'P3102'
+                ]]>
+    </entry>
+
+</properties>
+

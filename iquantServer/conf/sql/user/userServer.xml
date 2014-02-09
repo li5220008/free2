@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment></comment>
+    <!--用户服务器配置-->
+
+    <!--添加服务器配置-->
+    <entry key="addUserServer">
+        <![CDATA[
+                    INSERT INTO user_server(
+                       uid,
+                       ip,
+                       port
+                    ) VALUES(
+                       :uid,
+                       :ip,
+                       :port
+                    )
+
+                ]]>
+    </entry>
+
+    <!--更新服务器配置-->
+    <entry key="updateServer">
+        <![CDATA[
+
+                    UPDATE
+                        user_server
+                    SET
+                        `ip`=:ip, `port`=:port
+                    WHERE
+                        uid=:uid;
+
+                ]]>
+    </entry>
+
+    <!--获取服务器配置-->
+    <entry key="fetchUserServer">
+        <![CDATA[
+                    SELECT
+                        id,
+                        uid,
+                        ip,
+                        port
+                    FROM
+                        user_server
+                    WHERE
+                        id=:id;
+
+                ]]>
+    </entry>
+
+</properties>

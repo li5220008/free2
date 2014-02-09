@@ -1,0 +1,12 @@
+# Application dependencies
+
+require:
+    - play
+    - iquantDocCommon -> iquantDocCommon
+
+repositories:
+    - MyModules:
+        type:     local
+        artifact: ${application.path}/../[module]
+        contains:
+            - iquantDocCommon

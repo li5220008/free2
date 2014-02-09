@@ -1,0 +1,401 @@
+#{extends 'manage_main.html' /}
+#{set title:'用户权限管理' /}
+
+#{set 'moreStyles'}
+*{这里是待激活的css}*
+<link rel="stylesheet" type="text/css" href="@{'public/stylesheets/global-manage.css'}">
+#{/set}
+
+<style>
+.common_user_bar{background-color:#474747; height:36px; line-height:36px; border-top:1px solid #474747; }
+</style>
+<body>
+<script type="text/javascript" src="@{'/public/javascripts/roleManage.js'}"></script>
+<script type="text/javascript" src="@{'/public/javascripts/changerole.js'}"></script>
+<link href="@{'/public/stylesheets/ui-lightness/jquery-ui-1.9.1.custom.css'}" rel="stylesheet">
+<script src="@{'/public/javascripts/jquery-ui-1.9.1.custom.js'}"></script>
+<script>
+    var renameRoleRoute = #{jsRoute @RoleInfos.renameOrNewRole(":name",":id") /} //改名url
+    var delRoleRoute = #{jsRoute @RoleInfos.deleteRoleName(":id") /} //删除url
+
+</script>
+<!--strategy_nav Begin-->
+<div   class="strategy_nav">
+	<ul class="manage_top_menu">
+        #{hasAuth '21' }<li><a href="@{ActivateUser.list()}" >用户权限管理</a></li> #{/hasAuth }
+        #{hasAuth '22' }<li class="mt_current"><a href="@{RoleInfos.roleList()}">角色管理</a></li> #{/hasAuth}
+    </ul>
+</div>
+<!--strategy_nav End-->
+
+<!--role_manage_box Begin-->
+<div class="role_manage_box">
+    <input type="hidden" value="${roleId}" id="curRoleId">
+    <input type="hidden" value="${tab}" id="curTab">
+<!--角色列表 Begin-->
+	<div class="role_list_wrap">
+    	<div class="role_list_title_box">
+        	<div class="role_list_title">
+            角色列表
+            </div>
+        	<div class="role_list_control">
+            	<p>
+                #{hasAuth '22' }<button id="addCndBtn" class="add_role">
+                    <img src="@{'/public/images/admin/role_add.png'}">
+                    </button>
+                #{/hasAuth}
+                *{  <button>
+                    <img src="@{'/public/images/admin/role_top.png'}">
+                    </button>
+                    <button>
+                    <img src="@{'/public/images/admin/role_bottom.png'}">
+                    </button>}*
+                #{hasAuth '22' }
+                    <button id="delCndBtn">
+                    <img src="@{'/public/images/admin/role_remove.png'}">
+                    </button>
+                #{/hasAuth}
+                </p>
+            </div>
+
+            <div class="role_tu_list">
+                <h3 class="h3_title" id="searchTitle">我的搜索列表</h3>
+                <ul class="role_list_ul" id="ut_ul_list">
+                    #{list items:roleList,as:'item'}
+                    <li #{if roleId ==item.id} class="current" #{/if} roleId="${item.id}" data-height="${36*item_index}" id="ut_${item.id}"><a>#{emVF item.name/}</a></li>
+                    #{/list}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--角色列表 End-->
+    
+    <div class="belogn_user_wrap">
+    	<ul class="tab_ul" id="menuTab">
+            <a href="@{RoleInfos.roleList()}?tab=0&roleId=${roleId}"><li class="#{if tab==0}display#{/if}">角色属性</li></a>
+            <a href="@{RoleInfos.roleList()}?tab=1&roleId=${roleId}"> <li class="#{if tab==1}display#{/if}">角色用户列表</li></a>
+       </ul>
+       <ul class="sub_content" id="menuTab2">
+       #{if tab==0}
+            <li class="display">
+                    <div class="common_user_bar">
+                    ${roleInfoDto.name}
+                    </div>
+                <div class="role_belong_content">
+               		 <div class="role_description">
+                     	<h3 class="role_descr_til">
+                        角色描述：
+                        </h3>
+                                <input type="hidden" name="roleDto.id" id="editRoleId" value="#{emVF roleInfoDto.id/}">
+                        <textarea name="rolebasicdesp" cols="" rows="" class="role_txtarea" id="role_basicinfo_desp" readonly>${roleInfoDto.desp}</textarea>
+                        
+                        <div class="common_btn">
+                            #{hasAuth '22' }<input type="button" id="role_basicinfo_edit" class="common_blue" value="编辑">#{/hasAuth}
+                            #{hasAuth '22' }<input type="button" id="role_basicinfo_save" class="common_blue" value="保存">#{/hasAuth}
+                        </div>
+                     </div>
+                     
+                     <div class="role_privilege">
+                     	<h3 class="role_descr_til">
+                        角色权限信息：
+                        </h3>
+                        <div class="role_privi_txt">
+                        	 <div class="organization_tree">
+                                <!--ligerTree插件html部分 Beigin-->
+                                <ul id="tree1">
+                                    <li isexpand="false">
+                                        <span>节点1</span>
+                                        <ul>
+                                            <li isexpand="false">
+                                                <span>节点1.1</span>
+                                                 <ul>
+                                                    <li><span>节点1.1.2</span></li>
+                                                    <li><span>节点1.1.2</span></li>
+                                                 </ul>
+                                             </li>
+                                             <li><span>节点1.2</span></li>
+                                        </ul>
+                                    </li>  
+                                </ul>
+                                <!--ligerTree插件html部分 End-->
+                                </div>
+                        </div>
+                        <div class="common_btn">
+                            #{hasAuth '22' }<input type="button" onclick="javascript:changeTreeStatus()" class="common_blue treeNodeSet" value="设置">#{/hasAuth}
+                            #{hasAuth '22' }<input type="button" id="updateRoleBtn" onclick="javscript:updateRoleFunction()" class="common_blue treeNodeSave" value="保存">#{/hasAuth}
+                        </div>
+                     </div>
+                </div>
+            </li>
+           #{/if}
+           #{if tab==1}
+            <li class="display">
+          		  <div class="common_user_bar">
+                   *{ ${ri.name}}*
+                 </div>
+                  <div class="role_belong_content">
+          			 
+                            
+                             
+                                        
+                          <table width="100%" cellspacing="0" cellpadding="0" border="0" class="tbl_exec">
+              <tr>
+                <th width="12%">帐号</th>
+                <th width="13%">姓名</th>
+                
+                <th width="15%">联系电话</th>
+                <th width="15%">所属营业部</th>
+                <th width="15%">资金账号</th>
+                
+                <th width="15%"> 权限到期日</th>
+                <th width="15%">用户状态</th>
+                                                                                    
+
+                </tr>
+                </table>
+                                                                               
+                            <div class="tbl_scoll">
+                        
+                            <table width="100%" cellspacing="0" cellpadding="0" border="0" class="tbl_common tbl_exec tbl_no_scroll">
+
+                             #{list items:usersList , as:'item'}
+                            <tr>
+                            <td width="12%"><span class="username_datum">#{emVFC item.account /}</span></td>
+                            <td width="13%">#{emVF item.name /}</td>
+                            <td width="15%">#{emVF item.phone /}</td>
+                             <td width="15%">#{emVF item.saleName /}</td>
+                            <td width="15%">#{emVF item.capitalAccount /}</td>
+                            <td width="15%">#{emVF item.endDate , f:'yyyy-MM-dd' /}</td>
+                            <td width="15%">#{if item.status==1}禁用#{/if}
+                                #{elseif item.status==2}未激活#{/elseif}
+                                #{elseif item.status==10 &&item.endDate-new java.util.Date()>7}正常#{/elseif}
+                                #{elseif item.status==10 &&item.endDate-new java.util.Date()<=7&&item.endDate>new java.util.Date()}一周内到期#{/elseif}
+                                #{elseif item.status==10 &&item.endDate<new java.util.Date()}已到期#{/elseif}</td>
+                            </tr>
+                             #{/list}
+
+                  
+                        </table>
+                  	      </div>
+                            <!--角色用户列表 End-->
+                            
+                              <!--分页 Begin-->
+                      <div class="page">
+                          <div class="page_center">
+                              <form action="@{RoleInfos.roleList() }?&tab=${tab}&roleId=${roleId}" class="pageFrom" method="get">
+                              #{paging page:page /}
+                              </form>
+                          </div>
+                      </div>
+                                <!--分页 End-->
+                                
+                             
+                                
+                </div>
+                
+                   <!--control_active Begin-->
+                                <div class="control_active">
+                                	<div class="control_active_wrap">
+                                    #{hasAuth '22' }	<span class="add_remove_user">增加/删除用户</span> #{/hasAuth}
+                                    </div>
+                                </div>
+                                 <!--control_active End-->
+            </li>
+          #{/if}
+       </ul>
+    </div>
+</div>
+<!--role_manage_box End-->
+
+<!-- 角色基本信息查看与修改 begin-->
+<script>
+
+
+    //$("#ut_ul_list li").click(function(){
+    //    alert($(this).attr("id").substring("ut_".length))
+    //});
+
+
+    $("#role_basicinfo_save").click(function(){
+        var rolebasicinfoval = $("#role_basicinfo_desp").val();
+        var roleid = $('#editRoleId').val();
+        $.ajax({
+            url:"/roleinfos/rolebasicinfosave",
+            data:{'txtarea':rolebasicinfoval,'id':roleid},
+            dataType:'json',
+            type:"post",
+            success:function(data){
+                $.qicTips({
+                    target:'#role_basicinfo_save',
+                    level:1,
+                    message:data.message
+                });
+
+            },
+            error:function(data){
+                $.qicTips({
+                    target:'#role_basicinfo_save',
+                    level:2,
+                    message:'出错了....'
+                });
+            }
+        });
+    });
+
+    $('#role_basicinfo_edit').click(function(){
+        $('#role_basicinfo_desp').removeAttr("readonly");
+    });
+
+
+
+
+
+
+</script>
+
+<!-- 角色基本信息查看与修改 end-->
+
+
+<script>
+window.resizeHeight(".role_list_ul", 186);
+//window.resizeWidth(".belogn_user_wrap", 288);
+//window.resizeHeight(".sub_content", 101);
+//window.resizeHeight(".role_belong_content", 150);
+window.resizeHeight(".role_privi_txt", 321);
+//window.resizeWidth("#menuTab2", 288);
+window.resizeHeight(".tbl_scoll", 244);
+window.resizeWidth(".belogn_user_wrap", 288);
+
+
+
+$(".add_role").click(function(){
+	$(".add_role_box").toggle();	
+});
+
+//jQ tab切换
+$(".tab_ul li").click(function(){
+	var index = $(this).index();
+	$(".tab_ul").children("li").removeClass().eq(index).addClass('display');
+	$(".sub_content").children("li").removeClass().eq(index).addClass('display')
+});
+</script>
+<!--ligerUI插件 Begin-->
+<script src="@{'/public/javascripts/ligerUI/base.js'}"></script>
+<script src="@{'/public/javascripts/ligerUI/ligerTree.js'}"></script>
+<link rel="stylesheet" type="text/css" href="@{'/public/javascripts/ligerUI/ligerui-tree.css'}">
+<script type="text/javascript">
+
+    var allowEdit = false;
+	$(function(){
+        var tab = ${tab};
+        $("#tree1").html("");
+		$("#tree1").ligerTree({ checkbox: true,
+                                data:${sysFunList},
+                                parentIcon: null,
+                                childIcon: null,
+                                getChecked:true,
+                                nodeWidth: 152,
+                                idFieldName :'id',
+                                parentIDFieldName :'pid'
+
+                               }).expandAll();
+        if($.query.get("scroll") == "bottom") {
+            var topL0 = $(".role_list_ul li:last-child").offset().top;
+            $(".role_list_ul").scrollTop(topL0)
+        }
+        if($.query.get("iflag") == "0"){
+            $("#addCndBtn").trigger("click");
+        }
+	});
+    $("#tree1").css("z-index",-100);
+    function changeTreeStatus(){
+        allowEdit = true;
+        $("#tree1").css("z-index",10000);
+    }
+    function updateRoleFunction(){
+        if(!allowEdit){
+            $.qicTips({message:'请设置角色权限信息', level:2, target:'#updateRoleBtn', mleft:-70, mtop:-50});
+            return;
+        }
+        manager = $("#tree1").ligerGetTreeManager();
+        //收集checkBox值
+        var checkedArray = manager.getChecked();
+        var length = checkedArray.length;
+        var ids = "{\n  \"roleDto.id\":" + ${roleId} +",\n";
+        //拼成roleDto.functions[i].id:id的格式 方便后台注入
+        for(var i = 0;i < length ;i++){
+            ids = ids + "\"roleDto.functions["+i+"].id\":" + checkedArray[i].target.id
+            if(i<length-1){
+                ids+=",\n";
+            }
+        }
+        ids+="\n}"
+       // return;
+         var url = #{jsRoute @RoleInfos.updateRoleFunctions()/};
+
+        $.ajax({
+            url: url.url(),
+            dataType:"json",
+            type:"post",
+            data:$.parseJSON(ids),
+            success: function(data){
+                $.qicTips({
+                    target:'#updateRoleBtn',
+                    level:1,
+                    message:data.message
+                });
+                allowEdit = false;
+                $("#tree1").css("z-index",-100);
+            },
+            error:function(data){
+                $.qicTips({
+                    target:'#updateRoleBtn',
+                    level:2,
+                    message:"保存失败"
+                });
+            }
+
+        });
+    }
+</script>
+<!--ligerUI插件 End-->
+
+<!--用户列表设置 Begin-->
+<div class="set_user_list" title="用户列表设置">
+</div>
+<script type="text/javascript">
+    var changeroleRoute = #{jsRoute @RoleInfos.changeRoleList() /};
+    var getUserRount = #{jsRoute @RoleInfos.getUserByCondition() /};
+    var getRoleUserRount = #{jsRoute @RoleInfos.getRoleUserByCondition() /};
+    var  changeUserRoleRount = #{jsRoute @RoleInfos.changeRole() /};
+
+    textareaEdit("#role_basicinfo_edit", "#role_basicinfo_save", ".role_txtarea");
+    treeNodeEdit(".treeNodeSet", '.treeNodeSave', '#tree1');
+
+    $("#ut_ul_list li").live("click", function(){
+         /*
+          var scollHigh = $(this).parent()[0].scrollHeight;
+          var index = $(this).index();
+          var scrollTop = scollHigh - index * 36 - $(".role_list_ul").height();
+          var dataHigh =  $(this).attr("data-height");
+        */
+        var scrollTop = $(this).parent().scrollTop();
+        localStorage.dataHeight = scrollTop;
+    });
+
+    (function(){
+        //设置角色列表位置
+        var search = location.search;
+        if(search !== ""){
+            $("#ut_ul_list").scrollTop(localStorage.dataHeight);
+        }
+
+    })();
+
+
+
+</script>
+<link href="@{'/public/stylesheets/ui-lightness/jquery-ui-1.9.1.custom.css'}" rel="stylesheet">
+<script src="@{'/public/javascripts/jquery-ui-1.9.1.custom.js'}"></script>
+<!--用户列表设置 End-->
+</body>

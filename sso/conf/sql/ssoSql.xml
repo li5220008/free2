@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <!--根据策略状态返回策略列表-->
+    <entry key="fetchStrategyWithState">
+        <![CDATA[
+SELECT id, `name`, `status`, fundsProportion
+FROM strategy_baseinfo
+WHERE ( stup_uid = ? or stup_uid = -1000 ) AND `status` = ?
+                ]]>
+    </entry>
+
+    <!--判断是否有同名的帐号-->
+    <entry key="tradeAccountSameNameCount">
+        <![CDATA[
+select count(*) from trade_account where create_uid = ? and name = ? and STATUS > 0
+                ]]>
+    </entry>
+
+    <!--增加一个资金帐号-->
+    <entry key="addTradeAccount">
+        <![CDATA[
+INSERT INTO trade_account
+(`name`, account, `password`, `type`, create_uid, ctime, client_id, target_comp_id, hedge_type)
+VALUES (:name, :account, :password, :type, :userId, :ctime, :clientId, :targetCompId, :hedgeType)
+                ]]>
+    </entry>
+
+    <!--删除一个资金帐号-->
+    <entry key="delTradeAccount">
+        <![CDATA[
+DELETE FROM trade_account WHERE id = ? AND create_uid = ?
+                ]]>
+    </entry>
+
+    <!--软删除一个资金帐号-->
+    <entry key="softDelTradeAccount">
+        <![CDATA[
+update trade_account set `status` = -100 WHERE id = ? AND create_uid = ?
+                ]]>
+    </entry>
+
+    <!--修改一个资金帐号-->
+    <entry key="updateTradeAccount">
+        <![CDATA[
+UPDATE trade_account
+SET
+#{if param.name}
+    `name` = :name,
+#{/if}
+#{if param.account}
+    account = :account,
+#{/if}
+#{if param.password}
+    `password` = :password,
+#{/if}
+#{if param.type != null}
+    `type` = :type,
+#{/if}
+#{if param.clientId}
+    client_id = :clientId,
+#{/if}
+#{if param.hedgeType != null}
+    hedge_type = :hedgeType,
+#{/if}
+#{if param.targetCompId}
+    target_comp_id = :targetCompId
+#{/if}
+
+WHERE id = :id AND create_uid = :userId;
+                ]]>
+    </entry>
+
+    <!--返回用户的资金帐号-->
+    <entry key="fetchTradeAccount">
+        <![CDATA[
+SELECT distinct
+  id, `name`, account, `password`, `type`
+FROM trade_account
+WHERE create_uid = ? and status = 1
+                ]]>
+    </entry>
+
+    <!--返回用户的资金帐号,还没有绑定到产品上的-->
+    <entry key="fetchTradeAccountNoBindToProduct">
+        <![CDATA[
+SELECT distinct
+	a.id AS id, a.`name` AS 'name', a.account, a.`password`, a.`type`, a.client_id AS clientId, a.target_comp_id AS targetCompId, a.hedge_type AS hedgeType
+FROM trade_account a
+WHERE a.create_uid = ?
+    AND a.status = 1
+	AND a.id NOT IN
+		( /*这个子查询是找出已被使用的 account_id*/
+			SELECT account_id
+			FROM (
+				SELECT b.account_id, GROUP_CONCAT(DISTINCT b.status ORDER BY b.status) AS SALLIST
+				FROM virtual_product_trade_account b
+				GROUP BY b.account_id
+			) concatTab
+			WHERE FIND_IN_SET(1, SALLIST) > 0 /*1表示已使用*/
+		)
+                ]]>
+    </entry>
+
+    <!--产品名称是否重复-->
+    <entry key="virtualProductSameNameCount">
+        <![CDATA[
+select count(*) from virtual_product where create_uid = ? and name = ? and STATUS > 0
+                ]]>
+    </entry>
+
+    <!--增加一条虚拟产品信息-->
+    <entry key="addVirtualProduct">
+        <![CDATA[
+INSERT INTO virtual_product
+(`name`, `uuid`, create_uid, ctime )
+VALUES (:name, :uuid, :userId, :ctime)
+                ]]>
+    </entry>
+
+    <!--删除产品关联的策略关联关系-->
+    <entry key="delVirtualProductStrategyRefByPid">
+        <![CDATA[
+DELETE FROM virtual_product_strategy  WHERE product_id = ? AND create_uid = ?
+                ]]>
+    </entry>
+
+    <!--软删除产品关联的策略关联关系-->
+    <entry key="softDelVirtualProductStrategyRefByPid">
+        <![CDATA[
+update virtual_product_strategy set `status`=-100  WHERE product_id = ? AND create_uid = ?
+                ]]>
+    </entry>
+
+    <!--删除产品关联的交易帐号关联关系-->
+    <entry key="delVirtualProductTradeAccountRefByPid">
+        <![CDATA[
+DELETE FROM virtual_product_trade_account  WHERE product_id = ? AND create_uid = ?
+                ]]>
+    </entry>
+
+    <!--软删除产品关联的交易帐号关联关系-->
+    <entry key="softDelVirtualProductTradeAccountRefByPid">
+        <![CDATA[
+update virtual_product_trade_account set `status`=-100  WHERE product_id = ? AND create_uid = ?
+                ]]>
+    </entry>
+
+    <!--删除产品信息-->
+    <entry key="delVirtualProduct">
+        <![CDATA[
+delete from virtual_product where id = ? and create_uid = ?
+                ]]>
+    </entry>
+
+    <!--软删除产品信息-->
+    <entry key="softDelVirtualProduct">
+        <![CDATA[
+update virtual_product set `status` = -100 where id = ? and create_uid = ?
+                ]]>
+    </entry>
+
+    <!--修改产品名称-->
+    <entry key="renameVirtualProduct">
+        <![CDATA[
+update virtual_product set name = ? where id = ? and create_uid = ?
+                ]]>
+    </entry>
+
+    <!--增加一条虚拟产品与策略关联关系-->
+    <entry key="addVirtualProductAndStrategyRelevance">
+        <![CDATA[
+INSERT INTO virtual_product_strategy
+(product_id, strategy_id, create_uid, ctime, funds_proportion, strategy_param)
+VALUES (:productId, :strategyId, :userId, :ctime, :fundsProportion, :strategyParam)
+                ]]>
+    </entry>
+
+    <!--修改一条虚拟产品与策略关联关系-->
+    <entry key="editVirtualProductAndStrategyRelevance">
+        <![CDATA[
+UPDATE virtual_product_strategy
+SET
+    funds_proportion = :fundsProportion,
+    strategy_param = :strategyParam
+WHERE id = :refId AND product_id = :productId AND strategy_id = :strategyId
+                ]]>
+    </entry>
+
+    <!--删除一条虚拟产品与策略关联关系-->
+    <entry key="delVirtualProductStrategyRelevance">
+        <![CDATA[
+delete from virtual_product_strategy where id = ? and create_uid = ?
+                ]]>
+    </entry>
+
+    <!--软删除一条虚拟产品与策略关联关系-->
+    <entry key="softDelVirtualProductStrategyRelevance">
+        <![CDATA[
+update virtual_product_strategy set `status`=-100 where id = ? and create_uid = ?
+                ]]>
+    </entry>
+
+    <!--增加一条虚拟产品与资金帐号关联关系-->
+    <entry key="addVirtualProductAndAccountRelevance">
+        <![CDATA[
+INSERT INTO virtual_product_trade_account
+(product_id, account_id,  create_uid, ctime)
+VALUES (:productId, :accountId, :userId, :ctime)
+                ]]>
+    </entry>
+
+    <!--删除一条虚拟产品与资金帐号关联关系-->
+    <entry key="delVirtualProductTradeAccountRelevance">
+        <![CDATA[
+delete from virtual_product_trade_account where id = ? and create_uid = ?
+                ]]>
+    </entry>
+
+    <!--软删除一条虚拟产品与资金帐号关联关系-->
+    <entry key="softDelVirtualProductTradeAccountRelevance">
+        <![CDATA[
+update virtual_product_trade_account set `status`=-100 where id = ? and create_uid = ?
+                ]]>
+    </entry>
+
+    <!--根据id获取产品名称-->
+    <entry key="fetchVpNameById">
+        <![CDATA[
+select distinct name from virtual_product where id = ?
+                ]]>
+    </entry>
+
+    <!--返回这个产品的策略信息-->
+    <entry key="fetchStrategyByVpId">
+        <![CDATA[
+SELECT distinct
+    a.id AS refId,
+    b.id AS strategyId,
+    b.name,
+    a.ctime AS ctime,
+    a.funds_proportion AS fundsProportion,
+    a.strategy_param AS strategyParam
+  FROM virtual_product_strategy a
+    INNER JOIN strategy_baseinfo b
+  ON a.strategy_id = b.id
+WHERE a.product_id = ?
+  AND a.status = 1
+                ]]>
+    </entry>
+
+    <!--返回这个策略的资金帐号-->
+    <entry key="fetchAccountByVpId">
+        <![CDATA[
+select distinct
+    a.id as refId,
+    b.id as accountId,
+    b.name,
+    b.account,
+    b.password,
+    b.type
+  from virtual_product_trade_account a
+    inner join trade_account b
+  on a.account_id = b.id
+  where a.product_id = ?
+  and a.status = 1 and b.status = 1
+                ]]>
+    </entry>
+
+    <!--返回用户的全部产品列表-->
+    <entry key="fetchUserVirtualProductId">
+<![CDATA[
+select id from virtual_product
+where
+    create_uid = ?
+    and `status` = 1
+order by ctime desc
+]]>
+    </entry>
+
+
+
+    <!--iquant的策略上传保存到数据库-->
+    <entry key="strateSave4Iquant">
+        <![CDATA[
+INSERT INTO strategy_baseinfo(
+                st_uuid,
+                name,
+                trade_type,
+                trade_variety,
+                provider,
+                provider_desp,
+                desp,
+                status,
+                stup_uid,
+                upload_time,
+                lookback_stime,
+                lookback_etime,
+                enginetype_id,
+                customer_lookback_stime,
+                customer_lookback_etime,
+                param,
+                fundsProportion
+            )VALUES(
+                :uuid, :sname, :tradeType, :tradeVariety, :provider, :providerDesp, :desp, :status, :stupUid, NOW(), :lookBackStime, :lookBackEtime, :enginetypeId,
+                :lookBackStime, :lookBackEtime, :stkcdContent, :fundsProportion
+            )
+                ]]>
+    </entry>
+
+    <!--上传策略后同步数据到qic的qstragy表中,上架的时候上传到sqm库中-->
+    <entry key="syncStrategyToQsm4Iquant">
+        <![CDATA[
+INSERT INTO   qstrategy( StrategyID, StrategyName, FilePath, AgentIP )
+VALUES(:uuid , :sname, :distDir, :agentIp)
+                ]]>
+    </entry>
+
+    <!--检查策略名称-->
+    <entry key="checkStategyName">
+        <![CDATA[
+select count(*) from strategy_baseinfo where name = ?
+                ]]>
+    </entry>
+
+    <!--返回策略的标的信息-->
+    <entry key="fetchStrategyStockInfo">
+        <![CDATA[
+SELECT param FROM strategy_baseinfo WHERE id = ? AND stup_uid = ?
+                ]]>
+    </entry>
+
+    <!--产品策略关联的id-->
+    <entry key="findrefIdsByProdId">
+        <![CDATA[
+select id from virtual_product_strategy WHERE product_id = ? AND create_uid = ?
+                ]]>
+    </entry>
+</properties>

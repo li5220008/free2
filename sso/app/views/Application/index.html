@@ -1,0 +1,115 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+#{set 'moreStyles'}
+<style type="text/css">
+body {
+    padding-top: 60px;
+    padding-bottom: 40px;
+}
+.sidebar-nav {
+    padding: 9px 0;
+}
+</style>
+#{/set}
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="#">iquant SSO</a>
+            <div class="btn-group pull-right">
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="icon-user"></i> 系统监管
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="#" target="_blank">测试项1</a></li>
+                    <li><a href="#" target="_blank">测试项2</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#" target="_blank">测试项3</a></li>
+                </ul>
+            </div>
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li class="active"><a href="@{Application.index()}">主页</a></li>
+                    <li><a href="#about">关于</a></li>
+                    <li><a href="@{Application.gotoClearUserMacSet()}">联系我</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span3">
+            <div class="well sidebar-nav">
+                <ul class="nav nav-list">
+                    <li class="nav-header">功能</li>
+                    <li class="active"><a href="#">Link</a></li>
+                    <li class="nav-header">文档类</li>
+                    <li><a href="#">Link</a></li>
+                    <li><a href="#">Link</a></li>
+                </ul>
+            </div><!--/.well -->
+        </div><!--/span-->
+        <div class="span9">
+            <div class="hero-unit">
+                <h1>欢迎来到 iquant SSO子系统</h1>
+                <p>这是 iquant SSO 子系统的主页, 在这里提供一些到其它地方的连接</p>
+                <p><a class="btn btn-primary btn-large">更多 »</a></p>
+            </div>
+            <div class="row-fluid">
+                <div class="span6">
+                    <h2>获取token</h2>
+                    <p>
+                    #{form @SSOExportWithoutCheck.loginWithoutCryp(), target:"_blank", id:'loginForm'}
+                        用户名:<input type="text" name="u" size="7"> <br/>
+                        密码:<input type="text" name="p" size="10"><br/>
+                        mac地址:<input type="text" name="mac" size="20" value="00E06F05EA4E"><br/>
+                        产品id:<input type="text" name="pid" size="20" value="1"><br/>
+                        <input type="submit" value="提交">
+                    #{/form}
+                    </p>
+                </div><!--/span-->
+                <div class="span6">
+                    <h2></h2>
+                    <p></p>
+                </div><!--/span-->
+            </div><!--/row-->
+            <div class="row-fluid">
+                <div class="span4">
+                    <h2>校验token合法性</h2>
+                    <p>
+                    #{form @SSOExportWithoutCheck.checkLoginToken(), id:'checkLoginToken', target:'_blank'}
+                        token值 <input type="text" name="token"> <br/>
+                        <input type="submit" value="提交">
+                    #{/form}
+                    </p>
+                </div>
+                <div class="span4">
+                    <h2>退出</h2>
+                    <p>
+                    #{form @SSOExportWithCheck.loginOut(), id:'logoutForm', target:'_blank'}
+                        token值 <input type="text" name="ntToken"> <br/>
+                        <input type="submit" value="提交">
+                    #{/form}
+                    </p>
+                </div>
+            </div><!--/row-->
+
+        </div><!--/span-->
+    </div><!--/row-->
+
+    <hr>
+
+    <footer>
+        <p>© Company 2013</p>
+    </footer>
+
+</div><!--/.fluid-container-->

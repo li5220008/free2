@@ -1,0 +1,60 @@
+<table width="100%" border="0" class="tbl_exec" cellspacing="0" cellpadding="0">
+    <tr>
+        <th width="17%">时间</th>
+        <th width="17%">代码</th>
+    *{<th width="17%">名称</th>}*
+        <th width="17%">方向</th>
+        <th width="17%">开平</th>
+        <th width="16%">委托价格</th>
+        <th width="16%">委托量</th>
+
+
+        <th class="for_til_width"><span class="for_til_width">&nbsp;</span></th>
+    </tr>
+</table>
+
+<div class="tbl_scoll" id="tbl_scoll_entrustRecord">
+    <table width="100%" border="0" class="tbl_common tbl_exec tbl_no_scroll" cellspacing="0"
+           cellpadding="0" id="tbl_common_entrustRecord">
+    #{list items : authorizeRecordDtoList, as : 'item'}
+        <tr>
+            <td width="17%">#{emVF v : item.sendingtime, f : 'yyyy-MM-dd HH:mm:ss'/}</td>
+            <td width="17%">
+                #{emVF v :item.securityid /}
+                *{<div style="cursor: pointer">
+                    <a href="javascript:jumpToQuote('#{emVF v : item.securityid/}');"
+                       style="text-decoration: none">#{emVF v :item.securityid /}</a>
+                </div>}*
+            </td>
+        *{<td width="14%">
+                <div style="cursor: pointer">
+                    <a href="javascript:jumpToQuote('#{emVF v : item.securityid/}');"
+                       style="text-decoration: none">#{emVF v : item.name/}</a>
+                </div>
+            </td>}*
+            <td width="17%">
+                #{emVF v : item.getSide2()/}
+            </td>
+            <td width="17%">#{emVF v : item.getPositionEffect2()/}</td>
+            <td width="16%">#{emVF v : item.price, f:'#,##0.00'/}</td>
+            <td width="16%">#{emVF v : item.orderqty/}</td>
+        *{<td width="14%">
+                #{if item.trade_variety == 1}股票#{/if}
+                #{elseif item.trade_variety == 2}期货#{/elseif}
+                #{else}混合#{/else}
+            </td>}*
+        </tr>
+    #{/list}
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        scrollObj =  new ScrollPage({complete:"", getUrl:getLoadUrl, scrollTarget:"#tbl_scoll_entrustRecord", appendTarget:"#tbl_common_entrustRecord", pageNo:2});
+    });
+
+    function getLoadUrl(){
+        var url = "@{StrategyInfos.moreEntrustRecord(id)}";
+        return url;
+    }
+</script>

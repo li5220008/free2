@@ -1,0 +1,51 @@
+﻿# You can specialize this file for each language.
+# For example, for French create a messages.fr file
+#
+#以下是校验提示信息, 这里使用的1--400的保留号(系统级)
+# 代号意义:
+# 20 必须
+validation.required=20__%1$s 必须
+
+valid.username.required=20__用户名必须
+valid.pwd.required=20__密码必须
+valid.mac.required=20__mac地址必须
+valid.pid.required=20__pid产品id必须
+valid.name.required=20__名称必须
+valid.id.required=20__id必须
+valid.groupId.required=20__group id必须
+valid.secCode.required=20__证券代码必须
+valid.token.required=20__token必须
+valid.indexContent.required=20__自定义指标内容必须
+valid.category.required=20__类别必须
+
+valid.json.error=30_json格式错误
+
+
+
+
+#以下是给api产生的信息, 这里主要是考虑以后是否国际化,或者以后考虑使用键值替换
+#这里用 代号__描述 来表明一个错误. 其中注意的是代号在每个国际化文件中是不变的. 客户端可以根据这个做为判断
+#错误号 1--400 保留
+api.login.user.nofound=400__没有找到用户
+api.login.user.errorPwd=401__密码错误
+api.login.user.maxlogin=402__已达到最大登陆数
+
+api.cust.entityNoFound=500__相应实体不存在
+api.cust.secNoFound=500__[%2$s]证券代码不存在
+
+
+jpaquery.error=510__jpa查询错误
+jpaquery.timeout.error=511__jpa查询超时
+jpa.persistence.error=512__jpa错误.[%1$s]
+jpa.persistence.constraintViolationException=512__jpa 违反约束.[%1$s]
+jpa.persistence.pessimisticLockException=512__jpa sql语句悲观锁定.[%1$s]
+jpa.persistence.JDBCConnectionException=512__jpa连接错误
+jpa.persistence.queryTimeoutException=512__jpa查询超时.[%1$s]
+jpa.persistence.SQLGrammarException=512__jpa sql语法错误.[%1$s]
+
+
+sqlexception.error=515_sql语句错误
+
+jsonSyntax.error=600__json转换时语法错误
+
+finally.exception.error=65536_服务器错误

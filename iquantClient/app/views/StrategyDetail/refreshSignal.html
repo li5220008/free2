@@ -1,0 +1,31 @@
+#{list items : ordersignallist, as :'item'}
+<tr>
+    <td class="for_td_1"><strong>#{emVF v : item.sendingtime, f : 'HH:mm:ss'/}</strong></td>
+    <td class="for_td_2"><strong>
+        <div *{style="cursor: pointer; "}*>
+            <a *{href="javascript:jumpToQuote('#{emVF v : item.securityid/}');"}* style="text-decoration: none">#{emVF v :item.securityid /}</a>
+        </div>
+    </strong></td>
+    #{if item.isStock().equals("1")}
+        <td class="for_td_3">
+            #{emVFC v : item.getSide2(),c:true/}
+        </td>
+    #{/if}
+    #{elseif item.isStock().equals("2")}
+        <td  class="for_td_3">
+            #{emVFC v : item.getSidePositionEffect(),c:true/}
+        </td>
+    #{/elseif}
+    <td  class="for_td_4" align="left"><strong>#{emVF v : item.price, f : '##0.00'/}</strong></td>
+</tr>
+#{/list}
+
+<script type="text/javascript">
+    function jumpToQuote(code) {
+        if (code.substr(0, 1) == "6") {
+            qicScriptContext.jumpToQuoteChart(1, code);
+        } else {
+            qicScriptContext.jumpToQuoteChart(2, code);
+        }
+    }
+</script>

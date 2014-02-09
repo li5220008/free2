@@ -1,0 +1,45 @@
+#{if enginetypeId==1}
+    #{list items : strategyPositionDtoList, as : 'item'}
+    <tr>
+        <td width="31%">#{emVF v :item.securityid /}</td>
+        <td width="31%">#{emVF v : item.getSide()/}</td>
+        <td width="33%">#{emVF v : item.positionqty/}</td>
+    *{<td width="12%">#{emVF v : item.securityexchange/}</td>}*
+        <td >&nbsp;</td>
+    </tr>
+    #{/list}
+#{/if}
+#{elseif enginetypeId==2}
+    #{list items : strategyPositionDtoList, as : 'item'}
+    <tr>
+        <td width="24%">#{emVF v :item.securityid /}</td>
+        <td width="24%">
+            #{if item.isStock().equals("1")}
+                买
+            #{/if}
+            #{elseif item.isStock().equals("2")}
+                #{if item.positions>0}
+                    多
+                #{/if}#{else }
+                空
+            #{/else}
+            #{/elseif}
+            #{else }
+                  买
+            #{/else}
+        </td>
+        <td width="24%"><strong>#{emVF v : item.positions/}</strong></td>
+        <td width="27%">
+            #{if "1".equals(item.securityexchange)}上交所#{/if}
+            #{elseif "2".equals(item.securityexchange)}深交所#{/elseif}
+            #{elseif "3".equals(item.securityexchange)}港交所#{/elseif}
+            #{elseif "4".equals(item.securityexchange)}中金所#{/elseif}
+            #{elseif "5".equals(item.securityexchange)}大连期货#{/elseif}
+            #{elseif "6".equals(item.securityexchange)}郑州期货#{/elseif}
+        </td>
+        <td >&nbsp;</td>
+    </tr>
+    #{/list}
+#{/elseif}
+
+

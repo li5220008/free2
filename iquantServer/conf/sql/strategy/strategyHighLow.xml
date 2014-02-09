@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+    <comment>绩效数据拓展表 sql</comment>
+
+
+    <entry key="delHighLowSql">
+        <![CDATA[
+        delete from qic_db.`strategy_performance_qicore` where strategy_id=? and type=?
+                ]]>
+    </entry>
+    <!--绩效数据拓展表-->
+    <entry key="strategyHighLowSql">
+        <![CDATA[
+        INSERT INTO qic_db.`strategy_performance_qicore` (
+  strategy_id,
+  retained_profits,
+  yield,
+  yield_of_month,
+  yield_of_year,
+  yield_of_month_standard_deviation,
+  overall_profitability,
+  overall_deficit,
+  trade_count,
+  profit_count,
+  deficit_count,
+  max_single_profit,
+  max_single_deficit,
+  trade_days,
+  max_short_position_time,
+  long_position_trade_count,
+  short_position_trade_count,
+  position_close_count,
+  max_sequential_profit_count,
+  max_sequential_deficit_count,
+  profit_ratio,
+  canhsied_ratio,
+  max_single_profit_ratio,
+  max_single_deficit_ratio,
+  max_sequential_deficit_capital,
+  sum_of_commission,
+  gross_profit,
+  profit_loss_ratio,
+  avg_profit_of_month,
+  sharpe_index,
+  floating_profit_and_loss,
+  moving_cost,
+  type,total_asset,last_sequential_deficit_capital,last_sequential_profit_count,last_sequential_deficit_count,update_time
+) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+
+                ]]>
+    </entry>
+
+    <entry key="SelectHighLowSql">
+        <![CDATA[
+SELECT
+    tab1.tabId1 AS strategyId,
+    tab1.rp AS retainedProfits,
+    tab1.td AS yield,
+    tab1.yom AS yieldOfMonth,
+    tab1.yoy AS yieldOfYear,
+    tab2.yomsd AS yieldOfMonthStandardDeviation,
+    tab1.opl AS overallProfitability,
+    tab1.od AS overallDeficit,
+    tab1.tc AS tradeCount,
+    tab1.pc AS profitCount,
+    tab1.dc AS deficitCount,
+    tab1.msp AS maxSingleProfit,
+    tab1.msd AS maxSingleDeficit,
+    tab2.tradeDays AS tradeDays,
+    tab2.maxspt AS maxShortPositionTime,
+    tab1.lptc AS longPositionTradeCount,
+    tab1.sptc AS shortPositionTradeCount,
+    tab1.pcc AS positionCloseCount,
+    tab1.mspc AS maxSequentialProfitCount,
+    tab1.msdc AS maxSequentialDeficitCount,
+    tab1.pfr AS profitRatio,
+    tab1.cr AS canhsiedRatio,
+    tab1.mspfr AS maxSingleProfitRatio,
+    tab1.msdfr AS maxSingleDeficitRatio,
+    tab1.msdcl AS maxSequentialDeficitCapital,
+    tab1.soc AS sumOfCommission,
+    tab1.grssp AS grossProfit,
+    tab1.prolr AS profitLossRatio,
+    tab1.apom AS avgProfitOfMonth,
+    tab2.shari AS sharpeIndex,
+    tab1.fpal AS floatingProfitAndLoss,
+    tab2.mc AS movingCost
+  FROM
+    (SELECT
+      hfhi.`Yield` AS td,
+      hfhi.`RetainedProfits` AS rp,
+      hfhi.`YieldOfMonth` AS yom,
+      hfhi.`YieldOfYear` AS yoy,
+      hfhi.`OverallProfitability` AS opl,
+      hfhi.`OverallDeficit` AS od,
+      hfhi.`TradeCount` AS tc,
+      hfhi.`ProfitCount` AS pc,
+      hfhi.`DeficitCount` AS dc,
+      hfhi.`MAXSingleProfit` AS msp,
+      hfhi.`MAXSingleDeficit` AS msd,
+      hfhi.`LongPositionTradeCount` AS lptc,
+      hfhi.`ShortPositionTradeCount` AS sptc,
+      hfhi.`PositionCloseCount` AS pcc,
+      hfhi.`MAXSequentialProfitCount` AS mspc,
+      hfhi.`MAXSequentialDeficitCount` AS msdc,
+      hfhi.`ProfitRatio` AS pfr,
+      hfhi.`CanhsiedRatio` AS cr,
+      hfhi.`MAXSingleProfitRatio` AS mspfr,
+      hfhi.`MAXSingleDeficitRatio` AS msdfr,
+      hfhi.`MAXSequentialDeficitCapital` msdcl,
+      hfhi.`SumOfCommission` soc,
+      hfhi.`GrossProfit` AS grssp,
+      hfhi.`ProfitLossRatio` AS prolr,
+      hfhi.`AvgProfitOfMonth` AS apom,
+      hfhi.`FloatingProfitAndLoss` fpal,
+      hfhi.`StrategyID` AS tabId1
+    FROM
+      qicore.high_freq_hist_indicator hfhi
+      INNER JOIN
+        (SELECT
+          a.`StrategyID`,
+          MAX(a.`UpdateTime`) AS hight_UpdateTime
+        FROM
+          qicore.`high_freq_hist_indicator` a
+        WHERE 1 = 1
+        GROUP BY a.`StrategyID`) c
+        ON hfhi.StrategyID = c.StrategyID
+        AND hfhi.UpdateTime = c.hight_UpdateTime
+    GROUP BY hfhi.`StrategyID`) tab1
+    LEFT JOIN
+      (SELECT
+        lf.`YieldOfMonthStandardDeviation` AS yomsd,
+        lf.`TradeDays` AS tradeDays,
+        lf.`MAXShortPositionTime` AS maxspt,
+        lf.`SharpeIndex` AS shari,
+        lf.`MovingCost` AS mc,
+        lf.`StrategyID` AS tabId2
+      FROM
+        qicore.`low_freq_hist_indicator` lf
+        INNER JOIN
+          (SELECT
+            b.`StrategyID`,
+            MAX(b.`UpdateTime`) AS low_UpdateTime
+          FROM
+            qicore.`low_freq_hist_indicator` b
+          WHERE 1 = 1
+          GROUP BY b.`StrategyID`) lowfhi
+          ON lf.`StrategyID` = lowfhi.StrategyID
+          AND lf.`UpdateTime` = lowfhi.low_UpdateTime
+      GROUP BY lf.`StrategyID`) tab2
+      ON tab1.tabId1 = tab2.tabId2
+                ]]>
+    </entry>
+
+    <entry key="selecthighSql">
+        <![CDATA[
+    SELECT
+    tab1.tabId1 AS strategyId,
+    tab1.rp AS retainedProfits,
+    tab1.td AS yield,
+    tab1.yom AS yieldOfMonth,
+    tab1.yoy AS yieldOfYear,
+    tab1.opl AS overallProfitability,
+    tab1.od AS overallDeficit,
+    tab1.tc AS tradeCount,
+    tab1.pc AS profitCount,
+    tab1.dc AS deficitCount,
+    tab1.msp AS maxSingleProfit,
+    tab1.msd AS maxSingleDeficit,
+    tab1.lptc AS longPositionTradeCount,
+    tab1.sptc AS shortPositionTradeCount,
+    tab1.pcc AS positionCloseCount,
+    tab1.mspc AS maxSequentialProfitCount,
+    tab1.msdc AS maxSequentialDeficitCount,
+    tab1.pfr AS profitRatio,
+    tab1.cr AS canhsiedRatio,
+    tab1.mspfr AS maxSingleProfitRatio,
+    tab1.msdfr AS maxSingleDeficitRatio,
+    tab1.msdcl AS maxSequentialDeficitCapital,
+    tab1.soc AS sumOfCommission,
+    tab1.grssp AS grossProfit,
+    tab1.prolr AS profitLossRatio,
+    tab1.apom AS avgProfitOfMonth,
+    tab1.fpal AS floatingProfitAndLoss,
+    tab1.upt as updateTime
+    FROM
+    (SELECT
+    hfhi.`Yield` AS td,
+    hfhi.`RetainedProfits` AS rp,
+    hfhi.`YieldOfMonth` AS yom,
+    hfhi.`YieldOfYear` AS yoy,
+    hfhi.`OverallProfitability` AS opl,
+    hfhi.`OverallDeficit` AS od,
+    hfhi.`TradeCount` AS tc,
+    hfhi.`ProfitCount` AS pc,
+    hfhi.`DeficitCount` AS dc,
+    hfhi.`MAXSingleProfit` AS msp,
+    hfhi.`MAXSingleDeficit` AS msd,
+    hfhi.`LongPositionTradeCount` AS lptc,
+    hfhi.`ShortPositionTradeCount` AS sptc,
+    hfhi.`PositionCloseCount` AS pcc,
+    hfhi.`MAXSequentialProfitCount` AS mspc,
+    hfhi.`MAXSequentialDeficitCount` AS msdc,
+    hfhi.`ProfitRatio` AS pfr,
+    hfhi.`CanhsiedRatio` AS cr,
+    hfhi.`MAXSingleProfitRatio` AS mspfr,
+    hfhi.`MAXSingleDeficitRatio` AS msdfr,
+    hfhi.`MAXSequentialDeficitCapital` msdcl,
+    hfhi.`SumOfCommission` soc,
+    hfhi.`GrossProfit` AS grssp,
+    hfhi.`ProfitLossRatio` AS prolr,
+    hfhi.`AvgProfitOfMonth` AS apom,
+    hfhi.`FloatingProfitAndLoss` fpal,
+    hfhi.`StrategyID` AS tabId1,
+    hfhi.updateTime as upt
+    FROM
+    qicore.high_freq_hist_indicator hfhi
+    INNER JOIN
+    (SELECT
+    a.`StrategyID`,
+    MAX(a.`UpdateTime`) AS hight_UpdateTime
+    FROM
+    qicore.`high_freq_hist_indicator` a
+    WHERE 1 = 1
+    GROUP BY a.`StrategyID`) c
+    ON hfhi.StrategyID = c.StrategyID
+    AND hfhi.UpdateTime = c.hight_UpdateTime
+    GROUP BY hfhi.`StrategyID`) tab1
+         ]]>
+        </entry>
+
+    <entry key="selectlowSql">
+        <![CDATA[
+        SELECT
+              tab2.yomsd AS yieldOfMonthStandardDeviation,
+              tab2.tradeDays AS tradeDays,
+              tab2.maxspt AS maxShortPositionTime,
+              tab2.shari AS sharpeIndex,
+              tab2.mc AS movingCost,
+              tab2.tabId2 AS strategyId
+            FROM
+              (SELECT
+                lf.`YieldOfMonthStandardDeviation` AS yomsd,
+                lf.`TradeDays` AS tradeDays,
+                lf.`MAXShortPositionTime` AS maxspt,
+                lf.`SharpeIndex` AS shari,
+                lf.`MovingCost` AS mc,
+                lf.`StrategyID` AS tabId2
+              FROM
+                qicore.`low_freq_hist_indicator` lf
+                INNER JOIN
+                  (SELECT
+                    b.`StrategyID`,
+                    MAX(b.`UpdateTime`) AS low_UpdateTime
+                  FROM
+                    qicore.`low_freq_hist_indicator` b
+                  WHERE 1 = 1
+                  GROUP BY b.`StrategyID`) lowfhi
+                  ON lf.`StrategyID` = lowfhi.StrategyID
+                  AND lf.`UpdateTime` = lowfhi.low_UpdateTime
+              GROUP BY lf.`StrategyID`) tab2
+                ]]>
+      </entry>
+
+    <entry key="getStrategyIDAndUuid">
+        <![CDATA[
+    SELECT a.`id` AS strategyId,a.`st_uuid` AS uuid FROM strategy_baseinfo a
+            ]]>
+    </entry>
+
+</properties>
